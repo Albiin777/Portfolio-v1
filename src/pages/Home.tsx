@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { motion } from 'framer-motion'
 
@@ -28,7 +28,7 @@ const STAGGER_CONTAINER = {
 const STAGGER_ITEM = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
-};
+} as any;
 
 const DOT_ANGLES_DEG = [0, 90, 180, 270]
 
@@ -56,7 +56,6 @@ function topDotIndex(ringRotation: number): number {
 
 export default function Home() {
   const navigate = useNavigate()
-  const location = useLocation()
   const [ringRotation, setRingRotation] = useState(0)
   const [transitioning, setTransitioning] = useState(false)
 
@@ -72,11 +71,8 @@ export default function Home() {
 
   // activeIndex is the dot currently at the top of the wheel (changes while rotating)
   const activeIndex = topDotIndex(ringRotation)
+  // activePage is the route the wheel is currently focused on
   const activePage = NAV_PAGES[activeIndex]
-
-  // currentPageIndex is the actual route the user is on (doesn't change during rotation)
-  const currentPageIndex = Math.max(0, NAV_PAGES.findIndex(p => p.path === location.pathname))
-
   const isDragging = useRef(false)
   const hasDragged = useRef(false)
   const lastAngle = useRef(0)

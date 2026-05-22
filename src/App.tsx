@@ -1,7 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
 import { NavigationProvider } from './context/NavigationContext'
 import Home from './pages/Home'
-import About from './pages/About'
 import Journey from './pages/Journey'
 import Skills from './pages/Skills'
 import Contact from './pages/Contact'
