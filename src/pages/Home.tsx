@@ -1,0 +1,448 @@
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { NAV_PAGES } from '../context/NavigationContext'
+import { motion } from 'framer-motion'
+
+const TypewriterText = ({ text, delay = 0 }: { text: string, delay?: number }) => {
+  const [displayed, setDisplayed] = useState('');
+  useEffect(() => {
+    let i = 0;
+    const t = setTimeout(() => {
+      const interval = setInterval(() => {
+        setDisplayed(text.slice(0, i + 1));
+        i++;
+        if (i >= text.length) clearInterval(interval);
+      }, 70);
+      return () => clearInterval(interval);
+    }, delay);
+    return () => clearTimeout(t);
+  }, [text, delay]);
+  return <>{displayed}<span className="animate-pulse">_</span></>;
+};
+
+const STAGGER_CONTAINER = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
+};
+
+const STAGGER_ITEM = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+};
+
+const DOT_ANGLES_DEG = [0, 90, 180, 270]
+
+const PARTICLES = Array.from({ length: 80 }, (_, i) => ({
+  id: i,
+  x: (i * 137.5) % 100,
+  y: (i * 93.1) % 100,
+  size: (i * 1.3) % 2 + 0.5,
+  dur: `${2 + ((i * 3.7) % 8)}s`,
+  delay: `${(i * 2.9) % 5}s`,
+  opacity: ((i * 0.17) % 0.5) + 0.1,
+}))
+
+const norm = (a: number) => ((a % 360) + 360) % 360
+
+function topDotIndex(ringRotation: number): number {
+  let closest = 0, minDist = 360
+  for (let i = 0; i < NAV_PAGES.length; i++) {
+    const screenAngle = norm(DOT_ANGLES_DEG[i] + ringRotation)
+    const dist = Math.min(screenAngle, 360 - screenAngle)
+    if (dist < minDist) { minDist = dist; closest = i }
+  }
+  return closest
+}
+
+export default function Home() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [ringRotation, setRingRotation] = useState(0)
+  const [transitioning, setTransitioning] = useState(false)
+
+  const [imageMousePos, setImageMousePos] = useState({ x: 50, y: 50 })
+  const [isHoveringImage, setIsHoveringImage] = useState(false)
+
+  const handleImageMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setImageMousePos({ x, y })
+  }, [])
+
+  // activeIndex is the dot currently at the top of the wheel (changes while rotating)
+  const activeIndex = topDotIndex(ringRotation)
+  const activePage = NAV_PAGES[activeIndex]
+
+  // currentPageIndex is the actual route the user is on (doesn't change during rotation)
+  const currentPageIndex = Math.max(0, NAV_PAGES.findIndex(p => p.path === location.pathname))
+
+  const isDragging = useRef(false)
+  const hasDragged = useRef(false)
+  const lastAngle = useRef(0)
+  const wheelRef = useRef<HTMLDivElement>(null)
+
+  const getCenter = useCallback(() => {
+    const el = wheelRef.current
+    if (!el) return { cx: 0, cy: 0 }
+    const r = el.getBoundingClientRect()
+    return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 }
+  }, [])
+
+  const getAngle = useCallback((clientX: number, clientY: number) => {
+    const { cx, cy } = getCenter()
+    return Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI)
+  }, [getCenter])
+
+  const snapToNearest = useCallback((rot: number) => {
+    setRingRotation(Math.round(rot / 90) * 90)
+  }, [])
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    isDragging.current = true
+    hasDragged.current = false
+    lastAngle.current = getAngle(e.clientX, e.clientY)
+  }
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return
+      hasDragged.current = true
+      const angle = getAngle(e.clientX, e.clientY)
+      setRingRotation(r => r + (angle - lastAngle.current))
+      lastAngle.current = angle
+    }
+    const onMouseUp = (e: MouseEvent) => {
+      if (!isDragging.current) return
+      isDragging.current = false
+      if (hasDragged.current) {
+        snapToNearest(ringRotation + (getAngle(e.clientX, e.clientY) - lastAngle.current))
+      }
+    }
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
+    return () => { window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp) }
+  }, [ringRotation, snapToNearest, getAngle])
+
+  useEffect(() => {
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging.current) return
+      hasDragged.current = true
+      const t = e.touches[0]
+      const angle = getAngle(t.clientX, t.clientY)
+      setRingRotation(r => r + (angle - lastAngle.current))
+      lastAngle.current = angle
+    }
+    const onTouchEnd = () => { 
+      if (!isDragging.current) return; 
+      isDragging.current = false; 
+      if (hasDragged.current) snapToNearest(ringRotation);
+    }
+    window.addEventListener('touchmove', onTouchMove, { passive: true })
+    window.addEventListener('touchend', onTouchEnd)
+    return () => { window.removeEventListener('touchmove', onTouchMove); window.removeEventListener('touchend', onTouchEnd) }
+  }, [ringRotation, snapToNearest, getAngle])
+
+  const handleDotClick = (dotIndex: number) => {
+    const screenAngle = norm(DOT_ANGLES_DEG[dotIndex] + ringRotation)
+    let delta = -screenAngle
+    if (delta < -180) delta += 360
+    if (delta > 180) delta -= 360
+    setRingRotation(r => r + delta)
+    setTimeout(() => {
+      if (transitioning) return
+      setTransitioning(true)
+      setTimeout(() => {
+        const sectionId = NAV_PAGES[dotIndex].id
+        const section = document.getElementById(sectionId)
+        if (section) section.scrollIntoView({ behavior: 'smooth' })
+        setTransitioning(false)
+      }, 600)
+    }, 500)
+  }
+
+  const SVG_SIZE = 480, CX = 240, CY = 240, R_OUTER = 210, R_INNER = 186
+  const R_MID = (R_OUTER + R_INNER) / 2, DOT_R = 4
+  const polarToXY = (angleDeg: number, r: number) => {
+    const a = (angleDeg - 90) * (Math.PI / 180)
+    return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a) }
+  }
+
+  const ticks = Array.from({ length: 72 }, (_, i) => {
+    const angle = i * 5
+    const isDot = DOT_ANGLES_DEG.some(a => Math.abs(a - angle) < 2)
+    const isMajor = i % 18 === 0 // every 90 deg
+    const isMedium = i % 6 === 0 // every 30 deg
+
+    let len = 4;
+    let opacity = 0.15;
+
+    if (isDot) { len = 0; opacity = 0; }
+    else if (isMajor) { len = 12; opacity = 0.5; }
+    else if (isMedium) { len = 8; opacity = 0.3; }
+
+    return {
+      outer: polarToXY(angle, R_INNER),
+      inner: polarToXY(angle, R_INNER - len),
+      opacity,
+      isMajor
+    }
+  })
+
+  const textPathRadius = R_OUTER + 16
+
+  return (
+    <motion.div
+      initial="hidden" animate="show" variants={STAGGER_CONTAINER}
+      className="relative min-h-screen w-full bg-bg-dark selection:bg-accent/30 selection:text-white flex flex-col xl:block items-center justify-center pb-8 xl:pb-0"
+    >
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 z-1 pointer-events-none opacity-80"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+          backgroundPosition: 'center center'
+        }}
+      />
+
+      {/* Ambient Glows */}
+      <div className="absolute right-[2%] lg:right-[6%] xl:right-[10%] top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] pointer-events-none z-0" />
+
+      {/* Particles */}
+      {PARTICLES.map(p => (
+        <div key={p.id} className="absolute rounded-full bg-white/60 pointer-events-none animate-twinkle z-1" style={{
+          left: `${p.x}%`, top: `${p.y}%`,
+          width: `${p.size}px`, height: `${p.size}px`,
+          opacity: p.opacity,
+          '--dur': p.dur, '--delay': p.delay,
+        } as React.CSSProperties} />
+      ))}
+
+      {/* Main content - Left Column */}
+      <div className="relative xl:absolute xl:left-[8%] 2xl:left-[10%] xl:top-1/2 xl:-translate-y-1/2 z-10 flex flex-col w-full max-w-[600px] xl:max-w-[700px] pr-6 pl-12 md:pr-12 md:pl-20 xl:px-0 order-2 xl:order-none pb-4 xl:pb-0 pt-0">
+
+        {/* Header Line (Desktop Only) */}
+        <motion.div variants={STAGGER_ITEM} className="hidden xl:flex items-center gap-4 mb-[56px] w-full">
+          <div className="flex items-center text-accent shrink-0">
+            <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor">
+              <path d="M0 0L8 6L0 12V0Z" />
+            </svg>
+          </div>
+          <div className="font-mono text-[11px] tracking-[0.2em] text-white/70 uppercase whitespace-nowrap shrink-0">
+            AI Innovator &nbsp;&bull;&nbsp; Full Stack Developer &nbsp;&bull;&nbsp; Problem Solver
+          </div>
+          <div className="flex-1 h-[1px] bg-white/10 relative min-w-[30px]">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-white/30 rounded-full" />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1 h-1 bg-white/30 rounded-full" />
+          </div>
+        </motion.div>
+
+        {/* Name Section */}
+        <motion.div variants={STAGGER_ITEM} className="flex flex-col items-start text-left">
+          <div className="text-[24px] md:text-[32px] xl:text-[40px] font-light text-white/90 leading-tight tracking-wide whitespace-nowrap">
+            <TypewriterText text="Hello, I'm" delay={300} />
+          </div>
+          <h1 className="text-[44px] md:text-[56px] xl:text-[72px] font-bold text-accent leading-[1.05] tracking-[-0.02em] whitespace-nowrap drop-shadow-lg">
+            Albin Thomas
+          </h1>
+        </motion.div>
+
+        {/* Badges Section (Mobile Only) */}
+        <motion.div variants={STAGGER_ITEM} className="xl:hidden flex flex-nowrap items-center gap-1.5 w-full mt-4 overflow-x-auto no-scrollbar pb-1">
+          <div className="px-2 py-1 bg-accent/10 border border-accent/20 rounded text-accent font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap shadow-[0_0_10px_rgba(255,75,31,0.1)]">AI Innovator</div>
+          <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Full Stack Dev</div>
+          <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Problem Solver</div>
+        </motion.div>
+
+        {/* Hero Text */}
+        <div className="flex flex-col gap-4 xl:gap-6 mt-4 xl:mt-8">
+          <motion.div variants={STAGGER_ITEM} className="flex flex-col gap-3 xl:gap-5 max-w-[540px]">
+            <p className="text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-mono leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
+              Computer Science Engineering student and developer passionate about building intelligent, user-focused digital solutions for real-world problems.
+            </p>
+            <p className="text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-mono leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
+              I enjoy turning ideas into meaningful products through code, creativity, and innovation, with interests in AI, web development, and modern user experiences.
+            </p>
+          </motion.div>
+
+          {/* Buttons */}
+          <motion.div variants={STAGGER_ITEM} className="mt-4 xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
+            <button
+              className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.15)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(224,90,43,0.3)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
+              onClick={() => window.open('/resume.pdf', '_blank')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-y-0.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <span>DOWNLOAD RESUME</span>
+            </button>
+            <button
+              className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-white/10 hover:border-white/40 hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
+              onClick={() => navigate('/work')}
+            >
+              <span>VIEW PROJECTS</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Right Column - Mechanical Wheel */}
+      <div className="relative xl:absolute xl:right-[2%] 2xl:right-[8%] xl:top-1/2 xl:-translate-y-1/2 z-10 order-1 xl:order-none flex items-center justify-center -mt-[110px] -mb-[110px] sm:-my-[50px] xl:my-0">
+        <motion.div variants={STAGGER_ITEM}>
+          <div className="relative w-[560px] h-[560px] flex items-center justify-center shrink-0 scale-[0.55] sm:scale-[0.7] lg:scale-100">
+
+            {/* Outer Casing / Brackets */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              {/* Static Outer Ring */}
+              <div className="absolute inset-[30px] rounded-full border-[12px] border-[#171717] shadow-mech-outer" />
+
+              {/* 4 Brackets */}
+              {[45, 135, 225, 315].map((angle, i) => (
+                <div key={i} className="absolute inset-0 flex items-center justify-center" style={{ transform: `rotate(${angle}deg)` }}>
+                  <div className="absolute top-0 w-24 h-12 bg-[#121212] border border-white/5 rounded-t-lg shadow-mech-inner flex items-center justify-center">
+                    <div className="w-12 h-1 bg-white/10 rounded-full" />
+                    <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
+                    <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
+                  </div>
+                </div>
+              ))}
+
+              {/* Glowing Accents on outer ring */}
+              <div className="absolute top-[30px] left-1/2 -translate-x-1/2 w-4 h-1 bg-accent shadow-[0_0_10px_var(--accent)]" />
+              <div className="absolute bottom-[30px] left-1/2 -translate-x-1/2 w-4 h-1 bg-white/30" />
+              <div className="absolute left-[30px] top-1/2 -translate-y-1/2 w-1 h-4 bg-accent shadow-[0_0_10px_var(--accent)]" />
+              <div className="absolute right-[30px] top-1/2 -translate-y-1/2 w-1 h-4 bg-accent shadow-[0_0_10px_var(--accent)]" />
+            </div>
+
+            {/* Rotating Mechanism */}
+            <div ref={wheelRef} className="absolute inset-[60px] rounded-full z-10 cursor-grab active:cursor-grabbing shadow-mech-ring bg-[#0f0f0f] touch-none"
+              onMouseDown={onMouseDown}
+              onTouchStart={e => { isDragging.current = true; hasDragged.current = false; lastAngle.current = getAngle(e.touches[0].clientX, e.touches[0].clientY) }}
+            >
+              {/* Top Label (Static) */}
+              <div className="absolute top-[26px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1">
+                <span className="font-mono text-[9px] text-white/50 tracking-[0.2em]">{activePage.num}</span>
+                <span className="font-sans text-[12px] font-bold tracking-[0.2em] text-white uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{activePage.label}</span>
+              </div>
+
+              <div className="absolute top-[60px] left-1/2 -translate-x-1/2 w-[6px] h-[6px] rounded-full bg-accent shadow-[0_0_12px_var(--accent),_0_0_24px_var(--accent)] z-20" />
+
+              {/* Static Red Arrows on Sides */}
+              <div className="absolute top-1/2 left-[30px] -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-r-[6px] border-r-accent z-20" />
+              <div className="absolute top-1/2 right-[30px] -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-l-[6px] border-l-accent z-20" />
+
+              {/* Static SVG for Bottom Text */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}>
+                <defs>
+                  <path id="static-text-path-bottom" d={`M ${CX - textPathRadius} ${CY} a ${textPathRadius} ${textPathRadius} 0 0 0 ${textPathRadius * 2} 0`} />
+                </defs>
+                <text fontFamily="Space Mono, monospace" fontSize="9" letterSpacing="5" fill="rgba(255,255,255,0.4)">
+                  <textPath href="#static-text-path-bottom" startOffset="50%" textAnchor="middle">ROTATE TO NAVIGATE</textPath>
+                </text>
+              </svg>
+
+              {/* The Rotating SVG part */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-100 ease-linear" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+                style={{ transform: `rotate(${ringRotation}deg)` }}
+              >
+                <defs>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                  <filter id="glow-heavy">
+                    <feGaussianBlur stdDeviation="8" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                </defs>
+
+                {/* Inner Ring Background */}
+                <circle cx={CX} cy={CY} r={R_OUTER} stroke="rgba(255,255,255,0.03)" strokeWidth="40" fill="none" />
+
+                {/* Ticks */}
+                {ticks.map((t, i) => (
+                  <line key={`tick-${i}`} x1={t.outer.x} y1={t.outer.y} x2={t.inner.x} y2={t.inner.y}
+                    stroke={t.isMajor ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.3)"} strokeWidth={t.isMajor ? "1.5" : "1"} opacity={t.opacity}
+                  />
+                ))}
+
+                {/* Sub-rings */}
+                <circle cx={CX} cy={CY} r={R_INNER} stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none" />
+
+                {/* Interactive Dots & Arrows */}
+                {NAV_PAGES.map((page, i) => {
+                  const pos = polarToXY(DOT_ANGLES_DEG[i], R_MID);
+                  const isActive = i === activeIndex;
+
+                  return (
+                    <g key={page.id} className="cursor-pointer pointer-events-auto" onClick={() => handleDotClick(i)}>
+                      <circle cx={pos.x} cy={pos.y} r={24} fill="transparent" />
+
+                      {isActive ? (
+                        <g filter="url(#glow)">
+                          {/* Active Indicator (Red Triangle pointing inward) */}
+                          <path d={`M ${pos.x - 5} ${pos.y - 5} L ${pos.x + 5} ${pos.y - 5} L ${pos.x} ${pos.y + 6} Z`} fill="var(--accent)" transform={`rotate(${DOT_ANGLES_DEG[i]} ${pos.x} ${pos.y})`} />
+                        </g>
+                      ) : (
+                        <circle cx={pos.x} cy={pos.y} r={DOT_R} fill="rgba(255,255,255,0.8)" />
+                      )}
+
+                      <line
+                        x1={pos.x} y1={pos.y}
+                        x2={polarToXY(DOT_ANGLES_DEG[i], R_INNER).x} y2={polarToXY(DOT_ANGLES_DEG[i], R_INNER).y}
+                        stroke={isActive ? 'rgba(255, 75, 31, 0.2)' : 'rgba(255,255,255,0.05)'} strokeWidth="1"
+                      />
+                    </g>
+                  )
+                })}
+              </svg>
+
+              {/* Center Image Container */}
+              <div
+                className="absolute inset-[64px] rounded-full overflow-hidden z-10 border border-white/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.9),_0_0_30px_rgba(0,0,0,0.8)] pointer-events-auto flex items-center justify-center bg-black cursor-pointer"
+                onMouseMove={handleImageMouseMove}
+                onMouseEnter={() => setIsHoveringImage(true)}
+                onMouseLeave={() => setIsHoveringImage(false)}
+                onClick={() => {
+                  if (hasDragged.current) return;
+                  if (transitioning) return;
+                  setTransitioning(true);
+                  setTimeout(() => {
+                    const sectionId = NAV_PAGES[activeIndex].id
+                    const section = document.getElementById(sectionId)
+                    if (section) section.scrollIntoView({ behavior: 'smooth' })
+                    setTransitioning(false)
+                  }, 600);
+                }}
+              >
+                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] z-20 pointer-events-none" />
+
+                {/* Base Image (Black & White) */}
+                <img src="/albin.png" alt="Albin Thomas Base"
+                  className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none grayscale opacity-70"
+                />
+
+                {/* Colored Image Spotlight (Orangish/Sepia Tint) */}
+                <img src="/albin.png" alt="Albin Thomas Color"
+                  className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none transition-opacity duration-300 sepia-[0.6] saturate-[1.5] contrast-[1.1] hue-rotate-[-15deg]"
+                  style={{
+                    opacity: isHoveringImage ? 1 : 0,
+                    WebkitMaskImage: `radial-gradient(circle 120px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,
+                    maskImage: `radial-gradient(circle 120px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className={`fixed inset-0 bg-bg-dark z-[100] pointer-events-none translate-y-full ${transitioning ? 'animate-slideUp' : ''}`} />
+    </motion.div>
+  )
+}

@@ -1,0 +1,79 @@
+import { useState } from 'react'
+
+export default function AnonymousChat() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+
+  const handleSend = () => {
+    if (!message.trim()) return
+    setStatus('sending')
+    // Simulate sending for now. You can hook this up to an API endpoint later.
+    setTimeout(() => {
+      setStatus('sent')
+      setMessage('')
+      setTimeout(() => {
+        setIsOpen(false)
+        setStatus('idle')
+      }, 2000)
+    }, 1000)
+  }
+
+  return (
+    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+      {/* Chat Window */}
+      <div 
+        className={`mb-4 w-80 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
+      >
+        <div className="bg-[#171717] px-5 py-4 border-b border-white/10 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <div className="font-mono text-[10px] tracking-[0.25em] text-white uppercase">Secret Comms</div>
+          </div>
+          <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors cursor-pointer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="p-5 flex flex-col gap-4">
+          <p className="text-[12px] font-sans text-white/50 leading-relaxed">
+            Send me an anonymous message. Your identity is completely hidden.
+          </p>
+          
+          <textarea 
+            className="w-full h-28 bg-[#0a0a0a] border border-white/10 text-white/80 text-[13px] font-sans p-3 focus:outline-none focus:border-accent/40 resize-none transition-colors shadow-inner placeholder:text-white/20"
+            placeholder="Type your message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={status !== 'idle'}
+          />
+          
+          <button 
+            className="w-full py-[12px] bg-white/5 backdrop-blur-[10px] border border-accent/30 text-accent font-mono text-[10px] tracking-[0.3em] uppercase hover:bg-accent/10 hover:border-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            onClick={handleSend}
+            disabled={!message.trim() || status !== 'idle'}
+          >
+            {status === 'idle' ? 'TRANSMIT' : status === 'sending' ? 'TRANSMITTING...' : 'DELIVERED'}
+          </button>
+        </div>
+      </div>
+
+      {/* Floating Action Button */}
+      <button 
+        className="group relative w-14 h-14 bg-[#121212] border border-[#171717] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.05)] hover:border-accent/40 hover:shadow-[0_0_20px_rgba(255,75,31,0.2),_inset_0_2px_4px_rgba(255,255,255,0.05)] transition-all duration-300 cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 group-hover:text-accent transition-colors duration-300">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        
+        {/* Unread indicator / glowing dot on button */}
+        {!isOpen && (
+          <div className="absolute top-0 right-0 w-3 h-3 bg-accent rounded-full border-2 border-[#121212] shadow-[0_0_10px_var(--accent)]" />
+        )}
+      </button>
+    </div>
+  )
+}
