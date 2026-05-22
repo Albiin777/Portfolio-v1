@@ -7,15 +7,18 @@ const TypewriterText = ({ text, delay = 0 }: { text: string, delay?: number }) =
   const [displayed, setDisplayed] = useState('');
   useEffect(() => {
     let i = 0;
+    let intervalId: number | undefined;
     const t = setTimeout(() => {
-      const interval = setInterval(() => {
+      intervalId = window.setInterval(() => {
         setDisplayed(text.slice(0, i + 1));
         i++;
-        if (i >= text.length) clearInterval(interval);
+        if (i >= text.length) clearInterval(intervalId);
       }, 70);
-      return () => clearInterval(interval);
     }, delay);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [text, delay]);
   return <>{displayed}<span className="animate-pulse">_</span></>;
 };
@@ -23,14 +26,14 @@ const TypewriterText = ({ text, delay = 0 }: { text: string, delay?: number }) =
 const STAGGER_CONTAINER = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
-};
+} as const;
 
 const STAGGER_ITEM = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
-} as any;
+} as const;
 
-const DOT_ANGLES_DEG = [0, 90, 180, 270]
+const DOT_ANGLES_DEG = [0, 72, 144, 216, 288]
 
 const PARTICLES = Array.from({ length: 80 }, (_, i) => ({
   id: i,
@@ -56,6 +59,7 @@ function topDotIndex(ringRotation: number): number {
 
 export default function Home() {
   const navigate = useNavigate()
+
   const [ringRotation, setRingRotation] = useState(0)
   const [transitioning, setTransitioning] = useState(false)
 
@@ -71,8 +75,10 @@ export default function Home() {
 
   // activeIndex is the dot currently at the top of the wheel (changes while rotating)
   const activeIndex = topDotIndex(ringRotation)
-  // activePage is the route the wheel is currently focused on
   const activePage = NAV_PAGES[activeIndex]
+
+
+
   const isDragging = useRef(false)
   const hasDragged = useRef(false)
   const lastAngle = useRef(0)
@@ -91,7 +97,7 @@ export default function Home() {
   }, [getCenter])
 
   const snapToNearest = useCallback((rot: number) => {
-    setRingRotation(Math.round(rot / 90) * 90)
+    setRingRotation(Math.round(rot / 72) * 72)
   }, [])
 
   const onMouseDown = (e: React.MouseEvent) => {
@@ -140,7 +146,8 @@ export default function Home() {
     return () => { window.removeEventListener('touchmove', onTouchMove); window.removeEventListener('touchend', onTouchEnd) }
   }, [ringRotation, snapToNearest, getAngle])
 
-  const handleDotClick = (dotIndex: number) => {
+  const handleDotClick = (e: React.MouseEvent, dotIndex: number) => {
+    e.stopPropagation()
     const screenAngle = norm(DOT_ANGLES_DEG[dotIndex] + ringRotation)
     let delta = -screenAngle
     if (delta < -180) delta += 360
@@ -167,7 +174,7 @@ export default function Home() {
 
   const ticks = Array.from({ length: 72 }, (_, i) => {
     const angle = i * 5
-    const isDot = DOT_ANGLES_DEG.some(a => Math.abs(a - angle) < 2)
+    const isDot = DOT_ANGLES_DEG.some(a => Math.abs(a - angle) < 3)
     const isMajor = i % 18 === 0 // every 90 deg
     const isMedium = i % 6 === 0 // every 30 deg
 
@@ -319,6 +326,17 @@ export default function Home() {
             <div ref={wheelRef} className="absolute inset-[60px] rounded-full z-10 cursor-grab active:cursor-grabbing shadow-mech-ring bg-[#0f0f0f] touch-none"
               onMouseDown={onMouseDown}
               onTouchStart={e => { isDragging.current = true; hasDragged.current = false; lastAngle.current = getAngle(e.touches[0].clientX, e.touches[0].clientY) }}
+              onClick={() => {
+                if (hasDragged.current) return;
+                if (transitioning) return;
+                setTransitioning(true);
+                setTimeout(() => {
+                  const sectionId = NAV_PAGES[activeIndex].id
+                  const section = document.getElementById(sectionId)
+                  if (section) section.scrollIntoView({ behavior: 'smooth' })
+                  setTransitioning(false)
+                }, 600);
+              }}
             >
               {/* Top Label (Static) */}
               <div className="absolute top-[26px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1">
@@ -376,7 +394,7 @@ export default function Home() {
                   const isActive = i === activeIndex;
 
                   return (
-                    <g key={page.id} className="cursor-pointer pointer-events-auto" onClick={() => handleDotClick(i)}>
+                    <g key={page.id} className="cursor-pointer pointer-events-auto" onClick={(e) => handleDotClick(e, i)}>
                       <circle cx={pos.x} cy={pos.y} r={24} fill="transparent" />
 
                       {isActive ? (
@@ -404,17 +422,6 @@ export default function Home() {
                 onMouseMove={handleImageMouseMove}
                 onMouseEnter={() => setIsHoveringImage(true)}
                 onMouseLeave={() => setIsHoveringImage(false)}
-                onClick={() => {
-                  if (hasDragged.current) return;
-                  if (transitioning) return;
-                  setTransitioning(true);
-                  setTimeout(() => {
-                    const sectionId = NAV_PAGES[activeIndex].id
-                    const section = document.getElementById(sectionId)
-                    if (section) section.scrollIntoView({ behavior: 'smooth' })
-                    setTransitioning(false)
-                  }, 600);
-                }}
               >
                 <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] z-20 pointer-events-none" />
 
@@ -423,9 +430,9 @@ export default function Home() {
                   className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none grayscale opacity-70"
                 />
 
-                {/* Colored Image Spotlight (Orangish/Sepia Tint) */}
+                {/* Colored Image Spotlight (Original Colors) */}
                 <img src="/albin.png" alt="Albin Thomas Color"
-                  className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none transition-opacity duration-300 sepia-[0.6] saturate-[1.5] contrast-[1.1] hue-rotate-[-15deg]"
+                  className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none transition-opacity duration-300"
                   style={{
                     opacity: isHoveringImage ? 1 : 0,
                     WebkitMaskImage: `radial-gradient(circle 120px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,

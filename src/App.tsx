@@ -2,6 +2,8 @@ import { NavigationProvider } from './context/NavigationContext'
 import Home from './pages/Home'
 import Journey from './pages/Journey'
 import Skills from './pages/Skills'
+import CodingProfiles from './pages/CodingProfiles'
+import Projects from './pages/Projects'
 import Contact from './pages/Contact'
 import AnonymousChat from './components/AnonymousChat'
 import FloatingNavbar from './components/FloatingNavbar'
@@ -19,6 +21,12 @@ export default function App() {
         </section>
         <section id="skills">
           <Skills />
+        </section>
+        <section id="coding">
+          <CodingProfiles />
+        </section>
+        <section id="projects">
+          <Projects />
         </section>
         <section id="contact">
           <Contact />

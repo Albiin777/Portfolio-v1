@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 export default function Contact() {
   return (
     <div className="min-h-screen bg-bg-dark text-white font-sans flex flex-col items-center justify-center gap-7">
-      <div className="font-mono text-xs tracking-[0.2em] text-white/40">04 / CONTACT</div>
+      <div className="font-mono text-xs tracking-[0.2em] text-white/40">06 // CONTACT</div>
       <h1 className="text-6xl font-bold">Get In Touch</h1>
       <p className="max-w-md text-center text-white/50 leading-relaxed font-mono text-sm">
         Have a project in mind or just want to say hi? My inbox is always open.

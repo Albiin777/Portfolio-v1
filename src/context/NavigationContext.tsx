@@ -1,12 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState } from 'react'
 
-export const SECTIONS = ['home', 'journey', 'skills', 'contact']
+export const SECTIONS = ['home', 'journey', 'skills', 'coding', 'projects', 'contact']
 export const NAV_PAGES = [
-  { id: 'home',    label: 'HOME',    num: '01', path: '/'        },
-  { id: 'journey', label: 'JOURNEY', num: '02', path: '/journey' },
-  { id: 'skills',  label: 'SKILLS',  num: '03', path: '/skills'  },
-  { id: 'contact', label: 'CONTACT', num: '04', path: '/contact' },
+  { id: 'home',     label: 'HOME',     num: '01', path: '/'        },
+  { id: 'journey',  label: 'JOURNEY',  num: '02', path: '/journey' },
+  { id: 'skills',   label: 'SKILLS',   num: '03', path: '/skills'  },
+  { id: 'coding',   label: 'CODING',   num: '04', path: '/coding'  },
+  { id: 'projects', label: 'PROJECTS', num: '05', path: '/projects'},
+  { id: 'contact',  label: 'CONTACT',  num: '06', path: '/contact' },
 ]
 
 interface NavigationContextType {

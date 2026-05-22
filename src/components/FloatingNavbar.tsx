@@ -1,77 +1,82 @@
-import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const ICONS = [
-  {
-    path: '#home',
-    id: 'home',
-    svg: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    )
-  },
-  {
-    path: '#journey',
-    id: 'user',
-    svg: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-    )
-  },
-  {
-    path: '#skills',
-    id: 'code',
-    svg: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 18 22 12 16 6"></polyline>
-        <polyline points="8 6 2 12 8 18"></polyline>
-      </svg>
-    )
-  },
-  {
-    path: '#work',
-    id: 'briefcase',
-    svg: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-      </svg>
-    )
-  },
-  {
-    path: '#contact',
-    id: 'mail',
-    svg: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-        <polyline points="22,6 12,13 2,6"></polyline>
-      </svg>
-    )
-  }
-]
+import { NAV_PAGES } from '../context/NavigationContext'
 
 export default function FloatingNavbar() {
-  const location = useLocation()
   const [isVisible, setIsVisible] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
+  const isProgrammaticScroll = useRef(false)
+  const scrollTimeout = useRef<number | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
-      // Only show the navbar if we are scrolled down a bit
+      // Toggle navbar visibility
       if (window.scrollY > 80) {
         setIsVisible(true)
       } else {
         setIsVisible(false)
       }
+
+      // If scrolling programmatically (via navbar click), ignore scroll events for active section detection
+      if (isProgrammaticScroll.current) return
+
+      // Find the currently active section based on scroll position (matching GlobalIndicator's 50% threshold)
+      let active = 'home'
+      for (let i = 0; i < NAV_PAGES.length; i++) {
+        const section = document.getElementById(NAV_PAGES[i].id)
+        if (section) {
+          const rect = section.getBoundingClientRect()
+          if (rect.top <= window.innerHeight / 2) {
+            active = NAV_PAGES[i].id
+          }
+        }
+      }
+      setActiveSection(active)
     }
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Run once on mount
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeout.current !== null) {
+        window.clearTimeout(scrollTimeout.current)
+      }
+    }
   }, [])
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const section = document.getElementById(id)
+    if (section) {
+      isProgrammaticScroll.current = true
+      setActiveSection(id)
+
+      if (scrollTimeout.current !== null) {
+        window.clearTimeout(scrollTimeout.current)
+      }
+
+      section.scrollIntoView({ behavior: 'smooth' })
+      window.history.pushState(null, '', `#${id}`)
+
+      // Release scroll block after smooth scroll duration
+      scrollTimeout.current = window.setTimeout(() => {
+        isProgrammaticScroll.current = false
+      }, 800)
+    }
+  }
+
+  const getLabel = (id: string) => {
+    switch (id) {
+      case 'home': return 'Home'
+      case 'journey': return 'Journey'
+      case 'skills': return 'Skills'
+      case 'coding': return 'Coding'
+      case 'projects': return 'Projects'
+      case 'contact': return 'Contact'
+      default: return id.charAt(0).toUpperCase() + id.slice(1)
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -81,27 +86,52 @@ export default function FloatingNavbar() {
           animate={{ y: 0, opacity: 1, x: '-50%' }}
           exit={{ y: -100, opacity: 0, x: '-50%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-6 left-1/2 z-50 flex items-center justify-center"
+          className="fixed top-6 left-1/2 z-50 flex items-center justify-center max-w-[95%] sm:max-w-md md:max-w-[480px]"
         >
-          <div className="flex items-center gap-6 px-8 py-3 bg-black/60 backdrop-blur-md rounded-full border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-            {ICONS.map((icon) => {
-              const isActive = location.hash === icon.path || (location.hash === '' && icon.path === '#home')
+          {/* Main capsule bar container - highly transparent, overflow-hidden to contain the glow, clean glass design */}
+          <div 
+            className="relative flex items-center justify-center gap-1.5 sm:gap-3 md:gap-4 px-2 py-1.5 bg-black/[0.12] backdrop-blur-xl rounded-full border border-white/[0.06] w-full sm:w-auto overflow-hidden"
+            style={{
+              cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cdefs%3E%3CradialGradient id='glow' cx='50%' cy='50%' r='50%'%3E%3Cstop offset='0%25' stop-color='%23ff4b1f' stop-opacity='0.65'/%3E%3Cstop offset='45%25' stop-color='%23ff8500' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%23ff4b1f' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='28' cy='28' r='26' fill='url(%23glow)'/%3E%3C/svg%3E") 28 28, auto`
+            }}
+          >
+            
+            {/* Navigation links */}
+            {NAV_PAGES.map((page) => {
+              const isActive = activeSection === page.id
+              
               return (
                 <a
-                  key={icon.id}
-                  href={icon.path}
-                  className={`relative flex flex-col items-center justify-center transition-colors duration-300 ${
-                    isActive ? 'text-accent' : 'text-white/40 hover:text-white/80'
+                  key={page.id}
+                  href={`#${page.id}`}
+                  onClick={(e) => handleNavClick(e, page.id)}
+                  style={{ cursor: 'inherit' }}
+                  className={`relative px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs md:text-sm font-medium transition-all duration-300 rounded-full flex items-center justify-center select-none group ${
+                    isActive 
+                      ? 'text-white' 
+                      : 'text-white/50 hover:text-white'
                   }`}
                 >
-                  {icon.svg}
+                  {/* Glowing active item background pill & ambient glow */}
                   {isActive && (
-                    <motion.div
-                      layoutId="active-nav-indicator"
-                      className="absolute -bottom-3 w-1 h-1 rounded-full bg-accent shadow-[0_0_8px_rgba(255,75,31,0.8)]"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
+                    <>
+                      {/* Ambient fire sparkle glow behind active item - contained inside capsule */}
+                      <div className="absolute inset-0.5 rounded-full bg-[#ff4b1f]/20 blur-[5px] opacity-70 animate-pulse pointer-events-none" />
+                      
+                      {/* Crisp gradient-bordered capsule with smooth motion physics */}
+                      <motion.div
+                        layoutId="active-pill"
+                        className="absolute inset-0 rounded-full p-[1.5px] bg-gradient-to-r from-[#ff4b1f] via-[#ff8500] to-[#ffaa1f] shadow-[0_0_10px_rgba(255,75,31,0.4)]"
+                        transition={{ type: 'spring', stiffness: 180, damping: 24 }}
+                      >
+                        <div className="w-full h-full rounded-full bg-[#0a0a0a]/85 backdrop-blur-md" />
+                      </motion.div>
+                    </>
                   )}
+
+                  <span className="relative z-10 transition-transform duration-300 group-hover:scale-[1.12] block origin-center">
+                    {getLabel(page.id)}
+                  </span>
                 </a>
               )
             })}
