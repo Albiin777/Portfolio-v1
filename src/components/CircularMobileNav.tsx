@@ -158,28 +158,48 @@ export default function CircularMobileNav() {
         />
       </div>
 
-      {/* Floating Toggle Button */}
+      {/* Floating Top Header (Visible after small scroll) */}
       {activeSection !== 'home' && (
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`fixed bottom-6 left-4 z-[100] w-14 h-14 rounded-full backdrop-blur-xl border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center text-accent pointer-events-auto transition-all active:scale-95 ${isOpen ? 'bg-transparent border-transparent shadow-none' : 'bg-[#111113]/90'}`}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={isOpen ? 'close' : activeSection}
-              initial={{ scale: 0, rotate: -90 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0, rotate: 90 }}
-              transition={{ duration: 0.2 }}
-            >
-              {isOpen ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-              ) : (
-                getIconForPage(activeSection)
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </button>
+        <div className="fixed top-5 left-5 right-5 z-[100] flex flex-row items-center justify-between pointer-events-none transition-all duration-300">
+          
+          {/* Left Capsule - Name */}
+          <a 
+            href="#home" 
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+              window.history.replaceState(null, '', '#home');
+              setIsOpen(false);
+            }}
+            className="h-12 px-5 rounded-full bg-[#111113]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
+          >
+            <span className="font-orbitron font-bold text-[13px] tracking-widest text-accent whitespace-nowrap">
+              Albin Thomas
+            </span>
+          </a>
+          
+          {/* Right Capsule - Menu Toggle */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`w-12 h-12 rounded-full backdrop-blur-xl border shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto transition-all active:scale-95 shrink-0 ${isOpen ? 'bg-[#111113]/90 border-accent/40 text-accent' : 'bg-[#111113]/80 border-white/10 text-accent hover:bg-white/5'}`}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isOpen ? 'close' : 'menu'}
+                initial={{ scale: 0, rotate: -90 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0, rotate: 90 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isOpen ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                ) : (
+                  getIconForPage(activeSection)
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+        </div>
       )}
 
       {/* Overlay & Circular Menu */}
@@ -196,9 +216,9 @@ export default function CircularMobileNav() {
             />
 
             <motion.div
-              initial={{ x: '-100%', opacity: 0 }}
+              initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '-100%', opacity: 0 }}
+              exit={{ x: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="absolute inset-0 pointer-events-none"
             >
@@ -235,24 +255,24 @@ export default function CircularMobileNav() {
                     const opacity = isVisuallyActive ? 1 : Math.max(0.4, 1 - dist * 0.15)
 
                     return (
-                      <div key={page.id} className="w-full snap-center shrink-0 flex items-center justify-start pl-6" style={{ height: `${ITEM_HEIGHT}px` }}>
+                      <div key={page.id} className="w-full snap-center shrink-0 flex items-center justify-end pr-6" style={{ height: `${ITEM_HEIGHT}px` }}>
                         <button
                           onClick={() => handleNavClick(page.id, index)}
                           className={`relative flex items-center gap-4 transition-all duration-75 group
                             ${isVisuallyActive ? 'px-4 py-2 bg-white/5 border border-white/20 rounded-2xl shadow-[0_0_15px_rgba(255,75,31,0.2)]' : ''}`}
                           style={{
-                            transform: `translateX(${xOffset}px) scale(${scale})`,
+                            transform: `translateX(${-xOffset}px) scale(${scale})`,
                             opacity: opacity,
                             filter: `blur(${blurAmount}px)`
                           }}
                         >
+                          <span className={`font-sans tracking-wide ${isVisuallyActive ? 'text-white font-bold text-base' : 'text-white/80 font-medium text-sm'}`}>
+                            {getLabel(page.id)}
+                          </span>
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-colors
                             ${isVisuallyActive ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-white/5 border-white/10 text-white/70'}`}>
                             {getIconForPage(page.id)}
                           </div>
-                          <span className={`font-sans tracking-wide ${isVisuallyActive ? 'text-white font-bold text-base' : 'text-white/80 font-medium text-sm'}`}>
-                            {getLabel(page.id)}
-                          </span>
                         </button>
                       </div>
                     )
@@ -266,13 +286,13 @@ export default function CircularMobileNav() {
 
             </motion.div>
 
-            {/* View Resume - Fixed at bottom right to align with close button */}
+            {/* View Resume - Fixed at bottom left to balance layout */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
               transition={{ delay: 0.1 }}
-              className="absolute bottom-6 right-4 pointer-events-auto"
+              className="absolute bottom-6 left-4 pointer-events-auto"
             >
               <a
                 href={resumeUrl}
