@@ -1,11 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
 export default function AnonymousChat() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      const shouldShow = window.scrollY > 160
+      setIsVisible(shouldShow)
+      if (!shouldShow) setIsOpen(false)
+    }
+
+    updateVisibility()
+    window.addEventListener('scroll', updateVisibility, { passive: true })
+    return () => window.removeEventListener('scroll', updateVisibility)
+  }, [])
 
   const handleSend = async () => {
     if (!message.trim()) return
@@ -35,7 +48,9 @@ export default function AnonymousChat() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none">
+    <div className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none transition-all duration-300 ${
+      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+    }`}>
       {/* Chat Window */}
       <div 
         className={`mb-4 w-80 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right pointer-events-auto ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
@@ -84,7 +99,9 @@ export default function AnonymousChat() {
 
       {/* Floating Action Button */}
       <button 
-        className="group relative w-14 h-14 bg-[#121212] border border-[#171717] rounded-full flex items-center justify-center hover:border-accent/40 transition-all duration-300 cursor-pointer pointer-events-auto"
+        className={`group relative w-14 h-14 bg-[#121212] border border-[#171717] rounded-full flex items-center justify-center hover:border-accent/40 transition-all duration-300 cursor-pointer ${
+          isVisible ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 group-hover:text-accent transition-colors duration-300">

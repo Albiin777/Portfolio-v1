@@ -93,8 +93,13 @@ const CompactProjectOverlay = ({ title, description, expanded, onExpandedChange 
           </p>
           <button
             type="button"
-            onPointerDown={(event) => event.stopPropagation()}
+            tabIndex={-1}
+            onPointerDown={(event) => {
+              event.preventDefault()
+              event.stopPropagation()
+            }}
             onClick={(event) => {
+              ;(document.activeElement as HTMLElement | null)?.blur()
               event.stopPropagation()
               setExpandedState(false)
             }}
@@ -115,8 +120,13 @@ const CompactProjectOverlay = ({ title, description, expanded, onExpandedChange 
             <span className="text-white/70 text-[11px] font-mono leading-relaxed">...</span>
             <button
               type="button"
-              onPointerDown={(event) => event.stopPropagation()}
+              tabIndex={-1}
+              onPointerDown={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+              }}
               onClick={(event) => {
+                ;(document.activeElement as HTMLElement | null)?.blur()
                 event.stopPropagation()
                 setExpandedState(true)
               }}
@@ -351,6 +361,12 @@ const normalizeProject = (project: ProjectData): ProjectData => ({
 const makeSlides = (projects: ProjectData[]) => (
   projects.length ? [projects[projects.length - 1], ...projects, projects[0]] : []
 )
+
+const getProjectUrl = (url: string) => url === '#' ? 'https://github.com' : url
+
+const openExternalUrl = (url: string) => {
+  window.open(getProjectUrl(url), '_blank', 'noopener,noreferrer')
+}
 
 const EmptyProjectState = ({ label }: { label: string }) => (
   <div className="relative z-10 flex min-h-[260px] w-full flex-col items-center justify-center rounded-xl border border-white/5 bg-[#08080a]/50 px-6 text-center">
@@ -783,18 +799,28 @@ export default function Projects() {
 
                       <div className="flex gap-4 relative z-20">
                         <a
-                          href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
+                          href={getProjectUrl(project.liveUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            openExternalUrl(project.liveUrl)
+                          }}
                           className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-accent text-accent hover:bg-accent hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(224,90,43,0.05)] cursor-pointer"
                         >
                           <span>Live Demo</span>
                           <ExternalLinkIcon />
                         </a>
                         <a
-                          href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
+                          href={getProjectUrl(project.codeUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            openExternalUrl(project.codeUrl)
+                          }}
                           className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/30 font-mono text-[11px] uppercase tracking-wider transition-all duration-300 cursor-pointer"
                         >
                           <span>Source Code</span>
@@ -966,22 +992,36 @@ Projects that represent my passion for learning and building new things         
 
                           <div className="flex gap-2 relative z-30">
                             <a 
-                              href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
+                              href={getProjectUrl(project.liveUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onPointerDown={(event) => event.stopPropagation()}
-                              onClick={(event) => event.stopPropagation()}
+                              onPointerDown={(event) => {
+                                event.stopPropagation()
+                                setCompactCarouselPaused(true)
+                              }}
+                              onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                openExternalUrl(project.liveUrl)
+                              }}
                               className="relative z-50 p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
                               title="Live Demo"
                             >
                               <ExternalLinkIcon />
                             </a>
                             <a 
-                              href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
+                              href={getProjectUrl(project.codeUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onPointerDown={(event) => event.stopPropagation()}
-                              onClick={(event) => event.stopPropagation()}
+                              onPointerDown={(event) => {
+                                event.stopPropagation()
+                                setCompactCarouselPaused(true)
+                              }}
+                              onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                openExternalUrl(project.codeUrl)
+                              }}
                               className="relative z-50 p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
                               title="Source Code"
                             >
@@ -1126,22 +1166,36 @@ Projects that represent my passion for learning and building new things         
 
                           <div className="flex gap-2 relative z-30">
                             <a 
-                              href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
+                              href={getProjectUrl(project.liveUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onPointerDown={(event) => event.stopPropagation()}
-                              onClick={(event) => event.stopPropagation()}
+                              onPointerDown={(event) => {
+                                event.stopPropagation()
+                                setCompactCarouselPaused(true)
+                              }}
+                              onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                openExternalUrl(project.liveUrl)
+                              }}
                               className="relative z-50 p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
                               title="Live Demo"
                             >
                               <ExternalLinkIcon />
                             </a>
                             <a 
-                              href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
+                              href={getProjectUrl(project.codeUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onPointerDown={(event) => event.stopPropagation()}
-                              onClick={(event) => event.stopPropagation()}
+                              onPointerDown={(event) => {
+                                event.stopPropagation()
+                                setCompactCarouselPaused(true)
+                              }}
+                              onClick={(event) => {
+                                event.preventDefault()
+                                event.stopPropagation()
+                                openExternalUrl(project.codeUrl)
+                              }}
                               className="relative z-50 p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
                               title="Source Code"
                             >
