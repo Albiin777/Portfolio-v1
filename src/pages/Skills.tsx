@@ -1,5 +1,14 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import PythonLogo from '../assets/tech/python.svg'
+import Html5Logo from '../assets/tech/html5.svg'
+import Css3Logo from '../assets/tech/css3.svg'
+import TailwindLogo from '../assets/tech/tailwindcss.svg'
+import ExpressLogo from '../assets/tech/express.svg'
+import VSCodeLogo from '../assets/tech/vscode.svg'
+import CLogo from '../assets/tech/c.svg'
+import FirebaseLogo from '../assets/tech/firebase.svg'
+import AntigravityLogo from '../assets/tech/antigravity.svg'
 
 // Category type definition
 interface Category {
@@ -53,21 +62,15 @@ const JSIcon = () => (
 )
 
 const HTMLIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#e34f26] fill-current">
-    <path d="M1.5 0h21l-1.9 21.2L12 24l-8.6-2.8L1.5 0zm15.8 8H7.9l.2 2.2h9.2l-.6 6.3-4.7 1.3-4.7-1.3-.3-3.3h2.2l.1 1.3 2.7.7 2.7-.7.3-3.1H5.1l-.8-9h13.3v2z" />
-  </svg>
+  <img src={Html5Logo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const CSSIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#1572b6] fill-current">
-    <path d="M1.5 0h21l-1.9 21.2L12 24l-8.6-2.8L1.5 0zm17 5.7H6.5l.3 3.3h11.4l-.6 6-5.3 1.5-5.3-1.5-.3-3.6h2.2l.1 1.6 3.3.9 3.3-.9.3-3.2H6.9l-.6-6.6h12.5v2.6z" />
-  </svg>
+  <img src={Css3Logo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const TailwindIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#38bdf8] fill-current">
-    <path d="M12 6.5c-2.4 0-3.6 1.2-3.6 3.6 0 2.4 1.2 3.6 3.6 3.6 2.4 0 3.6-1.2 3.6-3.6 0-2.4-1.2-3.6-3.6-3.6zm-6 6c-2.4 0-3.6 1.2-3.6 3.6 0 2.4 1.2 3.6 3.6 3.6 2.4 0 3.6-1.2 3.6-3.6 0-2.4-1.2-3.6-3.6-3.6z" />
-  </svg>
+  <img src={TailwindLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const ViteIcon = () => (
@@ -84,7 +87,7 @@ const NodeIcon = () => (
 )
 
 const ExpressIcon = () => (
-  <div className="w-3.5 h-3.5 bg-white text-black font-mono font-bold text-[8.5px] flex items-center justify-center rounded-[2px] leading-none select-none">EX</div>
+  <img src={ExpressLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const JavaIcon = () => (
@@ -98,21 +101,15 @@ const JavaIcon = () => (
 )
 
 const PythonIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" className="fill-current text-[#3776AB]">
-    <path d="M12 2c-3.3 0-6 2.7-6 6v3h6v2H6v3c0 3.3 2.7 6 6 6s6-2.7 6-6v-3h-6v-2h6V8c0-3.3-2.7-6-6-6z" />
-  </svg>
+  <img src={PythonLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const CIcon = () => (
-  <div className="w-3.5 h-3.5 bg-[#a8b9cc] text-black font-mono font-bold text-[8.5px] flex items-center justify-center rounded-[2px] leading-none select-none">C</div>
+  <img src={CLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const FirebaseIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[#FFCA28]">
-    <path d="M3.89 15.75L10.22 2.1c.32-.69 1.25-.69 1.57 0l1.62 3.47-9.52 10.18z" fill="#FFCA28" />
-    <path d="M20.15 15.75L12 23.11c-.38.35-.93.35-1.32 0L3.89 15.75l9.52-10.18 6.74 10.18z" fill="#F57C00" />
-    <path d="M12.91 5.92l1.62-3.47c.32-.69 1.25-.69 1.57 0l4.05 8.67-7.24-5.2z" fill="#FFA000" />
-  </svg>
+  <img src={FirebaseLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const MySQLIcon = () => (
@@ -139,19 +136,11 @@ const GitHubIcon = () => (
 )
 
 const VSCodeIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#007ACC] fill-current">
-    <path d="M23.984 6.328l-3.328-3.328-11.2 8 4.528 3.232 10-7.904zm-22.312 5.568l5.216-3.728-5.216-3.728-1.672.784v5.888l1.672.784z"/>
-  </svg>
+  <img src={VSCodeLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const AntigravityIcon = () => (
-  <span className="relative flex h-3.5 w-3.5 items-center justify-center">
-    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent/40 opacity-50"></span>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="animate-spin text-accent relative z-10" style={{ animationDuration: '6s' }}>
-      <circle cx="12" cy="12" r="9" strokeDasharray="4 3" />
-      <path d="M12 8v8M8 12h8" strokeLinecap="round" />
-    </svg>
-  </span>
+  <img src={AntigravityLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
 )
 
 const CATEGORIES: Category[] = [
@@ -245,7 +234,7 @@ export default function Skills() {
               </div>
 
               {/* Description text */}
-              <p className="text-white/50 text-[13px] leading-relaxed mb-6 font-mono min-h-[40px]">
+              <p className="text-white/50 text-[13px] leading-relaxed mb-6 font-mono min-h-[60px]">
                 {category.description}
               </p>
 

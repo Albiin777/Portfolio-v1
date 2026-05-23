@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
+import LeetCodeLogoSvg from '../assets/tech/leetcode.svg'
 
 const GITHUB_USERNAME = "Albiin777"
 const LEETCODE_USERNAME = "albiin777"
@@ -257,9 +258,7 @@ const GitHubLogo = () => (
 )
 
 const LeetCodeLogo = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="text-[#f89f1b]">
-    <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226a1.377 1.377 0 0 0-.004 1.948 1.378 1.378 0 0 0 1.951.004l5.228-5.599a1.378 1.378 0 0 0-.808-2.579zm2.637 10.229a1.378 1.378 0 0 0-1.95.004l-5.23 5.6a1.378 1.378 0 0 0 .806 2.58h.003c.365 0 .717-.145.96-.438l5.412-5.794a1.378 1.378 0 0 0-.001-1.952zm5.8 3.749a1.378 1.378 0 0 0-1.952.002l-5.416 5.8a1.378 1.378 0 0 0 .807 2.578h.004a1.376 1.376 0 0 0 .96-.438l5.598-6a1.377 1.377 0 0 0-.001-1.942zm-18.106 2.285a1.377 1.377 0 0 0-1.947.004 1.379 1.379 0 0 0 .004 1.95l1.637 1.637a1.377 1.377 0 0 0 1.947-.004 1.379 1.379 0 0 0-.004-1.95L3.814 16.263zm2.887-10.475L2.539 9.95a1.377 1.377 0 0 0 0 1.948l1.637 1.637a1.379 1.379 0 0 0 1.948 0l4.162-4.162a1.377 1.377 0 0 0 0-1.948L8.563 5.788a1.379 1.379 0 0 0-1.948 0z" />
-  </svg>
+  <img src={LeetCodeLogoSvg} alt="" aria-hidden="true" className="w-[22px] h-[22px]" />
 )
 
 const ExternalLinkIcon = () => (
@@ -843,119 +842,107 @@ export default function CodingProfiles() {
               </div>
 
               {/* Problem Stats Ring Chart Container */}
-              <div className="mb-6 bg-white/[0.01] border border-white/5 rounded-xl p-4 md:p-5 flex flex-row items-center justify-between gap-4 sm:gap-6">
+              <div className="mb-6 bg-white/[0.01] border border-white/5 rounded-xl p-4 md:p-6 flex flex-wrap items-center justify-center lg:justify-between gap-6 w-full overflow-hidden">
                 
-                {/* Left side: Total Solved large counter & Global Ranking at the bottom-left */}
-                <div className="flex flex-col items-start text-left justify-between h-full py-1 min-w-[80px] sm:min-w-[110px]">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] sm:text-[11px] font-mono text-white/40 uppercase tracking-wider">Total Solved</span>
-                    <span className="text-3xl sm:text-5xl font-bold text-accent tracking-tight mt-1">{leetcodeData.solved}</span>
+                {/* Group: Left Stats & Center Chart (Keeps them side-by-side) */}
+                <div className="flex flex-row items-center justify-between sm:justify-start gap-4 sm:gap-8 w-full md:w-auto">
+                  {/* Left side: Total Solved & Global Ranking */}
+                  <div className="flex flex-col items-start text-left justify-center py-1 min-w-[100px]">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] sm:text-[11px] font-mono text-white/40 uppercase tracking-wider">Total Solved</span>
+                      <span className="text-3xl sm:text-5xl font-bold text-accent tracking-tight mt-1">{leetcodeData.solved}</span>
+                    </div>
+                    <div className="flex flex-col mt-4 sm:mt-5">
+                      <span className="text-[9px] sm:text-[10px] font-mono text-white/40 uppercase tracking-wider leading-none mb-1">Global Ranking</span>
+                      <span className="text-base sm:text-xl font-bold text-accent tracking-tight leading-tight">
+                        {leetcodeData.ranking > 0 ? leetcodeData.ranking.toLocaleString() : 'N/A'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col mt-3 sm:mt-5">
-                    <span className="text-[9px] sm:text-[10px] font-mono text-white/40 uppercase tracking-wider leading-none mb-1">Global Ranking</span>
-                    <span className="text-base sm:text-xl font-bold text-accent tracking-tight leading-tight">
-                      {leetcodeData.ranking > 0 ? leetcodeData.ranking.toLocaleString() : 'N/A'}
-                    </span>
-                  </div>
-                </div>
 
-                {/* Center SVG Ring Chart - positioned more left with ml-2 md:ml-4 mr-auto */}
-                <div className="relative w-[90px] h-[90px] sm:w-[120px] sm:h-[120px] flex items-center justify-center shrink-0 ml-2 md:ml-4 mr-auto">
-                  <svg width="100%" height="100%" viewBox="0 0 120 120" className="transform -rotate-90">
-                    {/* Background Track Circle */}
-                    <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="none" />
+                  {/* Center SVG Ring Chart */}
+                  <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] flex items-center justify-center shrink-0">
+                    <svg width="100%" height="100%" viewBox="0 0 120 120" className="transform -rotate-90">
+                      {/* Background Track Circle */}
+                      <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="none" />
+                      
+                      {totalSolved > 0 ? (
+                        <>
+                          {/* Easy Segment (Green) */}
+                          <circle 
+                            cx="60" cy="60" r="42" 
+                            stroke="#10b981" strokeWidth="8" 
+                            strokeDasharray="263.89" 
+                            strokeDashoffset={263.89 - (easyPercent / 100) * 263.89} 
+                            fill="none" strokeLinecap="round"
+                          />
+                          {/* Medium Segment (Yellow) */}
+                          <circle 
+                            cx="60" cy="60" r="42" 
+                            stroke="#f59e0b" strokeWidth="8" 
+                            strokeDasharray="263.89" 
+                            strokeDashoffset={263.89 - (mediumPercent / 100) * 263.89}
+                            transform={`rotate(${easyPercent * 3.6} 60 60)`}
+                            fill="none" strokeLinecap="round"
+                          />
+                          {/* Hard Segment (Red) */}
+                          <circle 
+                            cx="60" cy="60" r="42" 
+                            stroke="#ef4444" strokeWidth="8" 
+                            strokeDasharray="263.89" 
+                            strokeDashoffset={263.89 - (hardPercent / 100) * 263.89}
+                            transform={`rotate(${(easyPercent + mediumPercent) * 3.6} 60 60)`}
+                            fill="none" strokeLinecap="round"
+                          />
+                        </>
+                      ) : (
+                        <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,0.08)" strokeWidth="8" fill="none" />
+                      )}
+                    </svg>
                     
-                    {totalSolved > 0 ? (
-                      <>
-                        {/* Easy Segment (Green) */}
-                        <circle 
-                          cx="60" 
-                          cy="60" 
-                          r="42" 
-                          stroke="#10b981" 
-                          strokeWidth="8" 
-                          strokeDasharray="263.89" 
-                          strokeDashoffset={263.89 - (easyPercent / 100) * 263.89} 
-                          fill="none" 
-                          strokeLinecap="round"
-                        />
-                        
-                        {/* Medium Segment (Yellow) */}
-                        <circle 
-                          cx="60" 
-                          cy="60" 
-                          r="42" 
-                          stroke="#f59e0b" 
-                          strokeWidth="8" 
-                          strokeDasharray="263.89" 
-                          strokeDashoffset={263.89 - (mediumPercent / 100) * 263.89}
-                          transform={`rotate(${easyPercent * 3.6} 60 60)`}
-                          fill="none" 
-                          strokeLinecap="round"
-                        />
-                        
-                        {/* Hard Segment (Red) */}
-                        <circle 
-                          cx="60" 
-                          cy="60" 
-                          r="42" 
-                          stroke="#ef4444" 
-                          strokeWidth="8" 
-                          strokeDasharray="263.89" 
-                          strokeDashoffset={263.89 - (hardPercent / 100) * 263.89}
-                          transform={`rotate(${(easyPercent + mediumPercent) * 3.6} 60 60)`}
-                          fill="none" 
-                          strokeLinecap="round"
-                        />
-                      </>
-                    ) : (
-                      /* Empty state tracker */
-                      <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,0.08)" strokeWidth="8" fill="none" />
-                    )}
-                  </svg>
-                  
-                  {/* Centered Ring Text */}
-                  <div className="absolute flex flex-col items-center justify-center text-center">
-                    <span className="text-2xl font-bold text-white tracking-tight">{leetcodeData.solved}</span>
-                    <span className="text-[9px] uppercase font-mono text-white/40 tracking-wider">Total</span>
+                    {/* Centered Ring Text */}
+                    <div className="absolute flex flex-col items-center justify-center text-center">
+                      <span className="text-2xl font-bold text-white tracking-tight">{leetcodeData.solved}</span>
+                      <span className="text-[9px] uppercase font-mono text-white/40 tracking-wider">Total</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Right side: Easy/Med/Hard Breakdown list - widened to prevent overflow */}
-                <div className="flex flex-col gap-1.5 sm:gap-2 flex-1 max-w-[240px] min-w-[130px] sm:min-w-[185px]">
+                {/* Right side: Easy/Med/Hard Breakdown list */}
+                <div className="grid grid-cols-3 sm:flex sm:flex-col gap-2 w-full md:w-auto md:flex-1 max-w-full lg:max-w-[260px] shrink-0">
                   {/* Easy */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
+                  <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-1 sm:gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-1 sm:px-4 py-2 sm:py-2.5 text-center sm:text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Easy</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-mono text-white/50">Easy</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
                       <span className="text-[12px] sm:text-[13px] font-bold text-[#10b981]">{leetcodeData.easy}</span>
-                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{easyPercent.toFixed(1)}%</span>
+                      <span className="text-[9px] sm:text-[10.5px] text-white/30 hidden sm:inline">{easyPercent.toFixed(1)}%</span>
                     </div>
                   </div>
 
                   {/* Medium */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
+                  <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-1 sm:gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-1 sm:px-4 py-2 sm:py-2.5 text-center sm:text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
-                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Medium</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b] shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-mono text-white/50">Medium</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
                       <span className="text-[12px] sm:text-[13px] font-bold text-[#f59e0b]">{leetcodeData.medium}</span>
-                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{mediumPercent.toFixed(1)}%</span>
+                      <span className="text-[9px] sm:text-[10.5px] text-white/30 hidden sm:inline">{mediumPercent.toFixed(1)}%</span>
                     </div>
                   </div>
 
                   {/* Hard */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
+                  <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-1 sm:gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-1 sm:px-4 py-2 sm:py-2.5 text-center sm:text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
-                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Hard</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444] shrink-0" />
+                      <span className="text-[10px] sm:text-xs font-mono text-white/50">Hard</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
                       <span className="text-[12px] sm:text-[13px] font-bold text-[#ef4444]">{leetcodeData.hard}</span>
-                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{hardPercent.toFixed(1)}%</span>
+                      <span className="text-[9px] sm:text-[10.5px] text-white/30 hidden sm:inline">{hardPercent.toFixed(1)}%</span>
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 // Define Project interfaces
 interface ProjectData {
@@ -11,6 +11,7 @@ interface ProjectData {
   liveUrl: string
   codeUrl: string
   type: string // 'featured' | 'personal' | 'academic'
+  image?: string
 }
 
 // Icons as pure CSS/SVG components
@@ -50,6 +51,43 @@ const GraduationCapIcon = () => (
     <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
     <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
   </svg>
+)
+
+type ProjectImageProps = {
+  src?: string
+  alt: string
+  compact?: boolean
+  overlay?: React.ReactNode
+}
+
+const ProjectImage = ({ src, alt, compact, overlay }: ProjectImageProps) => (
+  <div
+    className={`relative w-full ${compact ? 'aspect-video' : 'aspect-video'} rounded-[5px] border border-white/10 bg-[#08080a]/80 shadow-none p-2 overflow-hidden group-hover:border-accent/20 transition-all duration-500`}
+  >
+    {src ? (
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className="w-full h-full object-cover rounded-[4px] transition-all duration-700 filter grayscale brightness-110 contrast-110 group-hover:filter-none"
+      />
+    ) : (
+      <div
+        className="w-full h-full rounded-[4px] border border-white/5 bg-[#050507]"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(120deg, rgba(255,255,255,0.03), transparent 40%, rgba(255,75,31,0.06))',
+          backgroundSize: '10px 10px, 100% 100%'
+        }}
+      />
+    )}
+    <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-accent/15 opacity-80 group-hover:opacity-0 transition-opacity duration-700" />
+    {overlay && (
+      <div className="absolute inset-x-0 bottom-0 p-3 bg-black/60 backdrop-blur-[2px] border-t border-white/10">
+        {overlay}
+      </div>
+    )}
+  </div>
 )
 
 // Tech Micro Icons Map helper
@@ -317,7 +355,7 @@ export default function Projects() {
 
   // Initial scroll positions to first real slide (DOM index 1)
   useEffect(() => {
-    const initScroll = (ref: React.RefObject<HTMLDivElement>) => {
+    const initScroll = (ref: React.RefObject<HTMLDivElement | null>) => {
       if (ref.current) {
         ref.current.scrollLeft = ref.current.clientWidth
       }
@@ -639,7 +677,6 @@ export default function Projects() {
               className="w-full overflow-x-auto flex snap-x snap-mandatory no-scrollbar relative z-10 flex-1"
             >
               {FEATURED_SLIDES.map((project, idx) => {
-                const originalIdx = getOriginalIdx(idx, FEATURED_PROJECTS.length)
                 return (
                   <div 
                     key={idx}
@@ -649,22 +686,22 @@ export default function Projects() {
                     <div className="flex flex-col h-full justify-between py-1">
                       <div>
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-[10px] font-mono uppercase tracking-wider mb-5">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-[10px] font-mono uppercase tracking-wider mb-4">
                           <StarIcon />
                           <span>Featured Project</span>
                         </div>
 
-                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-accent transition-colors duration-300">
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-accent transition-colors duration-300">
                           {project.title}
                         </h3>
                         
-                        <p className="text-white/50 text-sm md:text-base font-mono mb-6 leading-relaxed">
+                        <p className="text-white/50 text-sm md:text-base font-mono mb-5 leading-relaxed">
                           {project.description}
                         </p>
 
                         {/* Bullet list */}
                         {project.bullets && (
-                          <ul className="flex flex-col gap-2.5 mb-8">
+                          <ul className="flex flex-col gap-2 mb-6">
                             {project.bullets?.map((bullet, i) => (
                               <li key={i} className="flex items-start gap-2.5 text-xs text-white/70 font-mono">
                                 <CheckIcon />
@@ -675,11 +712,39 @@ export default function Projects() {
                         )}
                       </div>
 
-                      <div>
-                        {/* Tech list */}
-                        <div className="flex flex-wrap gap-2 mb-6">
+                      <div className="flex gap-4 relative z-20">
+                        <a
+                          href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-accent text-accent hover:bg-accent hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(224,90,43,0.05)] cursor-pointer"
+                        >
+                          <span>Live Demo</span>
+                          <ExternalLinkIcon />
+                        </a>
+                        <a
+                          href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/30 font-mono text-[11px] uppercase tracking-wider transition-all duration-300 cursor-pointer"
+                        >
+                          <span>Source Code</span>
+                          <GitHubIcon />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Right side screenshot + stack */}
+                    <div className="flex flex-col gap-3">
+                      <ProjectImage
+                        src={project.image}
+                        alt={`${project.title} screenshot`}
+                      />
+
+                      <div className="flex flex-wrap items-center justify-start gap-3">
+                        <div className="flex flex-wrap gap-2">
                           {project.tech.map((lang) => (
-                            <div 
+                            <div
                               key={lang.name}
                               className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono text-white/80 hover:text-white transition-all duration-300"
                             >
@@ -689,292 +754,8 @@ export default function Projects() {
                           ))}
                         </div>
 
-                        {/* Action buttons */}
-                        <div className="flex gap-4 relative z-20">
-                          <a 
-                            href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-accent text-accent hover:bg-accent hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(224,90,43,0.05)] cursor-pointer"
-                          >
-                            <span>Live Demo</span>
-                            <ExternalLinkIcon />
-                          </a>
-                          <a 
-                            href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/30 font-mono text-[11px] uppercase tracking-wider transition-all duration-300 cursor-pointer"
-                          >
-                            <span>Source Code</span>
-                            <GitHubIcon />
-                          </a>
-                        </div>
+                        <div />
                       </div>
-                    </div>
-
-                    {/* Right side mockup */}
-                    <div className="relative w-full aspect-[4/3] rounded-xl border border-white/10 bg-[#08080a]/80 shadow-2xl p-4 overflow-hidden flex flex-col justify-between group-hover:border-accent/20 transition-all duration-500">
-                      {originalIdx === 0 && (
-                        /* High fidelity Analytics Dashboard CSS Mockup */
-                        <div className="w-full h-full flex flex-col justify-between font-mono text-[9px] text-white/60">
-                          {/* Top header line */}
-                          <div className="flex items-center justify-between border-b border-white/5 pb-2.5 mb-2.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-accent" />
-                              <span className="font-bold text-white text-[10px] tracking-tight">DashBoard</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <div className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-white/40 text-[8px] flex items-center gap-1">
-                                <span>Q Search...</span>
-                              </div>
-                              <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white/60">
-                                <span className="text-[7px]">🔔</span>
-                              </div>
-                              <div className="w-4 h-4 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-[7px] text-accent font-bold">AT</div>
-                            </div>
-                          </div>
-
-                          {/* Main screen row */}
-                          <div className="flex-1 flex gap-3 overflow-hidden">
-                            {/* Sidebar pane */}
-                            <div className="w-[64px] border-r border-white/5 pr-1.5 flex flex-col gap-1.5">
-                              <div className="bg-accent/10 border border-accent/30 text-accent font-bold px-2 py-1 rounded">Overview</div>
-                              <div className="px-2 py-0.5 hover:text-white">Analytics</div>
-                              <div className="px-2 py-0.5 hover:text-white">Users</div>
-                              <div className="px-2 py-0.5 hover:text-white">Reports</div>
-                              <div className="px-2 py-0.5 hover:text-white">Settings</div>
-                            </div>
-
-                            {/* Content area */}
-                            <div className="flex-1 flex flex-col justify-between h-full">
-                              {/* Mini Stats row */}
-                              <div className="grid grid-cols-3 gap-2">
-                                <div className="bg-white/[0.02] border border-white/5 rounded p-1.5 flex flex-col justify-between min-h-[44px]">
-                                  <span className="text-white/40 text-[7px] uppercase">Total Users</span>
-                                  <div className="flex items-baseline justify-between mt-1">
-                                    <span className="font-bold text-white text-[11px]">12,540</span>
-                                    <span className="text-emerald-500 text-[6.5px] font-bold">+12.5%</span>
-                                  </div>
-                                  <div className="w-full h-2 mt-1">
-                                    <svg className="w-full h-full text-emerald-500" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                      <path d="M0,15 Q25,8 50,13 T100,5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                                    </svg>
-                                  </div>
-                                </div>
-                                <div className="bg-white/[0.02] border border-white/5 rounded p-1.5 flex flex-col justify-between min-h-[44px]">
-                                  <span className="text-white/40 text-[7px] uppercase">Active Sessions</span>
-                                  <div className="flex items-baseline justify-between mt-1">
-                                    <span className="font-bold text-white text-[11px]">8,102</span>
-                                    <span className="text-rose-500 text-[6.5px] font-bold">-8.1%</span>
-                                  </div>
-                                  <div className="w-full h-2 mt-1">
-                                    <svg className="w-full h-full text-rose-500" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                      <path d="M0,5 Q25,12 50,7 T100,16" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                                    </svg>
-                                  </div>
-                                </div>
-                                <div className="bg-white/[0.02] border border-white/5 rounded p-1.5 flex flex-col justify-between min-h-[44px]">
-                                  <span className="text-white/40 text-[7px] uppercase">Conversion</span>
-                                  <div className="flex items-baseline justify-between mt-1">
-                                    <span className="font-bold text-white text-[11px]">3.24%</span>
-                                    <span className="text-emerald-500 text-[6.5px] font-bold">+2.4%</span>
-                                  </div>
-                                  <div className="w-full h-2 mt-1">
-                                    <svg className="w-full h-full text-emerald-500" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                      <path d="M0,18 Q25,14 50,12 T100,4" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                                    </svg>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Charts Row */}
-                              <div className="flex-1 grid grid-cols-5 gap-2 mt-2 items-stretch min-h-[80px]">
-                                {/* Bar Chart box */}
-                                <div className="col-span-3 bg-white/[0.015] border border-white/5 rounded p-2 flex flex-col justify-between">
-                                  <div className="flex justify-between items-center mb-1 text-white/55">
-                                    <span className="text-[7.5px] font-bold">Revenue Overview</span>
-                                    <span className="text-[6.5px] border border-white/10 rounded px-1">This Year</span>
-                                  </div>
-                                  <div className="flex-1 flex items-end justify-between px-1.5 pt-2.5">
-                                    <div className="w-2.5 h-[30%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[50%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[40%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[65%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[80%] bg-accent rounded-t" />
-                                    <div className="w-2.5 h-[55%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[70%] bg-accent/80 rounded-t" />
-                                    <div className="w-2.5 h-[90%] bg-accent rounded-t" />
-                                  </div>
-                                  <div className="flex justify-between text-[6px] text-white/20 px-0.5 mt-1">
-                                    <span>Jan</span>
-                                    <span>Mar</span>
-                                    <span>May</span>
-                                    <span>Jul</span>
-                                    <span>Sep</span>
-                                    <span>Nov</span>
-                                  </div>
-                                </div>
-
-                                {/* Top Channels Donut chart */}
-                                <div className="col-span-2 bg-white/[0.015] border border-white/5 rounded p-2 flex flex-col justify-between items-center text-center">
-                                  <span className="text-[7.5px] font-bold text-white/55 self-start">Top Channels</span>
-                                  <div className="relative w-11 h-11 flex items-center justify-center my-1">
-                                    <svg width="44" height="44" viewBox="0 0 44 44" className="transform -rotate-90">
-                                      <circle cx="22" cy="22" r="16" stroke="rgba(255,255,255,0.03)" strokeWidth="4" fill="none" />
-                                      <circle cx="22" cy="22" r="16" stroke="#ff4b1f" strokeWidth="4" strokeDasharray="100.5" strokeDashoffset="22" fill="none" strokeLinecap="round" />
-                                    </svg>
-                                    <span className="absolute text-[8px] font-bold text-white">78%</span>
-                                  </div>
-                                  <div className="flex gap-2 text-[5.5px] text-white/40">
-                                    <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-accent" />Direct</span>
-                                    <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-white/20" />Social</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {originalIdx === 1 && (
-                        /* AI Accident Detection Video feed UI Mockup */
-                        <div className="w-full h-full flex flex-col justify-between font-mono text-[9px]">
-                          {/* Top Header details */}
-                          <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2 text-white/60">
-                            <div className="flex items-center gap-2">
-                              <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                              </span>
-                              <span className="font-bold text-white text-[9.5px] tracking-wider uppercase">CCTV FEED // CAM_04</span>
-                            </div>
-                            <span className="text-[7.5px] border border-rose-500/30 bg-rose-500/5 px-2 py-0.5 rounded text-rose-400 font-bold uppercase tracking-widest animate-pulse">COLLISION ALERT</span>
-                          </div>
-
-                          {/* Video canvas container */}
-                          <div className="flex-1 relative border border-white/5 rounded-lg overflow-hidden bg-[#050507] flex items-center justify-center">
-                            {/* Simulating road camera frame */}
-                            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, transparent 20%, #000 70%), linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '100% 100%, 15px 15px, 15px 15px' }} />
-                            
-                            {/* Road lanes mock */}
-                            <svg className="absolute inset-0 w-full h-full text-white/5" viewBox="0 0 100 100" preserveAspectRatio="none">
-                              <line x1="20" y1="100" x2="45" y2="40" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" />
-                              <line x1="80" y1="100" x2="55" y2="40" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 3" />
-                              <line x1="50" y1="100" x2="50" y2="40" stroke="currentColor" strokeWidth="1" />
-                            </svg>
-
-                            {/* Detection bounding boxes */}
-                            {/* Car 1: Detected Safe */}
-                            <div className="absolute left-[15%] top-[55%] border-2 border-emerald-500 rounded p-1 flex flex-col gap-0.5 select-none bg-emerald-500/5 animate-pulse" style={{ animationDuration: '4s' }}>
-                              <span className="text-[6px] text-emerald-400 font-bold tracking-wider">CAR [98%] - SAFE</span>
-                              <div className="w-[45px] h-[30px] border border-emerald-500/20" />
-                            </div>
-
-                            {/* Car 2 & 3: Detected Collision */}
-                            <div className="absolute left-[40%] top-[40%] border-2 border-rose-500 rounded p-1 flex flex-col gap-0.5 select-none bg-rose-500/10 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                              <span className="text-[6px] text-rose-400 font-bold tracking-wider animate-bounce">COLLISION [99%]</span>
-                              <div className="w-[60px] h-[40px] border border-rose-500/40 relative">
-                                {/* Crosshairs */}
-                                <span className="absolute top-1/2 left-0 w-full h-[1px] bg-rose-500/30" />
-                                <span className="absolute left-1/2 top-0 w-[1px] h-full bg-rose-500/30" />
-                              </div>
-                            </div>
-
-                            {/* OSD telemetry info overlay */}
-                            <div className="absolute bottom-2 left-2 text-[6.5px] text-emerald-400 bg-black/75 px-1.5 py-0.5 border border-white/5 rounded font-mono flex flex-col">
-                              <span>LAT: 40.7128° N</span>
-                              <span>LON: 74.0060° W</span>
-                              <span>FPS: 30.2</span>
-                            </div>
-                          </div>
-
-                          {/* Log feed console at the bottom */}
-                          <div className="h-[40px] mt-2 bg-black/40 border border-white/5 rounded p-1.5 text-white/40 text-[7px] font-mono flex flex-col gap-0.5 justify-start overflow-hidden">
-                            <div className="flex gap-2"><span className="text-emerald-500">[04:21:05]</span><span className="text-white/60 font-semibold">COLLISION EVENT DETECTED ON CAM_04 // SEVERITY: HIGH</span></div>
-                            <div className="flex gap-2"><span className="text-emerald-500">[04:21:07]</span><span>Triggering emergency alert service pipeline...</span></div>
-                            <div className="flex gap-2"><span className="text-emerald-500">[04:21:10]</span><span className="text-emerald-400">Dispatch message sent successfully to Local EMS [ID: #894]</span></div>
-                          </div>
-                        </div>
-                      )}
-
-                      {originalIdx === 2 && (
-                        /* Web based Trip Planner high fidelity Map/Timeline UI Mockup */
-                        <div className="w-full h-full flex flex-col justify-between font-mono text-[9px] text-white/60">
-                          {/* Top Header */}
-                          <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px]">🗺️</span>
-                              <span className="font-bold text-white text-[9.5px]">TripPlanner AI</span>
-                            </div>
-                            <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[7.5px] px-2 py-0.5 rounded font-bold">BOARD SYNCED</div>
-                          </div>
-
-                          {/* Split view */}
-                          <div className="flex-1 flex gap-3 overflow-hidden">
-                            
-                            {/* Left column: Itinerary Timeline */}
-                            <div className="w-[110px] border-r border-white/5 pr-1.5 flex flex-col gap-2 overflow-y-auto no-scrollbar">
-                              <span className="text-[7.5px] uppercase font-bold text-accent">Itinerary Timeline</span>
-                              
-                              <div className="border border-white/10 rounded p-1.5 bg-white/[0.01] flex flex-col gap-1">
-                                <span className="text-[8px] font-bold text-white flex justify-between"><span>Day 1: Arrival</span><span className="text-[6.5px] text-accent font-normal">Hotel</span></span>
-                                <span className="text-[6.5px] text-white/40 leading-relaxed">Check-in at Sunset Lodge. Evening beachside walk.</span>
-                              </div>
-
-                              <div className="border border-white/10 rounded p-1.5 bg-white/[0.01] flex flex-col gap-1">
-                                <span className="text-[8px] font-bold text-white flex justify-between"><span>Day 2: Hike</span><span className="text-[6.5px] text-accent font-normal">Peak B</span></span>
-                                <span className="text-[6.5px] text-white/40 leading-relaxed">Morning hike on Ridge Trail. Pack lunch.</span>
-                              </div>
-                            </div>
-
-                            {/* Right column: Interactive Map mockup */}
-                            <div className="flex-1 flex flex-col justify-between h-full">
-                              
-                              {/* Map container */}
-                              <div className="flex-1 relative rounded border border-white/5 bg-white/[0.01] overflow-hidden flex items-center justify-center">
-                                <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle, #fff 1.5px, transparent 1.5px)', backgroundSize: '10px 10px' }} />
-                                
-                                {/* Dotted path route */}
-                                <svg className="absolute inset-0 w-full h-full text-accent" viewBox="0 0 100 100">
-                                  <path d="M 20 80 Q 40 30 55 45 T 80 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 2" />
-                                </svg>
-
-                                {/* Location Pins */}
-                                {/* Pin A */}
-                                <div className="absolute left-[20%] top-[72%] flex flex-col items-center">
-                                  <div className="w-2 h-2 rounded-full bg-accent border border-white shadow-[0_0_8px_rgba(224,90,43,0.8)] animate-pulse" />
-                                  <span className="text-[5.5px] bg-black/80 px-1 border border-white/10 rounded mt-0.5">Sunset Lodge</span>
-                                </div>
-
-                                {/* Pin B */}
-                                <div className="absolute left-[52%] top-[40%] flex flex-col items-center">
-                                  <div className="w-2 h-2 rounded-full bg-accent border border-white shadow-[0_0_8px_rgba(224,90,43,0.8)]" />
-                                  <span className="text-[5.5px] bg-black/80 px-1 border border-white/10 rounded mt-0.5">Ridge Trail</span>
-                                </div>
-
-                                {/* Pin C */}
-                                <div className="absolute left-[78%] top-[15%] flex flex-col items-center">
-                                  <div className="w-2 h-2 rounded-full bg-accent border border-white shadow-[0_0_8px_rgba(224,90,43,0.8)]" />
-                                  <span className="text-[5.5px] bg-black/80 px-1 border border-white/10 rounded mt-0.5">Summit Lake</span>
-                                </div>
-                              </div>
-
-                              {/* Budget card */}
-                              <div className="h-[36px] mt-2 bg-[#10b981]/5 border border-[#10b981]/20 rounded p-1.5 flex justify-between items-center text-[7.5px]">
-                                <div className="flex flex-col">
-                                  <span className="text-[6.5px] text-white/45 uppercase leading-none mb-0.5">Total Expense Log</span>
-                                  <span className="font-bold text-white text-[9.5px]">$480.20 <span className="text-[6.5px] text-[#10b981] font-normal">/ $1,200 max</span></span>
-                                </div>
-                                <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                  <div className="h-full bg-[#10b981] rounded-full" style={{ width: '40%' }} />
-                                </div>
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )
@@ -1075,122 +856,29 @@ export default function Projects() {
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
                   {PERSONAL_SLIDES.map((project, idx) => {
-                    const originalIdx = getOriginalIdx(idx, PERSONAL_PROJECTS.length)
                     return (
                       <div
                         key={idx}
                         className="w-full shrink-0 snap-center relative z-10 flex flex-col justify-between h-full"
                       >
-                        {/* CSS Mockup visual representation */}
-                        <div className="w-full h-[110px] rounded-lg border border-white/5 bg-[#050507] overflow-hidden relative mb-4">
-                          
-                          {originalIdx === 0 && (
-                            /* Portfolio Website Mockup */
-                            <div className="w-full h-full flex items-center justify-center relative bg-gradient-to-b from-[#180d07] to-[#050507] p-3 text-center">
-                              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ff4b1f 1px, transparent 1px)', backgroundSize: '8px 8px' }} />
-                              <div className="flex flex-col items-center gap-1 font-mono">
-                                <span className="text-[6px] text-white/40 tracking-[0.2em] uppercase">01 // HELLO</span>
-                                <span className="text-[11px] font-bold text-white tracking-tight">Hi, I'm <span className="text-accent">Albin Thomas</span></span>
-                                <span className="text-[6.5px] text-white/60 leading-none">Full Stack Developer & Engineer</span>
-                                <div className="mt-1 px-2.5 py-0.5 border border-accent/40 bg-accent/5 rounded text-[5px] text-accent uppercase tracking-widest leading-none">Explore Work</div>
-                              </div>
+                        <ProjectImage
+                          src={project.image}
+                          alt={`${project.title} screenshot`}
+                          compact
+                          overlay={(
+                            <div>
+                              <h4 className="text-sm font-bold text-white leading-none">
+                                {project.title}
+                              </h4>
+                              <p className="text-white/70 text-[11px] font-mono mt-1 leading-relaxed">
+                                {project.description}
+                              </p>
                             </div>
                           )}
-
-                          {originalIdx === 1 && (
-                            /* Task Automation Nodes Mockup */
-                            <div className="w-full h-full flex items-center justify-center bg-[#07080a] p-3 font-mono text-[6px]">
-                              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
-                              
-                              <div className="flex items-center gap-3 relative z-10">
-                                {/* Trigger Node */}
-                                <div className="border border-emerald-500/30 bg-emerald-500/5 rounded p-1 flex flex-col gap-0.5 items-center">
-                                  <span className="text-[5.5px] text-emerald-400 font-bold uppercase leading-none">Github Hook</span>
-                                  <span className="text-[4.5px] text-white/40 leading-none">On: push</span>
-                                </div>
-
-                                {/* Arrow connector */}
-                                <div className="text-accent flex items-center animate-pulse">──────▶</div>
-
-                                {/* Action Node */}
-                                <div className="border border-accent/30 bg-accent/5 rounded p-1 flex flex-col gap-0.5 items-center">
-                                  <span className="text-[5.5px] text-accent font-bold uppercase leading-none">Slack Alert</span>
-                                  <span className="text-[4.5px] text-white/40 leading-none">Send message</span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {originalIdx === 2 && (
-                            /* Markdown Editor Split Screen Mockup */
-                            <div className="w-full h-full flex font-mono text-[5.5px]">
-                              {/* Left edit pane */}
-                              <div className="w-1/2 border-r border-white/5 p-2 bg-black/40 flex flex-col gap-1 text-white/45">
-                                <span className="text-accent text-[5px] uppercase font-bold border-b border-white/5 pb-0.5 mb-0.5">editor.md</span>
-                                <span># My Project Title</span>
-                                <span>- Bullet List item 1</span>
-                                <span>- Bullet List item 2</span>
-                                <span>**Bold styling text**</span>
-                              </div>
-
-                              {/* Right preview pane */}
-                              <div className="w-1/2 p-2 bg-white/[0.01] flex flex-col gap-1 text-white/70">
-                                <span className="text-white/40 text-[5px] uppercase font-bold border-b border-white/5 pb-0.5 mb-0.5">preview</span>
-                                <span className="text-[7px] font-bold text-white">My Project Title</span>
-                                <span className="flex items-center gap-1"><span>•</span><span>Bullet List item 1</span></span>
-                                <span className="flex items-center gap-1"><span>•</span><span>Bullet List item 2</span></span>
-                                <span className="font-bold">Bold styling text</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {originalIdx === 3 && (
-                            /* Habit Tracker Calendar Grid Mockup */
-                            <div className="w-full h-full flex flex-col justify-between p-2.5 font-mono text-[5.5px] text-white/50">
-                              <span className="text-[6.5px] text-white/60 font-bold mb-1">Habits Tracker</span>
-                              
-                              <div className="flex flex-col gap-1.5">
-                                <div className="flex items-center justify-between">
-                                  <span className="w-20">Morning Gym Workout</span>
-                                  <div className="flex gap-1">
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent/20" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                  </div>
-                                  <span className="text-accent font-bold text-[6px]">80%</span>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                  <span className="w-20">Book Reading (15m)</span>
-                                  <div className="flex gap-1">
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                    <span className="w-2 h-2 rounded-sm bg-accent" />
-                                  </div>
-                                  <span className="text-accent font-bold text-[6px]">100%</span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                        </div>
-
-                        {/* Meta information */}
-                        <div>
-                          <h4 className="text-base font-bold text-white mb-2 leading-none">
-                            {project.title}
-                          </h4>
-                          <p className="text-white/45 text-xs font-mono mb-4 leading-relaxed min-h-[36px]">
-                            {project.description}
-                          </p>
-                        </div>
+                        />
 
                         {/* Tech list & links row */}
-                        <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-auto">
+                        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
                           <div className="flex gap-1.5">
                             {project.tech.map((t) => (
                               <div key={t.name} className="px-2 py-0.5 border border-white/5 bg-white/[0.02] rounded text-[8px] font-mono text-white/60">
@@ -1311,134 +999,29 @@ export default function Projects() {
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
                   {ACADEMIC_SLIDES.map((project, idx) => {
-                    const originalIdx = getOriginalIdx(idx, ACADEMIC_PROJECTS.length)
                     return (
                       <div
                         key={idx}
                         className="w-full shrink-0 snap-center relative z-10 flex flex-col justify-between h-full"
                       >
-                        {/* CSS Mockup visual representation */}
-                        <div className="w-full h-[110px] rounded-lg border border-white/5 bg-[#050507] overflow-hidden relative mb-4">
-                          
-                          {originalIdx === 0 && (
-                            /* Smart Attendance Records Mockup */
-                            <div className="w-full h-full flex flex-col justify-between p-2 font-mono text-[5.5px] text-white/60">
-                              <span className="text-[6px] text-white font-bold leading-none mb-1">Smart Attendance Log</span>
-                              
-                              <table className="w-full text-left">
-                                <thead>
-                                  <tr className="border-b border-white/10 text-white/30 text-[5px]">
-                                    <th>Student</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>John Doe</td>
-                                    <td className="text-emerald-500 font-bold">Present</td>
-                                    <td>May 12, 2026</td>
-                                    <td>09:15 AM</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Jane Smith</td>
-                                    <td className="text-emerald-500 font-bold">Present</td>
-                                    <td>May 12, 2026</td>
-                                    <td>09:17 AM</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Alex Johnson</td>
-                                    <td className="text-rose-500 font-bold">Absent</td>
-                                    <td>May 12, 2026</td>
-                                    <td>09:18 AM</td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                        <ProjectImage
+                          src={project.image}
+                          alt={`${project.title} screenshot`}
+                          compact
+                          overlay={(
+                            <div>
+                              <h4 className="text-sm font-bold text-white leading-none">
+                                {project.title}
+                              </h4>
+                              <p className="text-white/70 text-[11px] font-mono mt-1 leading-relaxed">
+                                {project.description}
+                              </p>
                             </div>
                           )}
-
-                          {originalIdx === 1 && (
-                            /* Accident Detection Camera Feeds Grid Mockup */
-                            <div className="w-full h-full grid grid-cols-2 gap-1 p-1 bg-black/80 font-mono text-[4.5px] text-white/40">
-                              <div className="border border-white/5 rounded relative flex items-center justify-center bg-black/40">
-                                <span className="absolute top-1 left-1 font-bold text-white/70">FEED_01</span>
-                                <div className="border border-emerald-500/20 text-emerald-400 p-[1px] text-[4px] scale-90">CAR (94%)</div>
-                              </div>
-                              <div className="border border-white/5 rounded relative flex items-center justify-center bg-black/40">
-                                <span className="absolute top-1 left-1 font-bold text-white/70">FEED_02</span>
-                                <span className="text-white/20 text-[4px]">No Events</span>
-                              </div>
-                              <div className="border border-white/5 rounded relative flex items-center justify-center bg-black/40">
-                                <span className="absolute top-1 left-1 font-bold text-white/70">FEED_03</span>
-                                <div className="border border-rose-500/30 text-rose-400 p-[1px] text-[3.5px] scale-90 animate-pulse">COLLISION</div>
-                              </div>
-                              <div className="border border-white/5 rounded relative flex items-center justify-center bg-black/40">
-                                <span className="absolute top-1 left-1 font-bold text-white/70">FEED_04</span>
-                                <span className="text-white/20 text-[4px]">No Events</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {originalIdx === 2 && (
-                            /* Library DBMS Portal Mockup */
-                            <div className="w-full h-full flex flex-col justify-between p-2 font-mono text-[5.5px] text-white/60">
-                              <div className="flex justify-between items-center mb-1 text-[6.5px] font-bold text-white">
-                                <span>Library Database Portal</span>
-                                <span className="border border-white/10 rounded px-1 text-[4.5px] text-white/45">Admin</span>
-                              </div>
-
-                              <table className="w-full text-left">
-                                <thead>
-                                  <tr className="border-b border-white/10 text-white/30 text-[5px]">
-                                    <th>Book ID</th>
-                                    <th>Title</th>
-                                    <th>Borrower</th>
-                                    <th>Due Date</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>#B942</td>
-                                    <td>Algorithms 4th Ed</td>
-                                    <td>Sarah Jenkins</td>
-                                    <td className="text-amber-500">In 3 Days</td>
-                                  </tr>
-                                  <tr>
-                                    <td>#B102</td>
-                                    <td>Intro to Database</td>
-                                    <td>David Lee</td>
-                                    <td className="text-emerald-500">Returned</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          )}
-
-                          {originalIdx === 3 && (
-                            /* Network Packet Sniffer Console logs Mockup */
-                            <div className="w-full h-full flex flex-col justify-start p-2 bg-[#020203] font-mono text-[5px] text-white/40 leading-normal">
-                              <span className="text-emerald-400 font-bold border-b border-white/10 pb-0.5 mb-1 text-[5.5px]">sniff_log // tcpdump</span>
-                              <div className="flex gap-1.5"><span className="text-[#38bdf8]">[TCP]</span><span>192.168.1.15:53218 {"->"} 10.0.0.12:443 [LEN: 1024]</span></div>
-                              <div className="flex gap-1.5"><span className="text-[#38bdf8]">[TCP]</span><span>10.0.0.12:443 {"->"} 192.168.1.15:53218 [ACK // SYN]</span></div>
-                              <div className="flex gap-1.5"><span className="text-amber-500">[UDP]</span><span>192.168.1.1:53 {"->"} 192.168.1.15:59322 [DNS RES]</span></div>
-                            </div>
-                          )}
-
-                        </div>
-
-                        {/* Meta information */}
-                        <div>
-                          <h4 className="text-base font-bold text-white mb-2 leading-none">
-                            {project.title}
-                          </h4>
-                          <p className="text-white/45 text-xs font-mono mb-4 leading-relaxed min-h-[36px]">
-                            {project.description}
-                          </p>
-                        </div>
+                        />
 
                         {/* Tech list & links row */}
-                        <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-auto">
+                        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
                           <div className="flex gap-1.5">
                             {project.tech.map((t) => (
                               <div key={t.name} className="px-2 py-0.5 border border-white/5 bg-white/[0.02] rounded text-[8px] font-mono text-white/60">

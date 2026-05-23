@@ -173,7 +173,10 @@ export default function Contact() {
                 <span key={i} className="w-[7px] h-[3px] bg-accent/80 -skew-x-12 inline-block" />
               ))}
               <div className="w-20 h-[1px] bg-gradient-to-r from-accent/50 to-transparent ml-1" />
-              <div className="w-2 h-2 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255,75,31,0.5)]" />
+              <div className="relative w-2 h-2">
+                <span className="absolute inset-0 rounded-full bg-accent/40 animate-ping" />
+                <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255,75,31,0.5)]" />
+              </div>
             </div>
           </div>
 
@@ -337,6 +340,9 @@ export default function Contact() {
                 <span key={i} className="w-[7px] h-[3px] bg-accent/70 -skew-x-12 inline-block" />
               ))}
               <div className="w-16 h-[1px] bg-gradient-to-r from-accent/40 to-transparent ml-1" />
+              <div className="relative w-1.5 h-1.5 ml-1">
+                <span className="absolute inset-0 rounded-full bg-accent/35 animate-pulse" />
+              </div>
             </div>
           </div>
 

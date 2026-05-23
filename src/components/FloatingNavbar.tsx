@@ -61,9 +61,6 @@ export default function FloatingNavbar() {
     return map[id] ?? id.toUpperCase()
   }
 
-  // Only show the 5 main links (exclude coding profiles)
-  const navLinks = NAV_PAGES.filter(p => p.id !== 'coding')
-
   return (
     <AnimatePresence>
       {isVisible && (
@@ -106,43 +103,65 @@ export default function FloatingNavbar() {
 
               {/* ── Center Nav Links ── */}
               <nav className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7 h-full" aria-label="Main navigation">
-                {navLinks.map(page => {
+                {NAV_PAGES.map(page => {
                   const isActive = activeSection === page.id
-                  return (
-                    <a
-                      key={page.id}
-                      href={`#${page.id}`}
-                      onClick={e => handleNavClick(e, page.id)}
-                      className={`relative flex items-center h-full text-[10.5px] font-mono tracking-[0.22em] font-bold
-                                  transition-colors duration-300 select-none
-                                  ${isActive ? 'text-accent' : 'text-white/50 hover:text-white/85'}`}
-                    >
-                      <span>{getLabel(page.id)}</span>
+                  const isSkills = page.id === 'skills'
 
-                      {/* Fire active indicator */}
-                      {isActive && (
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
-                          {/* Soft glow bloom behind bar */}
-                          <div className="absolute bottom-0 w-14 h-[8px] rounded-full"
-                            style={{ background: 'radial-gradient(ellipse, #ff6a0088 0%, transparent 70%)', filter: 'blur(3px)' }} />
-                          {/* Sharp fire bar */}
-                          <motion.div
-                            layoutId="nav-fire"
-                            className="w-8 h-[2.5px] rounded-sm relative z-10"
-                            style={{ background: 'linear-gradient(to right, #ff3b0f, #ff8500, #ffaa1f)' }}
-                            transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-                          >
-                            {/* Ember sparks */}
-                            <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ffcc55]"
-                              style={{ left: '18%', bottom: '1px', animationDelay: '0.1s', animationDuration: '1s' }} />
-                            <span className="spark absolute w-[2px] h-[2px] rounded-full bg-[#ff8500]"
-                              style={{ left: '52%', bottom: '1px', animationDelay: '0.5s', animationDuration: '1.3s' }} />
-                            <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ff4b1f]"
-                              style={{ left: '78%', bottom: '1px', animationDelay: '0s',  animationDuration: '1.1s' }} />
-                          </motion.div>
+                  return (
+                    <div key={page.id} className="relative h-full flex items-center group">
+                      <a
+                        href={`#${page.id}`}
+                        onClick={e => handleNavClick(e, page.id)}
+                        className={`relative flex items-center h-full text-[10.5px] font-mono tracking-[0.22em] font-bold
+                                    transition-colors duration-300 select-none
+                                    ${isActive ? 'text-accent' : 'text-white/50 hover:text-white/85'}`}
+                      >
+                        <span>{getLabel(page.id)}</span>
+
+                        {/* Fire active indicator */}
+                        {isActive && (
+                          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+                            {/* Soft glow bloom behind bar */}
+                            <div className="absolute bottom-0 w-14 h-[8px] rounded-full"
+                              style={{ background: 'radial-gradient(ellipse, #ff6a0088 0%, transparent 70%)', filter: 'blur(3px)' }} />
+                            {/* Sharp fire bar */}
+                            <motion.div
+                              layoutId="nav-fire"
+                              className="w-8 h-[2.5px] rounded-sm relative z-10"
+                              style={{ background: 'linear-gradient(to right, #ff3b0f, #ff8500, #ffaa1f)' }}
+                              transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                            >
+                              {/* Ember sparks */}
+                              <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ffcc55]"
+                                style={{ left: '18%', bottom: '1px', animationDelay: '0.1s', animationDuration: '1s' }} />
+                              <span className="spark absolute w-[2px] h-[2px] rounded-full bg-[#ff8500]"
+                                style={{ left: '52%', bottom: '1px', animationDelay: '0.5s', animationDuration: '1.3s' }} />
+                              <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ff4b1f]"
+                                style={{ left: '78%', bottom: '1px', animationDelay: '0s',  animationDuration: '1.1s' }} />
+                            </motion.div>
+                          </div>
+                        )}
+                      </a>
+
+                      {/* Dropdown for Coding section under Skills */}
+                      {isSkills && (
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
+                          <div className="bg-[#060608]/90 backdrop-blur-md border border-white/10 rounded-lg p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex flex-col min-w-[140px] items-center">
+                            <a
+                              href="#coding"
+                              onClick={(e) => {
+                                handleNavClick(e, 'coding')
+                                // Keep Skills active visually when navigating to Coding
+                                setActiveSection('skills')
+                              }}
+                              className="w-full text-center text-[10px] font-mono tracking-[0.2em] font-bold text-white/50 hover:text-accent hover:bg-white/5 px-4 py-3 rounded-md transition-colors whitespace-nowrap"
+                            >
+                              CODING STATS
+                            </a>
+                          </div>
                         </div>
                       )}
-                    </a>
+                    </div>
                   )
                 })}
               </nav>
