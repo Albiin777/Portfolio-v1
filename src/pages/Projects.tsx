@@ -69,77 +69,7 @@ type ProjectImageProps = {
   onClick?: () => void
 }
 
-type CompactProjectOverlayProps = {
-  title: string
-  description: string
-  expanded: boolean
-  onExpandedChange: (expanded: boolean) => void
-}
 
-const CompactProjectOverlay = ({ title, description, expanded, onExpandedChange }: CompactProjectOverlayProps) => {
-  const setExpandedState = (nextExpanded: boolean) => {
-    onExpandedChange(nextExpanded)
-  }
-
-  return (
-    <div className="relative z-20 opacity-100 pointer-events-none">
-      <h4 className="text-sm font-bold text-white leading-none truncate">
-        {title}
-      </h4>
-      {expanded ? (
-        <div className="mt-1">
-          <p className="text-white/70 text-[11px] font-mono leading-relaxed">
-            {description}
-          </p>
-          <button
-            type="button"
-            tabIndex={-1}
-            onPointerDown={(event) => {
-              event.preventDefault()
-              event.stopPropagation()
-            }}
-            onClick={(event) => {
-              ;(document.activeElement as HTMLElement | null)?.blur()
-              event.stopPropagation()
-              setExpandedState(false)
-            }}
-            className="mt-1 text-[10px] font-mono text-white cursor-pointer pointer-events-auto"
-          >
-            Less
-          </button>
-        </div>
-      ) : (
-        <div className="mt-1 relative min-w-0 pr-16">
-          <p
-            className="text-white/70 text-[11px] font-mono leading-relaxed truncate"
-            title={description}
-          >
-            {description}
-          </p>
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-black/95 pl-2 opacity-100">
-            <span className="text-white/70 text-[11px] font-mono leading-relaxed">...</span>
-            <button
-              type="button"
-              tabIndex={-1}
-              onPointerDown={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-              }}
-              onClick={(event) => {
-                ;(document.activeElement as HTMLElement | null)?.blur()
-                event.stopPropagation()
-                setExpandedState(true)
-              }}
-              className="text-[10px] font-mono leading-relaxed text-white cursor-pointer pointer-events-auto"
-            >
-              more
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 const ProjectImage = ({ src, alt, compact, overlay, onClick }: ProjectImageProps) => (
   <div
@@ -407,7 +337,7 @@ export default function Projects() {
   const [featuredIdx, setFeaturedIdx] = useState(0)
   const [personalIdx, setPersonalIdx] = useState(0)
   const [academicIdx, setAcademicIdx] = useState(0)
-  const [expandedCompactProjectKey, setExpandedCompactProjectKey] = useState<string | null>(null)
+  const [expandedCompactProjectKey, ] = useState<string | null>(null)
   const [compactCarouselPaused, setCompactCarouselPaused] = useState(false)
 
   const featuredScrollRef = useRef<HTMLDivElement>(null)
@@ -989,7 +919,6 @@ Projects that represent my passion for learning and building new things         
                   {!personalProjects.length && <EmptyProjectState label="personal" />}
                   {personalSlides.map((project, idx) => {
                     const projectKey = `personal-${project.title}`
-                    const isDescriptionExpanded = expandedCompactProjectKey === projectKey
 
                     return (
                       <div
@@ -1033,7 +962,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.codeUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
                                 <GitHubIcon className="w-3.5 h-3.5" />
@@ -1161,7 +1090,6 @@ Projects that represent my passion for learning and building new things         
                   {!academicProjects.length && <EmptyProjectState label="academic" />}
                   {academicSlides.map((project, idx) => {
                     const projectKey = `academic-${project.title}`
-                    const isDescriptionExpanded = expandedCompactProjectKey === projectKey
 
                     return (
                       <div
@@ -1187,7 +1115,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.liveUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
                                 <ExternalLinkIcon className="w-3.5 h-3.5" />
@@ -1205,7 +1133,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.codeUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
                                 <GitHubIcon className="w-3.5 h-3.5" />
