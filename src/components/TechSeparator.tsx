@@ -1,7 +1,7 @@
 
 export default function TechSeparator() {
   return (
-    <div className="relative w-full flex justify-center py-12 select-none pointer-events-none z-10">
+    <div className="relative w-full flex justify-center py-6 md:py-12 select-none pointer-events-none z-10">
       <svg
         width="100%"
         height="60"

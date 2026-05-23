@@ -224,7 +224,7 @@ export default function Home() {
       ))}
 
       {/* Main content - Left Column */}
-      <div className="relative xl:absolute xl:left-[8%] 2xl:left-[10%] xl:top-1/2 xl:-translate-y-1/2 z-10 flex flex-col w-full max-w-[600px] xl:max-w-[700px] pr-6 pl-12 md:pr-12 md:pl-20 xl:px-0 order-2 xl:order-none pb-4 xl:pb-0 pt-0">
+      <div className="relative xl:absolute xl:left-[8%] 2xl:left-[10%] xl:top-1/2 xl:-translate-y-1/2 z-10 flex flex-col w-full max-w-[600px] xl:max-w-[700px] px-6 md:px-12 xl:px-0 order-2 xl:order-none pb-4 xl:pb-0 pt-0">
 
         {/* Header Line (Desktop Only) */}
         <motion.div variants={STAGGER_ITEM} className="hidden xl:flex items-center gap-4 mb-[56px] w-full">

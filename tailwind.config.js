@@ -10,6 +10,7 @@ export default {
       fontFamily: {
         sans: ['Space Grotesk', 'sans-serif'],
         mono: ['Space Mono', 'monospace'],
+        orbitron: ['Orbitron', 'sans-serif'],
       },
       colors: {
         accent: '#ff4b1f',

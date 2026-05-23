@@ -145,7 +145,7 @@ export default function ExperienceColumn() {
           <div className="absolute left-[5px] top-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full bg-[#111113] border-2 border-white/20 z-10" />
           <div className="absolute left-[15px] top-1/2 -translate-y-1/2 w-8 h-[1.5px] bg-white/15" />
           <div className="ml-11">
-            <span className="px-2.5 py-0.5 text-[10px] font-mono border border-white/10 text-white/25 bg-[#111113] rounded-full">HEAD</span>
+            <span className="px-2.5 py-0.5 text-[10px] font-mono border border-white/10 text-white/25 bg-[#111113] rounded-full">B.Tech</span>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import Projects from './pages/Projects'
 import Contact from './pages/Contact'
 import AnonymousChat from './components/AnonymousChat'
 import FloatingNavbar from './components/FloatingNavbar'
+import CircularMobileNav from './components/CircularMobileNav'
 import GlobalIndicator from './components/GlobalIndicator'
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
       </main>
       <GlobalIndicator />
       <FloatingNavbar />
+      <CircularMobileNav />
       <AnonymousChat />
     </NavigationProvider>
   )

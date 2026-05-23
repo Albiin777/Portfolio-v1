@@ -16,3 +16,19 @@
     display: none; /* Chrome, Safari and Opera */
   }
 }
+
+@keyframes sparkFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-12px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.spark {
+  animation: sparkFloat 1.2s infinite ease-out;
+}
+

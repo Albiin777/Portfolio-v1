@@ -2,141 +2,182 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
 
+// Download icon for Resume button
+const DownloadIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+)
+
 export default function FloatingNavbar() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible]       = useState(false)
   const [activeSection, setActiveSection] = useState('home')
-  const isProgrammaticScroll = useRef(false)
-  const scrollTimeout = useRef<number | null>(null)
+  const isProgrammaticScroll            = useRef(false)
+  const scrollTimeout                   = useRef<number | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
-      // Toggle navbar visibility
-      if (window.scrollY > 80) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(false)
-      }
-
-      // If scrolling programmatically (via navbar click), ignore scroll events for active section detection
+      setIsVisible(window.scrollY > 80)
       if (isProgrammaticScroll.current) return
 
-      // Find the currently active section based on scroll position (matching GlobalIndicator's 50% threshold)
       let active = 'home'
-      for (let i = 0; i < NAV_PAGES.length; i++) {
-        const section = document.getElementById(NAV_PAGES[i].id)
-        if (section) {
-          const rect = section.getBoundingClientRect()
-          if (rect.top <= window.innerHeight / 2) {
-            active = NAV_PAGES[i].id
-          }
+      for (const page of NAV_PAGES) {
+        const el = document.getElementById(page.id)
+        if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) {
+          active = page.id
         }
       }
       setActiveSection(active)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Run once on mount
-
+    handleScroll()
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      if (scrollTimeout.current !== null) {
-        window.clearTimeout(scrollTimeout.current)
-      }
+      if (scrollTimeout.current !== null) window.clearTimeout(scrollTimeout.current)
     }
   }, [])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
     const section = document.getElementById(id)
-    if (section) {
-      isProgrammaticScroll.current = true
-      setActiveSection(id)
-
-      if (scrollTimeout.current !== null) {
-        window.clearTimeout(scrollTimeout.current)
-      }
-
-      section.scrollIntoView({ behavior: 'smooth' })
-      window.history.pushState(null, '', `#${id}`)
-
-      // Release scroll block after smooth scroll duration
-      scrollTimeout.current = window.setTimeout(() => {
-        isProgrammaticScroll.current = false
-      }, 800)
-    }
+    if (!section) return
+    isProgrammaticScroll.current = true
+    setActiveSection(id)
+    if (scrollTimeout.current !== null) window.clearTimeout(scrollTimeout.current)
+    section.scrollIntoView({ behavior: 'smooth' })
+    window.history.pushState(null, '', `#${id}`)
+    scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, 800)
   }
 
   const getLabel = (id: string) => {
-    switch (id) {
-      case 'home': return 'Home'
-      case 'journey': return 'Journey'
-      case 'skills': return 'Skills'
-      case 'coding': return 'Coding'
-      case 'projects': return 'Projects'
-      case 'contact': return 'Contact'
-      default: return id.charAt(0).toUpperCase() + id.slice(1)
+    const map: Record<string, string> = {
+      home: 'HOME', journey: 'ABOUT', skills: 'SKILLS',
+      projects: 'PROJECTS', contact: 'CONTACT',
     }
+    return map[id] ?? id.toUpperCase()
   }
+
+  // Only show the 5 main links (exclude coding profiles)
+  const navLinks = NAV_PAGES.filter(p => p.id !== 'coding')
 
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
-          initial={{ y: -100, opacity: 0, x: '-50%' }}
-          animate={{ y: 0, opacity: 1, x: '-50%' }}
-          exit={{ y: -100, opacity: 0, x: '-50%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-6 left-1/2 z-50 flex items-center justify-center max-w-[95%] sm:max-w-md md:max-w-[480px]"
+        <motion.header
+          initial={{ y: -72, opacity: 0 }}
+          animate={{ y: 0,   opacity: 1 }}
+          exit={{    y: -72, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          className="hidden md:flex fixed top-0 left-0 right-0 z-50 flex-col pointer-events-none"
         >
-          {/* Main capsule bar container - highly transparent, overflow-hidden to contain the glow, clean glass design */}
-          <div 
-            className="relative flex items-center justify-center gap-1.5 sm:gap-3 md:gap-4 px-2 py-1.5 bg-black/[0.12] backdrop-blur-xl rounded-full border border-white/[0.06] w-full sm:w-auto overflow-hidden"
-            style={{
-              cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cdefs%3E%3CradialGradient id='glow' cx='50%' cy='50%' r='50%'%3E%3Cstop offset='0%25' stop-color='%23ff4b1f' stop-opacity='0.65'/%3E%3Cstop offset='45%25' stop-color='%23ff8500' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%23ff4b1f' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='28' cy='28' r='26' fill='url(%23glow)'/%3E%3C/svg%3E") 28 28, auto`
-            }}
-          >
-            
-            {/* Navigation links */}
-            {NAV_PAGES.map((page) => {
-              const isActive = activeSection === page.id
-              
-              return (
-                <a
-                  key={page.id}
-                  href={`#${page.id}`}
-                  onClick={(e) => handleNavClick(e, page.id)}
-                  style={{ cursor: 'inherit' }}
-                  className={`relative px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs md:text-sm font-medium transition-all duration-300 rounded-full flex items-center justify-center select-none group ${
-                    isActive 
-                      ? 'text-white' 
-                      : 'text-white/50 hover:text-white'
-                  }`}
-                >
-                  {/* Glowing active item background pill & ambient glow */}
-                  {isActive && (
-                    <>
-                      {/* Ambient fire sparkle glow behind active item - contained inside capsule */}
-                      <div className="absolute inset-0.5 rounded-full bg-[#ff4b1f]/20 blur-[5px] opacity-70 animate-pulse pointer-events-none" />
-                      
-                      {/* Crisp gradient-bordered capsule with smooth motion physics */}
-                      <motion.div
-                        layoutId="active-pill"
-                        className="absolute inset-0 rounded-full p-[1.5px] bg-gradient-to-r from-[#ff4b1f] via-[#ff8500] to-[#ffaa1f] shadow-[0_0_10px_rgba(255,75,31,0.4)]"
-                        transition={{ type: 'spring', stiffness: 180, damping: 24 }}
-                      >
-                        <div className="w-full h-full rounded-full bg-[#0a0a0a]/85 backdrop-blur-md" />
-                      </motion.div>
-                    </>
-                  )}
-
-                  <span className="relative z-10 transition-transform duration-300 group-hover:scale-[1.12] block origin-center">
-                    {getLabel(page.id)}
-                  </span>
-                </a>
-              )
-            })}
+          {/* ── Top accent line — thin orange glow line spanning full width ── */}
+          <div className="relative w-full h-[2px] overflow-visible">
+            {/* Base line */}
+            <div className="absolute inset-0 bg-accent/25" />
+            {/* Center-glow intensification */}
+            <div
+              className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px]"
+              style={{
+                width: '40%',
+                background: 'linear-gradient(to right, transparent, #ff4b1f99 30%, #ff8500cc 50%, #ff4b1f99 70%, transparent)',
+              }}
+            />
           </div>
-        </motion.div>
+
+          {/* ── Main navbar bar ─────────────────────────────────────────── */}
+          <div className="w-full bg-[#060608]/35 backdrop-blur-md border-b border-white/[0.07] pointer-events-auto">
+            <div className="max-w-7xl mx-auto px-6 h-[58px] flex items-center justify-between relative">
+
+              {/* ── Logo ── */}
+              <a
+                href="#home"
+                onClick={e => handleNavClick(e, 'home')}
+                className="flex items-center cursor-pointer shrink-0 -ml-1 sm:-ml-3"
+                aria-label="Home"
+              >
+                <span className="font-orbitron font-bold text-[15px] sm:text-[16px] tracking-wider text-accent hover:text-accent/80 transition-colors duration-200 select-none">
+                  Albin Thomas
+                </span>
+              </a>
+
+              {/* ── Center Nav Links ── */}
+              <nav className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7 h-full" aria-label="Main navigation">
+                {navLinks.map(page => {
+                  const isActive = activeSection === page.id
+                  return (
+                    <a
+                      key={page.id}
+                      href={`#${page.id}`}
+                      onClick={e => handleNavClick(e, page.id)}
+                      className={`relative flex items-center h-full text-[10.5px] font-mono tracking-[0.22em] font-bold
+                                  transition-colors duration-300 select-none
+                                  ${isActive ? 'text-accent' : 'text-white/50 hover:text-white/85'}`}
+                    >
+                      <span>{getLabel(page.id)}</span>
+
+                      {/* Fire active indicator */}
+                      {isActive && (
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+                          {/* Soft glow bloom behind bar */}
+                          <div className="absolute bottom-0 w-14 h-[8px] rounded-full"
+                            style={{ background: 'radial-gradient(ellipse, #ff6a0088 0%, transparent 70%)', filter: 'blur(3px)' }} />
+                          {/* Sharp fire bar */}
+                          <motion.div
+                            layoutId="nav-fire"
+                            className="w-8 h-[2.5px] rounded-sm relative z-10"
+                            style={{ background: 'linear-gradient(to right, #ff3b0f, #ff8500, #ffaa1f)' }}
+                            transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                          >
+                            {/* Ember sparks */}
+                            <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ffcc55]"
+                              style={{ left: '18%', bottom: '1px', animationDelay: '0.1s', animationDuration: '1s' }} />
+                            <span className="spark absolute w-[2px] h-[2px] rounded-full bg-[#ff8500]"
+                              style={{ left: '52%', bottom: '1px', animationDelay: '0.5s', animationDuration: '1.3s' }} />
+                            <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ff4b1f]"
+                              style={{ left: '78%', bottom: '1px', animationDelay: '0s',  animationDuration: '1.1s' }} />
+                          </motion.div>
+                        </div>
+                      )}
+                    </a>
+                  )
+                })}
+              </nav>
+
+              {/* ── Resume Button ── */}
+              <a
+                href="/resume.pdf"
+                download
+                className="relative shrink-0 group -mr-1 sm:-mr-3"
+                aria-label="Download Resume"
+              >
+                {/* Subtle outer glow on hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                             bg-accent/15 blur-[6px] pointer-events-none"
+                  style={{ clipPath: 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)' }}
+                />
+                <div
+                  className="flex items-center gap-1.5 px-4 py-1.5
+                             border border-accent/30 bg-accent/[0.04]
+                             group-hover:border-accent/65 group-hover:bg-accent/[0.1]
+                             text-accent font-mono text-[10.5px] tracking-[0.22em] uppercase
+                             transition-all duration-300 cursor-pointer select-none"
+                  style={{ clipPath: 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)' }}
+                >
+                  <span>RESUME</span>
+                  <DownloadIcon />
+                </div>
+              </a>
+
+
+
+            </div>
+          </div>
+        </motion.header>
       )}
     </AnimatePresence>
   )

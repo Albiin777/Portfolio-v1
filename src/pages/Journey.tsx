@@ -6,12 +6,12 @@ import TechSeparator from '../components/TechSeparator'
 
 export default function Journey() {
   return (
-    <div id="journey" className="relative min-h-screen bg-bg-dark text-white font-sans pb-20 pt-12 md:pt-20 overflow-hidden">
+    <div id="journey" className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
       {/* Subtle fire particles background behind all layout elements */}
       <FireParticles />
 
       {/* Header Section */}
-      <div className="relative z-10 flex flex-col items-center mb-20 px-6">
+      <div className="relative z-10 flex flex-col items-center mb-10 md:mb-20 px-6">
         <div className="font-mono text-white/40 text-sm mb-4 tracking-widest">02</div>
         <div className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4">
           {/* Left Circuit Design */}

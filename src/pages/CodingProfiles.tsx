@@ -604,7 +604,7 @@ export default function CodingProfiles() {
               </div>
               <div className="flex flex-col">
                 <h3 className="text-lg font-bold text-white group-hover:text-white transition-colors">GitHub</h3>
-                <span className="text-xs text-white/40 font-mono">@{GITHUB_USERNAME}</span>
+                <span className="text-xs text-white/40 font-mono"><span className="font-sans">@</span>{GITHUB_USERNAME}</span>
               </div>
               
               <a 
@@ -741,7 +741,7 @@ export default function CodingProfiles() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden"
+            className="relative z-20 bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden"
           >
             {/* Subtle glow border effect */}
             <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.015] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -755,11 +755,11 @@ export default function CodingProfiles() {
                 </div>
                 <div className="flex flex-col">
                   <h3 className="text-lg font-bold text-white group-hover:text-white transition-colors">LeetCode</h3>
-                  <span className="text-xs text-white/40 font-mono">@{LEETCODE_USERNAME}</span>
+                  <span className="text-xs text-white/40 font-mono"><span className="font-sans">@</span>{LEETCODE_USERNAME}</span>
                 </div>
                 
                 <a 
-                  href={`https://leetcode.com/u/${LEETCODE_USERNAME}`} 
+                  href={`https://leetcode.com/u/${LEETCODE_USERNAME}/`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-accent/40 hover:bg-accent/5 font-mono text-[10px] sm:text-[11px] tracking-wider uppercase transition-all duration-300 ml-auto cursor-pointer"
@@ -843,25 +843,25 @@ export default function CodingProfiles() {
               </div>
 
               {/* Problem Stats Ring Chart Container */}
-              <div className="mb-6 bg-white/[0.01] border border-white/5 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="mb-6 bg-white/[0.01] border border-white/5 rounded-xl p-4 md:p-5 flex flex-row items-center justify-between gap-4 sm:gap-6">
                 
                 {/* Left side: Total Solved large counter & Global Ranking at the bottom-left */}
-                <div className="flex flex-col items-center sm:items-start text-center sm:text-left justify-between h-full py-1 min-w-[110px]">
+                <div className="flex flex-col items-start text-left justify-between h-full py-1 min-w-[80px] sm:min-w-[110px]">
                   <div className="flex flex-col">
-                    <span className="text-[11px] font-mono text-white/40 uppercase tracking-wider">Total Solved</span>
-                    <span className="text-5xl font-bold text-accent tracking-tight mt-1">{leetcodeData.solved}</span>
+                    <span className="text-[10px] sm:text-[11px] font-mono text-white/40 uppercase tracking-wider">Total Solved</span>
+                    <span className="text-3xl sm:text-5xl font-bold text-accent tracking-tight mt-1">{leetcodeData.solved}</span>
                   </div>
-                  <div className="flex flex-col mt-4 sm:mt-5">
-                    <span className="text-[10px] font-mono text-white/40 uppercase tracking-wider leading-none mb-1">Global Ranking</span>
-                    <span className="text-lg md:text-xl font-bold text-accent tracking-tight leading-tight">
+                  <div className="flex flex-col mt-3 sm:mt-5">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-white/40 uppercase tracking-wider leading-none mb-1">Global Ranking</span>
+                    <span className="text-base sm:text-xl font-bold text-accent tracking-tight leading-tight">
                       {leetcodeData.ranking > 0 ? leetcodeData.ranking.toLocaleString() : 'N/A'}
                     </span>
                   </div>
                 </div>
 
-                {/* Center SVG Ring Chart */}
-                <div className="relative w-[120px] h-[120px] flex items-center justify-center">
-                  <svg width="120" height="120" viewBox="0 0 120 120" className="transform -rotate-90">
+                {/* Center SVG Ring Chart - positioned more left with ml-2 md:ml-4 mr-auto */}
+                <div className="relative w-[90px] h-[90px] sm:w-[120px] sm:h-[120px] flex items-center justify-center shrink-0 ml-2 md:ml-4 mr-auto">
+                  <svg width="100%" height="100%" viewBox="0 0 120 120" className="transform -rotate-90">
                     {/* Background Track Circle */}
                     <circle cx="60" cy="60" r="42" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="none" />
                     
@@ -921,41 +921,41 @@ export default function CodingProfiles() {
                   </div>
                 </div>
 
-                {/* Right side: Easy/Med/Hard Breakdown list */}
-                <div className="flex flex-col gap-2 w-full sm:w-auto min-w-[130px]">
+                {/* Right side: Easy/Med/Hard Breakdown list - widened to prevent overflow */}
+                <div className="flex flex-col gap-1.5 sm:gap-2 flex-1 max-w-[240px] min-w-[130px] sm:min-w-[185px]">
                   {/* Easy */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 py-1.5">
+                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-                      <span className="text-[11px] font-mono text-white/50">Easy</span>
+                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Easy</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
-                      <span className="text-[12px] font-bold text-[#10b981]">{leetcodeData.easy}</span>
-                      <span className="text-[9.5px] text-white/30">{easyPercent.toFixed(1)}%</span>
+                      <span className="text-[12px] sm:text-[13px] font-bold text-[#10b981]">{leetcodeData.easy}</span>
+                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{easyPercent.toFixed(1)}%</span>
                     </div>
                   </div>
 
                   {/* Medium */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 py-1.5">
+                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
-                      <span className="text-[11px] font-mono text-white/50">Medium</span>
+                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Medium</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
-                      <span className="text-[12px] font-bold text-[#f59e0b]">{leetcodeData.medium}</span>
-                      <span className="text-[9.5px] text-white/30">{mediumPercent.toFixed(1)}%</span>
+                      <span className="text-[12px] sm:text-[13px] font-bold text-[#f59e0b]">{leetcodeData.medium}</span>
+                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{mediumPercent.toFixed(1)}%</span>
                     </div>
                   </div>
 
                   {/* Hard */}
-                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 py-1.5">
+                  <div className="flex items-center justify-between gap-3 bg-white/[0.015] border border-white/5 rounded-xl px-3 sm:px-4 py-1.5 sm:py-2">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
-                      <span className="text-[11px] font-mono text-white/50">Hard</span>
+                      <span className="text-[11px] sm:text-xs font-mono text-white/50">Hard</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono">
-                      <span className="text-[12px] font-bold text-[#ef4444]">{leetcodeData.hard}</span>
-                      <span className="text-[9.5px] text-white/30">{hardPercent.toFixed(1)}%</span>
+                      <span className="text-[12px] sm:text-[13px] font-bold text-[#ef4444]">{leetcodeData.hard}</span>
+                      <span className="text-[9.5px] sm:text-[10.5px] text-white/30">{hardPercent.toFixed(1)}%</span>
                     </div>
                   </div>
                 </div>
@@ -967,18 +967,24 @@ export default function CodingProfiles() {
                 <div className="text-[10px] md:text-[11px] font-mono text-white/50 mb-3 tracking-wider uppercase">
                   Streak & Activity Stats
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:border-[#f89f1b]/15 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">{streakStats.activeDays}</span>
-                    <span className="text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Active Days</span>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2 sm:p-3 flex flex-col items-center justify-start text-center hover:border-[#f89f1b]/15 transition-all duration-300">
+                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">
+                      {streakStats.activeDays} <span className="text-[10px] sm:text-xs font-normal text-white/50">Days</span>
+                    </span>
+                    <span className="text-[8px] sm:text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Active Days</span>
                   </div>
-                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:border-[#f89f1b]/15 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">{streakStats.currentStreak} Days</span>
-                    <span className="text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Current Streak</span>
+                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2 sm:p-3 flex flex-col items-center justify-start text-center hover:border-[#f89f1b]/15 transition-all duration-300">
+                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">
+                      {streakStats.currentStreak} <span className="text-[10px] sm:text-xs font-normal text-white/50">Days</span>
+                    </span>
+                    <span className="text-[8px] sm:text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Current Streak</span>
                   </div>
-                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:border-[#f89f1b]/15 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">{streakStats.maxStreak} Days</span>
-                    <span className="text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Max Streak</span>
+                  <div className="bg-white/[0.015] border border-white/5 rounded-xl p-2 sm:p-3 flex flex-col items-center justify-start text-center hover:border-[#f89f1b]/15 transition-all duration-300">
+                    <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-[#f89f1b] mb-1">
+                      {streakStats.maxStreak} <span className="text-[10px] sm:text-xs font-normal text-white/50">Days</span>
+                    </span>
+                    <span className="text-[8px] sm:text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">Max Streak</span>
                   </div>
                 </div>
               </div>

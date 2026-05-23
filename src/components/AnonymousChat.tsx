@@ -20,10 +20,10 @@ export default function AnonymousChat() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none">
       {/* Chat Window */}
       <div 
-        className={`mb-4 w-80 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
+        className={`mb-4 w-80 bg-[#121212] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right pointer-events-auto ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
       >
         <div className="bg-[#171717] px-5 py-4 border-b border-white/10 flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export default function AnonymousChat() {
 
       {/* Floating Action Button */}
       <button 
-        className="group relative w-14 h-14 bg-[#121212] border border-[#171717] rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.05)] hover:border-accent/40 hover:shadow-[0_0_20px_rgba(255,75,31,0.2),_inset_0_2px_4px_rgba(255,255,255,0.05)] transition-all duration-300 cursor-pointer"
+        className="group relative w-14 h-14 bg-[#121212] border border-[#171717] rounded-full flex items-center justify-center hover:border-accent/40 transition-all duration-300 cursor-pointer pointer-events-auto"
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 group-hover:text-accent transition-colors duration-300">
