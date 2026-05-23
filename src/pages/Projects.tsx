@@ -165,7 +165,7 @@ const ProjectImage = ({ src, alt, compact, overlay, onClick }: ProjectImageProps
     )}
     <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-accent/15 opacity-80 group-hover/image:opacity-0 transition-opacity duration-700" />
     {overlay && (
-      <div className="absolute inset-x-0 bottom-0 z-10 p-3 bg-black/75 backdrop-blur-[2px] border-t border-white/10 opacity-100 transition-none pointer-events-none">
+      <div className="absolute inset-x-0 bottom-0 z-10 p-1.5 sm:p-3 bg-black/75 backdrop-blur-[2px] border-t border-white/10 opacity-100 transition-none pointer-events-none">
         {overlay}
       </div>
     )}
@@ -762,88 +762,121 @@ export default function Projects() {
             >
               {!featuredProjects.length && <EmptyProjectState label="featured" />}
               {featuredSlides.map((project, idx) => {
+                const TitleHeader = (
+                  <div>
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-[10px] font-mono uppercase tracking-wider mb-3 lg:mb-4">
+                      <StarIcon />
+                      <span>Featured Project</span>
+                    </div>
+
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-1 lg:mb-3 group-hover:text-accent transition-colors duration-300">
+                      {project.title}
+                    </h3>
+                  </div>
+                );
+
+                const DescriptionBlock = (
+                  <div>
+                    <p className="text-white/50 text-sm md:text-base font-mono mb-3 lg:mb-5 leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    {/* Bullet list */}
+                    {project.bullets && (
+                      <ul className="flex flex-col gap-1.5 lg:gap-2 mb-4 lg:mb-0">
+                        {project.bullets?.map((bullet, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-white/70 font-mono">
+                            <CheckIcon />
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+
+                const Buttons = (
+                  <div className="flex gap-4 relative z-20">
+                    <a
+                      href={getProjectUrl(project.liveUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        openExternalUrl(project.liveUrl)
+                      }}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-accent text-accent hover:bg-accent hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(224,90,43,0.05)] cursor-pointer"
+                    >
+                      <span>Live Demo</span>
+                      <ExternalLinkIcon />
+                    </a>
+                    <a
+                      href={getProjectUrl(project.codeUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        openExternalUrl(project.codeUrl)
+                      }}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/30 font-mono text-[11px] uppercase tracking-wider transition-all duration-300 cursor-pointer"
+                    >
+                      <span>Source Code</span>
+                      <GitHubIcon />
+                    </a>
+                  </div>
+                );
+
+                const TechStack = (
+                  <div className="flex flex-wrap items-center justify-start gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {project.tech.map((lang) => (
+                        <TechPill key={lang.name} name={lang.name} />
+                      ))}
+                    </div>
+                  </div>
+                );
+
+                const Image = (
+                  <ProjectImage
+                    src={project.image}
+                    alt={`${project.title} screenshot`}
+                  />
+                );
+
                 return (
                   <div 
                     key={idx}
-                    className="w-full shrink-0 snap-center grid grid-cols-1 lg:grid-cols-2 gap-8 items-center h-full relative z-10"
+                    className="w-full shrink-0 snap-center relative z-10 h-full"
                   >
-                    {/* Left side details */}
-                    <div className="flex flex-col h-full justify-between py-1">
-                      <div>
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-[10px] font-mono uppercase tracking-wider mb-4">
-                          <StarIcon />
-                          <span>Featured Project</span>
-                        </div>
-
-                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-accent transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        
-                        <p className="text-white/50 text-sm md:text-base font-mono mb-5 leading-relaxed">
-                          {project.description}
-                        </p>
-
-                        {/* Bullet list */}
-                        {project.bullets && (
-                          <ul className="flex flex-col gap-2 mb-6">
-                            {project.bullets?.map((bullet, i) => (
-                              <li key={i} className="flex items-start gap-2.5 text-xs text-white/70 font-mono">
-                                <CheckIcon />
-                                <span>{bullet}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-
-                      <div className="flex gap-4 relative z-20">
-                        <a
-                          href={getProjectUrl(project.liveUrl)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(event) => {
-                            event.preventDefault()
-                            event.stopPropagation()
-                            openExternalUrl(project.liveUrl)
-                          }}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-accent text-accent hover:bg-accent hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(224,90,43,0.05)] cursor-pointer"
-                        >
-                          <span>Live Demo</span>
-                          <ExternalLinkIcon />
-                        </a>
-                        <a
-                          href={getProjectUrl(project.codeUrl)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(event) => {
-                            event.preventDefault()
-                            event.stopPropagation()
-                            openExternalUrl(project.codeUrl)
-                          }}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.02] text-white/70 hover:text-white hover:border-white/30 font-mono text-[11px] uppercase tracking-wider transition-all duration-300 cursor-pointer"
-                        >
-                          <span>Source Code</span>
-                          <GitHubIcon />
-                        </a>
+                    {/* MOBILE LAYOUT (Interleaved Sequence) */}
+                    <div className="flex flex-col lg:hidden w-full h-full pb-2 gap-3">
+                      {TitleHeader}
+                      {Image}
+                      {DescriptionBlock}
+                      {TechStack}
+                      <div className="mt-auto pt-2">
+                        {Buttons}
                       </div>
                     </div>
 
-                    {/* Right side screenshot + stack */}
-                    <div className="flex flex-col gap-3">
-                      <ProjectImage
-                        src={project.image}
-                        alt={`${project.title} screenshot`}
-                      />
-
-                      <div className="flex flex-wrap items-center justify-start gap-3">
-                        <div className="flex flex-wrap gap-2">
-                          {project.tech.map((lang) => (
-                            <TechPill key={lang.name} name={lang.name} />
-                          ))}
+                    {/* DESKTOP LAYOUT (2 Columns) */}
+                    <div className="hidden lg:grid grid-cols-2 gap-8 items-center h-full">
+                      {/* Left side details */}
+                      <div className="flex flex-col h-full justify-between py-1">
+                        <div>
+                          {TitleHeader}
+                          {DescriptionBlock}
                         </div>
+                        {Buttons}
+                      </div>
 
-                        <div />
+                      {/* Right side screenshot + stack */}
+                      <div className="flex flex-col gap-3">
+                        {Image}
+                        {TechStack}
                       </div>
                     </div>
                   </div>
@@ -967,66 +1000,64 @@ Projects that represent my passion for learning and building new things         
                           src={project.image}
                           alt={`${project.title} screenshot`}
                           compact
-                          onClick={() => {
-                            if (isDescriptionExpanded) setExpandedCompactProjectKey(null)
-                          }}
-                          overlay={(
-                            <CompactProjectOverlay
-                              title={project.title}
-                              description={project.description}
-                              expanded={isDescriptionExpanded}
-                              onExpandedChange={(expanded) => {
-                                setExpandedCompactProjectKey(expanded ? projectKey : null)
-                              }}
-                            />
-                          )}
+                          overlay={
+                            <div className="flex gap-2 w-full">
+                              <a 
+                                href={getProjectUrl(project.liveUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onPointerDown={(event) => {
+                                  event.stopPropagation()
+                                  setCompactCarouselPaused(true)
+                                }}
+                                onClick={(event) => {
+                                  event.preventDefault()
+                                  event.stopPropagation()
+                                  openExternalUrl(project.liveUrl)
+                                }}
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
+                              >
+                                <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
+                                <ExternalLinkIcon className="w-3.5 h-3.5" />
+                              </a>
+                              <a 
+                                href={getProjectUrl(project.codeUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onPointerDown={(event) => {
+                                  event.stopPropagation()
+                                  setCompactCarouselPaused(true)
+                                }}
+                                onClick={(event) => {
+                                  event.preventDefault()
+                                  event.stopPropagation()
+                                  openExternalUrl(project.codeUrl)
+                                }}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                              >
+                                <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
+                                <GitHubIcon className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
+                          }
                         />
 
-                        {/* Tech list & links row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-2 pt-4 border-t border-white/5 mt-auto">
+                        {/* Title & Description right below the image */}
+                        <div className="flex flex-col gap-1.5 mt-4 mb-2">
+                          <h4 className="text-sm font-bold text-white truncate">
+                            {project.title}
+                          </h4>
+                          <p className="text-white/70 text-[11px] font-mono leading-relaxed line-clamp-3">
+                            {project.description}
+                          </p>
+                        </div>
+
+                        {/* Tech list row */}
+                        <div className="pt-4 border-t border-white/5 mt-auto">
                           <div className="flex flex-wrap gap-1.5 min-w-0">
                             {project.tech.map((t) => (
                               <TechPill key={t.name} name={t.name} compact />
                             ))}
-                          </div>
-
-                          <div className="flex gap-2 relative z-30 self-end sm:self-auto">
-                            <a 
-                              href={getProjectUrl(project.liveUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onPointerDown={(event) => {
-                                event.stopPropagation()
-                                setCompactCarouselPaused(true)
-                              }}
-                              onClick={(event) => {
-                                event.preventDefault()
-                                event.stopPropagation()
-                                openExternalUrl(project.liveUrl)
-                              }}
-                              className="relative z-50 p-2 sm:p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
-                              title="Live Demo"
-                            >
-                              <ExternalLinkIcon className="w-4 h-4 md:w-3 md:h-3" />
-                            </a>
-                            <a 
-                              href={getProjectUrl(project.codeUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onPointerDown={(event) => {
-                                event.stopPropagation()
-                                setCompactCarouselPaused(true)
-                              }}
-                              onClick={(event) => {
-                                event.preventDefault()
-                                event.stopPropagation()
-                                openExternalUrl(project.codeUrl)
-                              }}
-                              className="relative z-50 p-2 sm:p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
-                              title="Source Code"
-                            >
-                              <GitHubIcon className="w-4 h-4 md:w-3 md:h-3" />
-                            </a>
                           </div>
                         </div>
                       </div>
@@ -1141,66 +1172,64 @@ Projects that represent my passion for learning and building new things         
                           src={project.image}
                           alt={`${project.title} screenshot`}
                           compact
-                          onClick={() => {
-                            if (isDescriptionExpanded) setExpandedCompactProjectKey(null)
-                          }}
-                          overlay={(
-                            <CompactProjectOverlay
-                              title={project.title}
-                              description={project.description}
-                              expanded={isDescriptionExpanded}
-                              onExpandedChange={(expanded) => {
-                                setExpandedCompactProjectKey(expanded ? projectKey : null)
-                              }}
-                            />
-                          )}
+                          overlay={
+                            <div className="flex gap-2 w-full">
+                              <a 
+                                href={getProjectUrl(project.liveUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onPointerDown={(event) => {
+                                  event.stopPropagation()
+                                  setCompactCarouselPaused(true)
+                                }}
+                                onClick={(event) => {
+                                  event.preventDefault()
+                                  event.stopPropagation()
+                                  openExternalUrl(project.liveUrl)
+                                }}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
+                              >
+                                <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
+                                <ExternalLinkIcon className="w-3.5 h-3.5" />
+                              </a>
+                              <a 
+                                href={getProjectUrl(project.codeUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onPointerDown={(event) => {
+                                  event.stopPropagation()
+                                  setCompactCarouselPaused(true)
+                                }}
+                                onClick={(event) => {
+                                  event.preventDefault()
+                                  event.stopPropagation()
+                                  openExternalUrl(project.codeUrl)
+                                }}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                              >
+                                <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
+                                <GitHubIcon className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
+                          }
                         />
 
-                        {/* Tech list & links row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-2 pt-4 border-t border-white/5 mt-auto">
+                        {/* Title & Description right below the image */}
+                        <div className="flex flex-col gap-1.5 mt-4 mb-2">
+                          <h4 className="text-sm font-bold text-white truncate">
+                            {project.title}
+                          </h4>
+                          <p className="text-white/70 text-[11px] font-mono leading-relaxed line-clamp-3">
+                            {project.description}
+                          </p>
+                        </div>
+
+                        {/* Tech list row */}
+                        <div className="pt-4 border-t border-white/5 mt-auto">
                           <div className="flex flex-wrap gap-1.5 min-w-0">
                             {project.tech.map((t) => (
                               <TechPill key={t.name} name={t.name} compact />
                             ))}
-                          </div>
-
-                          <div className="flex gap-2 relative z-30 self-end sm:self-auto">
-                            <a 
-                              href={getProjectUrl(project.liveUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onPointerDown={(event) => {
-                                event.stopPropagation()
-                                setCompactCarouselPaused(true)
-                              }}
-                              onClick={(event) => {
-                                event.preventDefault()
-                                event.stopPropagation()
-                                openExternalUrl(project.liveUrl)
-                              }}
-                              className="relative z-50 p-2 sm:p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
-                              title="Live Demo"
-                            >
-                              <ExternalLinkIcon className="w-4 h-4 md:w-3 md:h-3" />
-                            </a>
-                            <a 
-                              href={getProjectUrl(project.codeUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onPointerDown={(event) => {
-                                event.stopPropagation()
-                                setCompactCarouselPaused(true)
-                              }}
-                              onClick={(event) => {
-                                event.preventDefault()
-                                event.stopPropagation()
-                                openExternalUrl(project.codeUrl)
-                              }}
-                              className="relative z-50 p-2 sm:p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
-                              title="Source Code"
-                            >
-                              <GitHubIcon className="w-4 h-4 md:w-3 md:h-3" />
-                            </a>
                           </div>
                         </div>
                       </div>
