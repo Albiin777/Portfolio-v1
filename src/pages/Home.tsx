@@ -182,6 +182,21 @@ export default function Home() {
     }, 500)
   }
 
+  const scrollToProjects = () => {
+    const scroll = () => {
+      const projectsSection = document.getElementById('projects')
+      if (projectsSection) projectsSection.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    if (window.location.pathname !== '/') {
+      navigate('/')
+      window.setTimeout(scroll, 120)
+      return
+    }
+
+    scroll()
+  }
+
   const SVG_SIZE = 480, CX = 240, CY = 240, R_OUTER = 210, R_INNER = 186
   const R_MID = (R_OUTER + R_INNER) / 2, DOT_R = 4
   const polarToXY = (angleDeg: number, r: number) => {
@@ -300,7 +315,7 @@ export default function Home() {
             </button>
             <button
               className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-white/10 hover:border-white/40 hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
-              onClick={() => navigate('/projects')}
+              onClick={scrollToProjects}
             >
               <span>VIEW PROJECTS</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-x-1">

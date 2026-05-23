@@ -1,0 +1,64 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "albinthomas6149@gmail.com";
+    }
+
+    function isShortString(value, maxLength) {
+      return value is string && value.size() > 0 && value.size() <= maxLength;
+    }
+
+    function isAnonymousMessage() {
+      return request.resource.data.keys().hasOnly(['type', 'message', 'createdAt'])
+        && request.resource.data.type == 'anonymous'
+        && isShortString(request.resource.data.message, 2000)
+        && request.resource.data.createdAt is timestamp;
+    }
+
+    function isDirectMessage() {
+      return request.resource.data.keys().hasOnly(['type', 'name', 'email', 'message', 'createdAt'])
+        && request.resource.data.type == 'direct'
+        && isShortString(request.resource.data.name, 120)
+        && isShortString(request.resource.data.email, 180)
+        && isShortString(request.resource.data.message, 4000)
+        && request.resource.data.createdAt is timestamp;
+    }
+
+    match /messages/{messageId} {
+      allow create: if isAnonymousMessage() || isDirectMessage();
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /profile/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /education/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /experience/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /skills/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -15,6 +15,13 @@
   *::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
+
+  @media (hover: hover) and (pointer: fine) {
+    html.custom-cursor-enabled,
+    html.custom-cursor-enabled * {
+      cursor: none !important;
+    }
+  }
 }
 
 @keyframes sparkFloat {
@@ -32,3 +39,13 @@
   animation: sparkFloat 1.2s infinite ease-out;
 }
 
+@keyframes cursorPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}

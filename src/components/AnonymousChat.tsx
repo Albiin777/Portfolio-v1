@@ -1,22 +1,37 @@
 import { useState } from 'react'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '../lib/firebase'
 
 export default function AnonymousChat() {
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState('')
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return
     setStatus('sending')
-    // Simulate sending for now. You can hook this up to an API endpoint later.
-    setTimeout(() => {
+
+    try {
+      if (!db) {
+        throw new Error('Firebase is not configured.')
+      }
+
+      await addDoc(collection(db, 'messages'), {
+        type: 'anonymous',
+        message: message.trim(),
+        createdAt: serverTimestamp()
+      })
+
       setStatus('sent')
       setMessage('')
       setTimeout(() => {
         setIsOpen(false)
         setStatus('idle')
       }, 2000)
-    }, 1000)
+    } catch (error) {
+      console.error('Failed to send anonymous message:', error)
+      setStatus('error')
+    }
   }
 
   return (
@@ -30,7 +45,11 @@ export default function AnonymousChat() {
             <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             <div className="font-mono text-[10px] tracking-[0.25em] text-white uppercase">Secret Comms</div>
           </div>
-          <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors cursor-pointer">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="w-9 h-9 -m-2 flex items-center justify-center text-white/40 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close anonymous message panel"
+          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
@@ -55,7 +74,10 @@ export default function AnonymousChat() {
             onClick={handleSend}
             disabled={!message.trim() || status !== 'idle'}
           >
-            {status === 'idle' ? 'TRANSMIT' : status === 'sending' ? 'TRANSMITTING...' : 'DELIVERED'}
+            {status === 'idle' && 'TRANSMIT'}
+            {status === 'sending' && 'TRANSMITTING...'}
+            {status === 'sent' && 'DELIVERED'}
+            {status === 'error' && 'TRY AGAIN'}
           </button>
         </div>
       </div>

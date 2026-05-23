@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { NavigationProvider } from './context/NavigationContext'
 import Home from './pages/Home'
 import Journey from './pages/Journey'
@@ -11,6 +11,7 @@ import AnonymousChat from './components/AnonymousChat'
 import FloatingNavbar from './components/FloatingNavbar'
 import CircularMobileNav from './components/CircularMobileNav'
 import GlobalIndicator from './components/GlobalIndicator'
+import SpaceCursor from './components/SpaceCursor'
 
 const PortfolioPage = () => (
   <>
@@ -42,8 +43,12 @@ const PortfolioPage = () => (
 )
 
 export default function App() {
+  const location = useLocation()
+  const showCustomCursor = location.pathname !== '/admin'
+
   return (
     <NavigationProvider>
+      {showCustomCursor && <SpaceCursor />}
       <Routes>
         <Route path="/" element={<PortfolioPage />} />
         <Route path="/projects" element={<Projects />} />
