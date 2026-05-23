@@ -275,162 +275,6 @@ const TechPill = ({ name, compact = false }: { name: string; compact?: boolean }
   )
 }
 
-// CAROUSEL DATA STRUCTURES
-const FEATURED_PROJECTS: ProjectData[] = [
-  {
-    title: 'Analytics Dashboard',
-    description: 'A modern analytics dashboard with real-time insights, interactive charts and role-based access for seamless data visualization.',
-    bullets: [
-      'Real-time data visualization',
-      'Role based authentication',
-      'Interactive charts and filters',
-      'Export reports in multiple formats'
-    ],
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' },
-      { name: 'Node.js', color: '#339933', icon: 'Node.js' },
-      { name: 'MongoDB', color: '#47a248', icon: 'MongoDB' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'featured'
-  },
-  {
-    title: 'AI Accident Detection App',
-    description: 'Real-time accident detection using computer vision and deep learning to dispatch emergency responders automatically.',
-    bullets: [
-      'Real-time object detection and tracking',
-      'Automated collision severity assessment',
-      'Instant emergency alert pipeline',
-      'Cloud dashboard for traffic monitoring'
-    ],
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' },
-      { name: 'Python', color: '#3776ab', icon: 'Python' },
-      { name: 'OpenCV', color: '#5c3ee8', icon: 'OpenCV' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'featured'
-  },
-  {
-    title: 'Web-based Trip Planner',
-    description: 'Intelligent travel planner with route optimization, expense tracking, and collaborative real-time coordination tools.',
-    bullets: [
-      'AI-driven optimized route suggestions',
-      'Interactive map integration and markers',
-      'Multi-user real-time board collaboration',
-      'Comprehensive budget and expense logs'
-    ],
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' },
-      { name: 'Node.js', color: '#339933', icon: 'Node.js' },
-      { name: 'Firebase', color: '#ffca28', icon: 'Firebase' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'featured'
-  }
-]
-
-const PERSONAL_PROJECTS: ProjectData[] = [
-  {
-    title: 'Portfolio Website',
-    description: 'A personal portfolio built with Next.js and Tailwind CSS to showcase my work and skills.',
-    tech: [
-      { name: 'Next.js', color: '#ffffff', icon: 'Next.js' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'personal'
-  },
-  {
-    title: 'Personal Chat App',
-    description: 'Real-time messaging application with private channels, typing indicators, and file sharing.',
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Firebase', color: '#ffca28', icon: 'Firebase' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'personal'
-  },
-  {
-    title: 'Markdown Editor',
-    description: 'A web-based Markdown editor with live preview side-by-side, autosave, and text formatting shortcuts.',
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'personal'
-  },
-  {
-    title: 'Habit Tracker',
-    description: 'A minimalist habit tracking dashboard logging daily completions with visual streaks and reminders.',
-    tech: [
-      { name: 'React', color: '#61dafb', icon: 'React' },
-      { name: 'Tailwind CSS', color: '#38bdf8', icon: 'Tailwind CSS' },
-      { name: 'Firebase', color: '#ffca28', icon: 'Firebase' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'personal'
-  }
-]
-
-const ACADEMIC_PROJECTS: ProjectData[] = [
-  {
-    title: 'Smart Attendance System',
-    description: 'Face recognition based attendance system developed using Python and OpenCV.',
-    tech: [
-      { name: 'Python', color: '#3776ab', icon: 'Python' },
-      { name: 'OpenCV', color: '#5c3ee8', icon: 'OpenCV' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'academic'
-  },
-  {
-    title: 'Accident Detection Model',
-    description: 'Vehicular collision detection model trained using YOLO and PyTorch on municipal camera feeds.',
-    tech: [
-      { name: 'Python', color: '#3776ab', icon: 'Python' },
-      { name: 'OpenCV', color: '#5c3ee8', icon: 'OpenCV' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'academic'
-  },
-  {
-    title: 'DBMS Library Portal',
-    description: 'Secure university database system managing inventory, fine calculations, and active reservations.',
-    tech: [
-      { name: 'Next.js', color: '#ffffff', icon: 'Next.js' },
-      { name: 'Firebase', color: '#ffca28', icon: 'Firebase' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'academic'
-  },
-  {
-    title: 'Network Packet Sniffer',
-    description: 'Raw sockets analyzer built in C to inspect packet headers, protocol distributions, and log traffic.',
-    tech: [
-      { name: 'Python', color: '#3776ab', icon: 'Python' }
-    ],
-    liveUrl: '#',
-    codeUrl: '#',
-    type: 'academic'
-  }
-]
-
 const getOriginalIdx = (domIdx: number, length: number) => {
   const adjusted = domIdx - 1
   return (adjusted % length + length) % length
@@ -508,10 +352,21 @@ const makeSlides = (projects: ProjectData[]) => (
   projects.length ? [projects[projects.length - 1], ...projects, projects[0]] : []
 )
 
+const EmptyProjectState = ({ label }: { label: string }) => (
+  <div className="relative z-10 flex min-h-[260px] w-full flex-col items-center justify-center rounded-xl border border-white/5 bg-[#08080a]/50 px-6 text-center">
+    <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent/80">
+      No {label} projects
+    </div>
+    <p className="mt-3 max-w-sm text-[12px] leading-relaxed text-white/40 font-mono">
+      Add projects in Firebase from the admin panel and set their type to {label}.
+    </p>
+  </div>
+)
+
 export default function Projects() {
   const projectRecords = useCollectionData<ProjectData>(
     'projects',
-    [...FEATURED_PROJECTS, ...PERSONAL_PROJECTS, ...ACADEMIC_PROJECTS]
+    []
   )
   const normalizedProjects = useMemo(
     () => projectRecords.map(normalizeProject).filter(isPublishableProject),
@@ -889,7 +744,8 @@ export default function Projects() {
               onScroll={handleFeaturedScroll}
               className="w-full overflow-x-auto flex snap-x snap-mandatory no-scrollbar relative z-10 flex-1"
             >
-                  {featuredSlides.map((project, idx) => {
+              {!featuredProjects.length && <EmptyProjectState label="featured" />}
+              {featuredSlides.map((project, idx) => {
                 return (
                   <div 
                     key={idx}
@@ -985,24 +841,28 @@ export default function Projects() {
           </div>
 
           {/* Arrow Left */}
-          <button 
-            onClick={prevFeatured}
-            className="absolute left-[-12px] md:left-0 top-[50%] -translate-y-1/2 w-10 h-10 rounded-full border border-accent/20 bg-black/60 hover:bg-accent/15 hover:border-accent flex items-center justify-center transition-all duration-300 text-accent cursor-pointer z-30 group"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transform group-hover:-translate-x-0.5 transition-transform duration-300">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
+          {featuredProjects.length > 0 && (
+            <button
+              onClick={prevFeatured}
+              className="absolute left-[-12px] md:left-0 top-[50%] -translate-y-1/2 w-10 h-10 rounded-full border border-accent/20 bg-black/60 hover:bg-accent/15 hover:border-accent flex items-center justify-center transition-all duration-300 text-accent cursor-pointer z-30 group"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transform group-hover:-translate-x-0.5 transition-transform duration-300">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          )}
 
           {/* Arrow Right */}
-          <button 
-            onClick={nextFeatured}
-            className="absolute right-[-12px] md:right-0 top-[50%] -translate-y-1/2 w-10 h-10 rounded-full border border-accent/20 bg-black/60 hover:bg-accent/15 hover:border-accent flex items-center justify-center transition-all duration-300 text-accent cursor-pointer z-30 group"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transform group-hover:translate-x-0.5 transition-transform duration-300">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
+          {featuredProjects.length > 0 && (
+            <button
+              onClick={nextFeatured}
+              className="absolute right-[-12px] md:right-0 top-[50%] -translate-y-1/2 w-10 h-10 rounded-full border border-accent/20 bg-black/60 hover:bg-accent/15 hover:border-accent flex items-center justify-center transition-all duration-300 text-accent cursor-pointer z-30 group"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transform group-hover:translate-x-0.5 transition-transform duration-300">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          )}
 
         </div>
 
@@ -1067,6 +927,7 @@ Projects that represent my passion for learning and building new things         
                   onScroll={handlePersonalScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
+                  {!personalProjects.length && <EmptyProjectState label="personal" />}
                   {personalSlides.map((project, idx) => {
                     const projectKey = `personal-${project.title}`
                     const isDescriptionExpanded = expandedCompactProjectKey === projectKey
@@ -1226,6 +1087,7 @@ Projects that represent my passion for learning and building new things         
                   onScroll={handleAcademicScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
+                  {!academicProjects.length && <EmptyProjectState label="academic" />}
                   {academicSlides.map((project, idx) => {
                     const projectKey = `academic-${project.title}`
                     const isDescriptionExpanded = expandedCompactProjectKey === projectKey
