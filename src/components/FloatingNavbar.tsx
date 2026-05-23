@@ -1,18 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
+import { useDocData } from '../lib/content'
 
-// Download icon for Resume button
-const DownloadIcon = () => (
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-)
+type ProfileData = {
+  resumeUrl: string
+}
 
 export default function FloatingNavbar() {
+  const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
+  const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
   const [isVisible, setIsVisible]       = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const isProgrammaticScroll            = useRef(false)
@@ -96,7 +93,7 @@ export default function FloatingNavbar() {
                 className="flex items-center cursor-pointer shrink-0 -ml-1 sm:-ml-3"
                 aria-label="Home"
               >
-                <span className="font-orbitron font-bold text-[15px] sm:text-[16px] tracking-wider text-accent hover:text-accent/80 transition-colors duration-200 select-none">
+                <span className="font-orbitron font-bold text-[18px] sm:text-[19px] tracking-wider text-accent hover:text-accent/80 transition-colors duration-200 select-none">
                   Albin Thomas
                 </span>
               </a>
@@ -112,7 +109,7 @@ export default function FloatingNavbar() {
                       <a
                         href={`#${page.id}`}
                         onClick={e => handleNavClick(e, page.id)}
-                        className={`relative flex items-center h-full text-[10.5px] font-mono tracking-[0.22em] font-bold
+                        className={`relative flex items-center h-full text-[13px] font-mono tracking-[0.22em] font-bold
                                     transition-colors duration-300 select-none
                                     ${isActive ? 'text-accent' : 'text-white/50 hover:text-white/85'}`}
                       >
@@ -154,7 +151,7 @@ export default function FloatingNavbar() {
                                 // Keep Skills active visually when navigating to Coding
                                 setActiveSection('skills')
                               }}
-                              className="w-full text-center text-[10px] font-mono tracking-[0.2em] font-bold text-white/50 hover:text-accent hover:bg-white/5 px-4 py-3 rounded-md transition-colors whitespace-nowrap"
+                              className="w-full text-center text-[12px] font-mono tracking-[0.2em] font-bold text-white/50 hover:text-accent hover:bg-white/5 px-4 py-3 rounded-md transition-colors whitespace-nowrap"
                             >
                               CODING STATS
                             </a>
@@ -168,10 +165,11 @@ export default function FloatingNavbar() {
 
               {/* ── Resume Button ── */}
               <a
-                href="/resume.pdf"
-                download
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="relative shrink-0 group -mr-1 sm:-mr-3"
-                aria-label="Download Resume"
+                aria-label="View Resume"
               >
                 {/* Subtle outer glow on hover */}
                 <div
@@ -183,12 +181,11 @@ export default function FloatingNavbar() {
                   className="flex items-center gap-1.5 px-4 py-1.5
                              border border-accent/30 bg-accent/[0.04]
                              group-hover:border-accent/65 group-hover:bg-accent/[0.1]
-                             text-accent font-mono text-[10.5px] tracking-[0.22em] uppercase
+                             text-accent font-mono text-[13px] tracking-[0.22em] uppercase
                              transition-all duration-300 cursor-pointer select-none"
                   style={{ clipPath: 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)' }}
                 >
                   <span>RESUME</span>
-                  <DownloadIcon />
                 </div>
               </a>
 

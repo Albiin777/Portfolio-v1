@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useCollectionData } from '../lib/content'
+import FirebaseLogo from '../assets/tech/firebase.svg'
 
 // Define Project interfaces
 interface ProjectData {
@@ -7,11 +9,17 @@ interface ProjectData {
   subtitle?: string
   description: string
   bullets?: string[]
-  tech: { name: string; color: string; icon: string }[]
+  tech: { name: string; color?: string; icon?: string }[]
   liveUrl: string
   codeUrl: string
-  type: string // 'featured' | 'personal' | 'academic'
+  type?: string // 'featured' | 'personal' | 'academic'
+  types?: string[] | string
+  category?: string
+  status?: string
+  published?: boolean
+  draft?: boolean
   image?: string
+  imageUrl?: string
 }
 
 // Icons as pure CSS/SVG components
@@ -58,18 +66,82 @@ type ProjectImageProps = {
   alt: string
   compact?: boolean
   overlay?: React.ReactNode
+  onClick?: () => void
 }
 
-const ProjectImage = ({ src, alt, compact, overlay }: ProjectImageProps) => (
+type CompactProjectOverlayProps = {
+  title: string
+  description: string
+  expanded: boolean
+  onExpandedChange: (expanded: boolean) => void
+}
+
+const CompactProjectOverlay = ({ title, description, expanded, onExpandedChange }: CompactProjectOverlayProps) => {
+  const setExpandedState = (nextExpanded: boolean) => {
+    onExpandedChange(nextExpanded)
+  }
+
+  return (
+    <div className="relative z-20 opacity-100 pointer-events-none">
+      <h4 className="text-sm font-bold text-white leading-none truncate">
+        {title}
+      </h4>
+      {expanded ? (
+        <div className="mt-1">
+          <p className="text-white/70 text-[11px] font-mono leading-relaxed">
+            {description}
+          </p>
+          <button
+            type="button"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation()
+              setExpandedState(false)
+            }}
+            className="mt-1 text-[10px] font-mono text-white cursor-pointer pointer-events-auto"
+          >
+            Less
+          </button>
+        </div>
+      ) : (
+        <div className="mt-1 relative min-w-0 pr-16">
+          <p
+            className="text-white/70 text-[11px] font-mono leading-relaxed truncate"
+            title={description}
+          >
+            {description}
+          </p>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-black/95 pl-2 opacity-100">
+            <span className="text-white/70 text-[11px] font-mono leading-relaxed">...</span>
+            <button
+              type="button"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation()
+                setExpandedState(true)
+              }}
+              className="text-[10px] font-mono leading-relaxed text-white cursor-pointer pointer-events-auto"
+            >
+              more
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const ProjectImage = ({ src, alt, compact, overlay, onClick }: ProjectImageProps) => (
   <div
-    className={`relative w-full ${compact ? 'aspect-video' : 'aspect-video'} rounded-[5px] border border-white/10 bg-[#08080a]/80 shadow-none p-2 overflow-hidden group-hover:border-accent/20 transition-all duration-500`}
+    className={`group/image relative w-full ${compact ? 'aspect-video' : 'aspect-video'} rounded-[5px] border border-white/10 bg-black shadow-none p-2 overflow-hidden hover:border-accent/20 transition-all duration-500`}
+    onClick={onClick}
   >
     {src ? (
       <img
         src={src}
         alt={alt}
         loading="lazy"
-        className="w-full h-full object-cover rounded-[4px] transition-all duration-700 filter grayscale brightness-110 contrast-110 group-hover:filter-none"
+        className="w-full h-full object-contain rounded-[4px] transition-all duration-700 filter grayscale brightness-110 contrast-110 group-hover/image:filter-none"
       />
     ) : (
       <div
@@ -81,9 +153,9 @@ const ProjectImage = ({ src, alt, compact, overlay }: ProjectImageProps) => (
         }}
       />
     )}
-    <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-accent/15 opacity-80 group-hover:opacity-0 transition-opacity duration-700" />
+    <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-accent/15 opacity-80 group-hover/image:opacity-0 transition-opacity duration-700" />
     {overlay && (
-      <div className="absolute inset-x-0 bottom-0 p-3 bg-black/60 backdrop-blur-[2px] border-t border-white/10">
+      <div className="absolute inset-x-0 bottom-0 z-10 p-3 bg-black/75 backdrop-blur-[2px] border-t border-white/10 opacity-100 transition-none pointer-events-none">
         {overlay}
       </div>
     )}
@@ -92,8 +164,12 @@ const ProjectImage = ({ src, alt, compact, overlay }: ProjectImageProps) => (
 
 // Tech Micro Icons Map helper
 const getTechIcon = (name: string) => {
-  switch (name) {
-    case 'React':
+  const normalized = name.trim().toLowerCase()
+
+  switch (normalized) {
+    case 'react':
+    case 'react.js':
+    case 'reactjs':
       return (
         <svg width="12" height="12" viewBox="-11.5 -10.23174 23 20.46348" className="text-[#61dafb] fill-none stroke-current" strokeWidth="1.2">
           <circle cx="0" cy="0" r="2.05" fill="currentColor"/>
@@ -104,31 +180,57 @@ const getTechIcon = (name: string) => {
           </g>
         </svg>
       )
-    case 'Tailwind CSS':
+    case 'typescript':
+    case 'type script':
+    case 'ts':
+      return (
+        <div className="w-3.5 h-3.5 bg-[#3178c6] text-white font-mono font-bold text-[8px] flex items-center justify-center rounded-[2px] leading-none select-none">TS</div>
+      )
+    case 'javascript':
+    case 'java script':
+    case 'js':
+      return (
+        <div className="w-3.5 h-3.5 bg-[#f7df1e] text-black font-mono font-bold text-[8px] flex items-center justify-center rounded-[2px] leading-none select-none">JS</div>
+      )
+    case 'tailwind css':
+    case 'tailwind':
+    case 'tailwindcss':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#38bdf8] fill-current">
           <path d="M12 6.5c-2.4 0-3.6 1.2-3.6 3.6 0 2.4 1.2 3.6 3.6 3.6 2.4 0 3.6-1.2 3.6-3.6 0-2.4-1.2-3.6-3.6-3.6zm-6 6c-2.4 0-3.6 1.2-3.6 3.6 0 2.4 1.2 3.6 3.6 3.6 2.4 0 3.6-1.2 3.6-3.6 0-2.4-1.2-3.6-3.6-3.6z" />
         </svg>
       )
-    case 'Node.js':
+    case 'node.js':
+    case 'node':
+    case 'nodejs':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#339933] fill-current">
           <path d="M12 2L2.5 7.5v11L12 24l9.5-5.5v-11L12 2zm0 2.5l7.5 4.3v8.4L12 21.5l-7.5-4.3v-8.4L12 4.5z" />
         </svg>
       )
-    case 'MongoDB':
+    case 'express':
+    case 'express.js':
+    case 'expressjs':
+      return (
+        <div className="w-3.5 h-3.5 border border-white/25 text-white font-mono font-bold text-[7px] flex items-center justify-center rounded-[2px] leading-none select-none">EX</div>
+      )
+    case 'mongodb':
+    case 'mongo db':
+    case 'mongo':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24" className="text-[#47A248] fill-current">
           <path d="M12 0C7.5 0 6 3 6 6c0 5 6 12 6 18 0-6 6-13 6-18 0-3-1.5-6-6-6zm0 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
         </svg>
       )
-    case 'Python':
+    case 'python':
+    case 'py':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24" className="fill-current text-[#3776AB]">
           <path d="M12 2c-3.3 0-6 2.7-6 6v3h6v2H6v3c0 3.3 2.7 6 6 6s6-2.7 6-6v-3h-6v-2h6V8c0-3.3-2.7-6-6-6z" />
         </svg>
       )
-    case 'OpenCV':
+    case 'opencv':
+    case 'open cv':
       return (
         <svg width="12" height="12" viewBox="0 0 24 24" className="fill-current text-[#5C3EE8]">
           <circle cx="12" cy="6" r="4" />
@@ -136,21 +238,41 @@ const getTechIcon = (name: string) => {
           <circle cx="18" cy="16" r="4" />
         </svg>
       )
-    case 'Next.js':
+    case 'next.js':
+    case 'next':
+    case 'nextjs':
       return (
         <div className="w-3.5 h-3.5 bg-white text-black font-mono font-bold text-[8.5px] flex items-center justify-center rounded-[2px] leading-none select-none">N</div>
       )
-    case 'Firebase':
+    case 'firebase':
       return (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[#FFCA28]">
-          <path d="M3.89 15.75L10.22 2.1c.32-.69 1.25-.69 1.57 0l1.62 3.47-9.52 10.18z" fill="#FFCA28" />
-          <path d="M20.15 15.75L12 23.11c-.38.35-.93.35-1.32 0L3.89 15.75l9.52-10.18 6.74 10.18z" fill="#F57C00" />
-          <path d="M12.91 5.92l1.62-3.47c.32-.69 1.25-.69 1.57 0l4.05 8.67-7.24-5.2z" fill="#FFA000" />
-        </svg>
+        <img src={FirebaseLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
       )
     default:
       return null
   }
+}
+
+const TechPill = ({ name, compact = false }: { name: string; compact?: boolean }) => {
+  const icon = getTechIcon(name)
+
+  return (
+    <div
+      title={name}
+      className={`border border-white/5 bg-white/[0.02] rounded font-mono text-white/60 flex items-center justify-center ${
+        compact
+          ? 'w-7 h-7 p-0 text-[0px] sm:w-auto sm:h-auto sm:px-2 sm:py-0.5 sm:text-[8px] sm:justify-start sm:gap-1.5'
+          : 'px-3 py-1.5 gap-2 text-[11px] hover:border-accent/40 hover:bg-accent/5 hover:text-white transition-all duration-300'
+      }`}
+    >
+      {icon && (
+        <span className={`flex shrink-0 items-center justify-center ${compact ? 'scale-90 sm:scale-75' : ''}`}>
+          {icon}
+        </span>
+      )}
+      <span className={compact ? 'hidden sm:inline' : ''}>{name}</span>
+    </div>
+  )
 }
 
 // CAROUSEL DATA STRUCTURES
@@ -309,41 +431,121 @@ const ACADEMIC_PROJECTS: ProjectData[] = [
   }
 ]
 
-const FEATURED_SLIDES = [
-  FEATURED_PROJECTS[FEATURED_PROJECTS.length - 1],
-  ...FEATURED_PROJECTS,
-  FEATURED_PROJECTS[0]
-]
-
-const PERSONAL_SLIDES = [
-  PERSONAL_PROJECTS[PERSONAL_PROJECTS.length - 1],
-  ...PERSONAL_PROJECTS,
-  PERSONAL_PROJECTS[0]
-]
-
-const ACADEMIC_SLIDES = [
-  ACADEMIC_PROJECTS[ACADEMIC_PROJECTS.length - 1],
-  ...ACADEMIC_PROJECTS,
-  ACADEMIC_PROJECTS[0]
-]
-
 const getOriginalIdx = (domIdx: number, length: number) => {
   const adjusted = domIdx - 1
   return (adjusted % length + length) % length
 }
 
+const toText = (value: unknown, fallback = '') => (
+  typeof value === 'string' ? value : fallback
+)
+
+const normalizeTypeValue = (value: unknown) => toText(value).trim().toLowerCase()
+
+const normalizeTypeList = (types?: ProjectData['types']) => {
+  if (Array.isArray(types)) return types.map(normalizeTypeValue).filter(Boolean)
+  if (typeof types === 'string') {
+    return types
+      .split(',')
+      .map(normalizeTypeValue)
+      .filter(Boolean)
+  }
+  return []
+}
+
+const projectHasType = (project: ProjectData, type: string) => {
+  const projectTypes = [
+    ...normalizeTypeList(project.types),
+    normalizeTypeValue(project.type),
+    normalizeTypeValue(project.category)
+  ].filter(Boolean)
+
+  return projectTypes.length ? projectTypes.includes(type) : type === 'featured'
+}
+
+const isPublishableProject = (project: ProjectData) => {
+  const title = toText(project.title).trim()
+  const description = toText(project.description).trim()
+  const status = normalizeTypeValue(project.status)
+
+  return (
+    Boolean(title) &&
+    title !== 'New Project' &&
+    description !== 'Describe the project...' &&
+    status !== 'draft' &&
+    project.draft !== true &&
+    project.published !== false
+  )
+}
+
+const normalizeTech = (tech: unknown) => (
+  Array.isArray(tech)
+    ? tech
+      .map((item) => typeof item === 'string' ? { name: item } : item)
+      .filter((item): item is { name: string; color?: string; icon?: string } => (
+        Boolean(item) &&
+        typeof item === 'object' &&
+        'name' in item &&
+        typeof item.name === 'string' &&
+        Boolean(item.name.trim())
+      ))
+    : []
+)
+
+const normalizeProject = (project: ProjectData): ProjectData => ({
+  ...project,
+  title: toText(project.title, 'Untitled Project'),
+  description: toText(project.description),
+  bullets: Array.isArray(project.bullets) ? project.bullets : [],
+  codeUrl: toText(project.codeUrl, '#') || '#',
+  image: toText(project.image) || toText(project.imageUrl),
+  liveUrl: toText(project.liveUrl, '#') || '#',
+  status: normalizeTypeValue(project.status),
+  tech: normalizeTech(project.tech)
+})
+
+const makeSlides = (projects: ProjectData[]) => (
+  projects.length ? [projects[projects.length - 1], ...projects, projects[0]] : []
+)
+
 export default function Projects() {
+  const projectRecords = useCollectionData<ProjectData>(
+    'projects',
+    [...FEATURED_PROJECTS, ...PERSONAL_PROJECTS, ...ACADEMIC_PROJECTS]
+  )
+  const normalizedProjects = useMemo(
+    () => projectRecords.map(normalizeProject).filter(isPublishableProject),
+    [projectRecords]
+  )
+  const featuredProjects = useMemo(
+    () => normalizedProjects.filter((project) => projectHasType(project, 'featured')),
+    [normalizedProjects]
+  )
+  const personalProjects = useMemo(
+    () => normalizedProjects.filter((project) => projectHasType(project, 'personal')),
+    [normalizedProjects]
+  )
+  const academicProjects = useMemo(
+    () => normalizedProjects.filter((project) => projectHasType(project, 'academic')),
+    [normalizedProjects]
+  )
+  const featuredSlides = useMemo(() => makeSlides(featuredProjects), [featuredProjects])
+  const personalSlides = useMemo(() => makeSlides(personalProjects), [personalProjects])
+  const academicSlides = useMemo(() => makeSlides(academicProjects), [academicProjects])
+
   const [featuredIdx, setFeaturedIdx] = useState(0)
   const [personalIdx, setPersonalIdx] = useState(0)
   const [academicIdx, setAcademicIdx] = useState(0)
+  const [expandedCompactProjectKey, setExpandedCompactProjectKey] = useState<string | null>(null)
+  const [compactCarouselPaused, setCompactCarouselPaused] = useState(false)
 
   const featuredScrollRef = useRef<HTMLDivElement>(null)
   const personalScrollRef = useRef<HTMLDivElement>(null)
   const academicScrollRef = useRef<HTMLDivElement>(null)
 
-  const featuredSettleTimer = useRef<any>(null)
-  const personalSettleTimer = useRef<any>(null)
-  const academicSettleTimer = useRef<any>(null)
+  const featuredSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const personalSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const academicSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -396,7 +598,8 @@ export default function Projects() {
     const { scrollLeft, clientWidth } = featuredScrollRef.current
     if (clientWidth === 0) return
     
-    const N = FEATURED_PROJECTS.length
+    const N = featuredProjects.length
+    if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
     const originalIdx = getOriginalIdx(domIdx, N)
     if (originalIdx !== featuredIdx && originalIdx >= 0 && originalIdx < N) {
@@ -426,7 +629,8 @@ export default function Projects() {
     const { scrollLeft, clientWidth } = personalScrollRef.current
     if (clientWidth === 0) return
     
-    const N = PERSONAL_PROJECTS.length
+    const N = personalProjects.length
+    if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
     const originalIdx = getOriginalIdx(domIdx, N)
     if (originalIdx !== personalIdx && originalIdx >= 0 && originalIdx < N) {
@@ -456,7 +660,8 @@ export default function Projects() {
     const { scrollLeft, clientWidth } = academicScrollRef.current
     if (clientWidth === 0) return
     
-    const N = ACADEMIC_PROJECTS.length
+    const N = academicProjects.length
+    if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
     const originalIdx = getOriginalIdx(domIdx, N)
     if (originalIdx !== academicIdx && originalIdx >= 0 && originalIdx < N) {
@@ -512,7 +717,7 @@ export default function Projects() {
   const nextFeatured = () => {
     if (!featuredScrollRef.current) return
     const { clientWidth } = featuredScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || featuredProjects.length === 0) return
     featuredScrollRef.current.scrollTo({
       left: (featuredIdx + 2) * clientWidth,
       behavior: 'smooth'
@@ -521,7 +726,7 @@ export default function Projects() {
   const prevFeatured = () => {
     if (!featuredScrollRef.current) return
     const { clientWidth } = featuredScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || featuredProjects.length === 0) return
     featuredScrollRef.current.scrollTo({
       left: featuredIdx * clientWidth,
       behavior: 'smooth'
@@ -531,7 +736,7 @@ export default function Projects() {
   const nextPersonal = () => {
     if (!personalScrollRef.current) return
     const { clientWidth } = personalScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || personalProjects.length === 0) return
     personalScrollRef.current.scrollTo({
       left: (personalIdx + 2) * clientWidth,
       behavior: 'smooth'
@@ -540,7 +745,7 @@ export default function Projects() {
   const prevPersonal = () => {
     if (!personalScrollRef.current) return
     const { clientWidth } = personalScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || personalProjects.length === 0) return
     personalScrollRef.current.scrollTo({
       left: personalIdx * clientWidth,
       behavior: 'smooth'
@@ -550,7 +755,7 @@ export default function Projects() {
   const nextAcademic = () => {
     if (!academicScrollRef.current) return
     const { clientWidth } = academicScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || academicProjects.length === 0) return
     academicScrollRef.current.scrollTo({
       left: (academicIdx + 2) * clientWidth,
       behavior: 'smooth'
@@ -559,7 +764,7 @@ export default function Projects() {
   const prevAcademic = () => {
     if (!academicScrollRef.current) return
     const { clientWidth } = academicScrollRef.current
-    if (clientWidth === 0) return
+    if (clientWidth === 0 || academicProjects.length === 0) return
     academicScrollRef.current.scrollTo({
       left: academicIdx * clientWidth,
       behavior: 'smooth'
@@ -568,6 +773,8 @@ export default function Projects() {
 
   // Auto-play Featured Projects
   useEffect(() => {
+    if (featuredProjects.length === 0) return
+
     const timer = setInterval(() => {
       if (featuredScrollRef.current) {
         const { clientWidth } = featuredScrollRef.current
@@ -580,10 +787,13 @@ export default function Projects() {
       }
     }, 3000)
     return () => clearInterval(timer)
-  }, [featuredIdx])
+  }, [featuredIdx, featuredProjects.length])
 
   // Auto-play Personal Projects
   useEffect(() => {
+    if (expandedCompactProjectKey || compactCarouselPaused) return
+    if (personalProjects.length === 0) return
+
     const timer = setInterval(() => {
       if (personalScrollRef.current) {
         const { clientWidth } = personalScrollRef.current
@@ -596,10 +806,13 @@ export default function Projects() {
       }
     }, 3000)
     return () => clearInterval(timer)
-  }, [personalIdx])
+  }, [compactCarouselPaused, expandedCompactProjectKey, personalIdx, personalProjects.length])
 
   // Auto-play Academic Projects
   useEffect(() => {
+    if (expandedCompactProjectKey || compactCarouselPaused) return
+    if (academicProjects.length === 0) return
+
     const timer = setInterval(() => {
       if (academicScrollRef.current) {
         const { clientWidth } = academicScrollRef.current
@@ -612,7 +825,7 @@ export default function Projects() {
       }
     }, 3000)
     return () => clearInterval(timer)
-  }, [academicIdx])
+  }, [academicIdx, academicProjects.length, compactCarouselPaused, expandedCompactProjectKey])
 
 
   return (
@@ -676,7 +889,7 @@ export default function Projects() {
               onScroll={handleFeaturedScroll}
               className="w-full overflow-x-auto flex snap-x snap-mandatory no-scrollbar relative z-10 flex-1"
             >
-              {FEATURED_SLIDES.map((project, idx) => {
+                  {featuredSlides.map((project, idx) => {
                 return (
                   <div 
                     key={idx}
@@ -744,13 +957,7 @@ export default function Projects() {
                       <div className="flex flex-wrap items-center justify-start gap-3">
                         <div className="flex flex-wrap gap-2">
                           {project.tech.map((lang) => (
-                            <div
-                              key={lang.name}
-                              className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-3 py-1.5 flex items-center gap-2 text-[11px] font-mono text-white/80 hover:text-white transition-all duration-300"
-                            >
-                              {getTechIcon(lang.name)}
-                              <span>{lang.name}</span>
-                            </div>
+                            <TechPill key={lang.name} name={lang.name} />
                           ))}
                         </div>
 
@@ -764,7 +971,7 @@ export default function Projects() {
 
             {/* Carousel dots indicators */}
             <div className="flex justify-center gap-2 mt-6 relative z-30">
-              {FEATURED_PROJECTS.map((_, idx) => (
+              {featuredProjects.map((_, idx) => (
                 <button 
                   key={idx}
                   onClick={() => scrollFeaturedTo(idx)}
@@ -844,18 +1051,26 @@ export default function Projects() {
                 </div>
               </div>
               <p className="text-white/40 text-xs font-mono leading-relaxed mb-6">
-                Projects built from my ideas, driven by curiosity and passion.
-              </p>
+Projects that represent my passion for learning and building new things              </p>
 
               {/* Slider wrapper */}
-              <div className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between">
+              <div
+                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between"
+                onMouseEnter={() => setCompactCarouselPaused(true)}
+                onMouseLeave={() => setCompactCarouselPaused(false)}
+                onFocus={() => setCompactCarouselPaused(true)}
+                onBlur={() => setCompactCarouselPaused(false)}
+              >
                 
                 <div 
                   ref={personalScrollRef}
                   onScroll={handlePersonalScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
-                  {PERSONAL_SLIDES.map((project, idx) => {
+                  {personalSlides.map((project, idx) => {
+                    const projectKey = `personal-${project.title}`
+                    const isDescriptionExpanded = expandedCompactProjectKey === projectKey
+
                     return (
                       <div
                         key={idx}
@@ -865,25 +1080,26 @@ export default function Projects() {
                           src={project.image}
                           alt={`${project.title} screenshot`}
                           compact
+                          onClick={() => {
+                            if (isDescriptionExpanded) setExpandedCompactProjectKey(null)
+                          }}
                           overlay={(
-                            <div>
-                              <h4 className="text-sm font-bold text-white leading-none">
-                                {project.title}
-                              </h4>
-                              <p className="text-white/70 text-[11px] font-mono mt-1 leading-relaxed">
-                                {project.description}
-                              </p>
-                            </div>
+                            <CompactProjectOverlay
+                              title={project.title}
+                              description={project.description}
+                              expanded={isDescriptionExpanded}
+                              onExpandedChange={(expanded) => {
+                                setExpandedCompactProjectKey(expanded ? projectKey : null)
+                              }}
+                            />
                           )}
                         />
 
                         {/* Tech list & links row */}
                         <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
-                          <div className="flex gap-1.5">
+                          <div className="flex flex-wrap gap-1.5 min-w-0 overflow-hidden">
                             {project.tech.map((t) => (
-                              <div key={t.name} className="px-2 py-0.5 border border-white/5 bg-white/[0.02] rounded text-[8px] font-mono text-white/60">
-                                {t.name}
-                              </div>
+                              <TechPill key={t.name} name={t.name} compact />
                             ))}
                           </div>
 
@@ -892,7 +1108,9 @@ export default function Projects() {
                               href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
+                              onPointerDown={(event) => event.stopPropagation()}
+                              onClick={(event) => event.stopPropagation()}
+                              className="relative z-50 p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
                               title="Live Demo"
                             >
                               <ExternalLinkIcon />
@@ -901,7 +1119,9 @@ export default function Projects() {
                               href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
+                              onPointerDown={(event) => event.stopPropagation()}
+                              onClick={(event) => event.stopPropagation()}
+                              className="relative z-50 p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
                               title="Source Code"
                             >
                               <GitHubIcon />
@@ -915,14 +1135,16 @@ export default function Projects() {
 
                 {/* Internal arrows */}
                 <button 
+                  onPointerDown={(event) => event.stopPropagation()}
                   onClick={prevPersonal}
-                  className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-40"
+                  className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">←</span>
                 </button>
                 <button 
+                  onPointerDown={(event) => event.stopPropagation()}
                   onClick={nextPersonal}
-                  className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-40"
+                  className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">→</span>
                 </button>
@@ -932,7 +1154,7 @@ export default function Projects() {
 
             {/* Slider dots indicators */}
             <div className="flex justify-center gap-1.5 mt-5">
-              {PERSONAL_PROJECTS.map((_, idx) => (
+              {personalProjects.map((_, idx) => (
                 <button 
                   key={idx}
                   onClick={() => scrollPersonalTo(idx)}
@@ -991,14 +1213,23 @@ export default function Projects() {
               </p>
 
               {/* Slider wrapper */}
-              <div className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between">
+              <div
+                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between"
+                onMouseEnter={() => setCompactCarouselPaused(true)}
+                onMouseLeave={() => setCompactCarouselPaused(false)}
+                onFocus={() => setCompactCarouselPaused(true)}
+                onBlur={() => setCompactCarouselPaused(false)}
+              >
                 
                 <div 
                   ref={academicScrollRef}
                   onScroll={handleAcademicScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
                 >
-                  {ACADEMIC_SLIDES.map((project, idx) => {
+                  {academicSlides.map((project, idx) => {
+                    const projectKey = `academic-${project.title}`
+                    const isDescriptionExpanded = expandedCompactProjectKey === projectKey
+
                     return (
                       <div
                         key={idx}
@@ -1008,25 +1239,26 @@ export default function Projects() {
                           src={project.image}
                           alt={`${project.title} screenshot`}
                           compact
+                          onClick={() => {
+                            if (isDescriptionExpanded) setExpandedCompactProjectKey(null)
+                          }}
                           overlay={(
-                            <div>
-                              <h4 className="text-sm font-bold text-white leading-none">
-                                {project.title}
-                              </h4>
-                              <p className="text-white/70 text-[11px] font-mono mt-1 leading-relaxed">
-                                {project.description}
-                              </p>
-                            </div>
+                            <CompactProjectOverlay
+                              title={project.title}
+                              description={project.description}
+                              expanded={isDescriptionExpanded}
+                              onExpandedChange={(expanded) => {
+                                setExpandedCompactProjectKey(expanded ? projectKey : null)
+                              }}
+                            />
                           )}
                         />
 
                         {/* Tech list & links row */}
                         <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
-                          <div className="flex gap-1.5">
+                          <div className="flex flex-wrap gap-1.5 min-w-0 overflow-hidden">
                             {project.tech.map((t) => (
-                              <div key={t.name} className="px-2 py-0.5 border border-white/5 bg-white/[0.02] rounded text-[8px] font-mono text-white/60">
-                                {t.name}
-                              </div>
+                              <TechPill key={t.name} name={t.name} compact />
                             ))}
                           </div>
 
@@ -1035,7 +1267,9 @@ export default function Projects() {
                               href={project.liveUrl === '#' ? 'https://github.com' : project.liveUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
+                              onPointerDown={(event) => event.stopPropagation()}
+                              onClick={(event) => event.stopPropagation()}
+                              className="relative z-50 p-1.5 border border-accent/20 text-accent hover:bg-accent/5 rounded-lg transition-colors cursor-pointer"
                               title="Live Demo"
                             >
                               <ExternalLinkIcon />
@@ -1044,7 +1278,9 @@ export default function Projects() {
                               href={project.codeUrl === '#' ? 'https://github.com' : project.codeUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
+                              onPointerDown={(event) => event.stopPropagation()}
+                              onClick={(event) => event.stopPropagation()}
+                              className="relative z-50 p-1.5 border border-white/10 text-white/60 hover:text-white rounded-lg transition-colors cursor-pointer"
                               title="Source Code"
                             >
                               <GitHubIcon />
@@ -1058,14 +1294,16 @@ export default function Projects() {
 
                 {/* Internal arrows */}
                 <button 
+                  onPointerDown={(event) => event.stopPropagation()}
                   onClick={prevAcademic}
-                  className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-40"
+                  className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">←</span>
                 </button>
                 <button 
+                  onPointerDown={(event) => event.stopPropagation()}
                   onClick={nextAcademic}
-                  className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-40"
+                  className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">→</span>
                 </button>
@@ -1075,7 +1313,7 @@ export default function Projects() {
 
             {/* Slider dots indicators */}
             <div className="flex justify-center gap-1.5 mt-5">
-              {ACADEMIC_PROJECTS.map((_, idx) => (
+              {academicProjects.map((_, idx) => (
                 <button 
                   key={idx}
                   onClick={() => scrollAcademicTo(idx)}

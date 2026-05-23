@@ -1,4 +1,21 @@
 import { useState } from 'react'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+import { useDocData } from '../lib/content'
+
+type ProfileData = {
+  resumeUrl: string
+}
+
+const downloadResume = (resumeUrl: string) => {
+  const link = document.createElement('a')
+  link.href = resumeUrl
+  link.download = 'Albin_Thomas-resume.pdf'
+  link.rel = 'noopener noreferrer'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
 
 // ─── Icon Components ──────────────────────────────────────────────────────────
 const PhoneIcon = () => (
@@ -123,21 +140,37 @@ const ContactCard = ({ icon, label, value, sub, onClick }: ContactCardProps) => 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
+  const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
+  const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.message) return
     setStatus('sending')
-    setTimeout(() => {
+    try {
+      if (!db) {
+        throw new Error('Firebase is not configured.')
+      }
+
+      await addDoc(collection(db, 'messages'), {
+        type: 'direct',
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.message.trim(),
+        createdAt: serverTimestamp()
+      })
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
       setTimeout(() => setStatus('idle'), 4000)
-    }, 1500)
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      setStatus('error')
+    }
   }
 
   return (
@@ -269,7 +302,7 @@ export default function Contact() {
             icon={<DocumentIcon />}
             label="RESUME"
             value="Download My Resume ↗"
-            onClick={() => window.open('/resume.pdf', '_blank')}
+            onClick={() => downloadResume(resumeUrl)}
           />
         </div>
 
@@ -455,6 +488,7 @@ export default function Contact() {
                     {status === 'idle' && <><span>SEND MESSAGE</span><SendIcon /></>}
                     {status === 'sending' && <span>SENDING...</span>}
                     {status === 'success' && <span>MESSAGE SENT ✓</span>}
+                    {status === 'error' && <span>TRY AGAIN</span>}
                   </button>
                 </div>
 

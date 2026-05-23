@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
+import { useDocData } from '../lib/content'
+
+type ProfileData = {
+  resumeUrl: string
+}
 
 // Icons for the sections
 const HomeIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -9,8 +14,6 @@ const SkillsIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="n
 const CodingIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
 const ProjectsIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
 const ContactIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-const DownloadIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-
 const getIconForPage = (id: string) => {
   switch (id) {
     case 'home': return <HomeIcon />
@@ -32,6 +35,8 @@ const getLabel = (id: string) => {
 }
 
 export default function CircularMobileNav() {
+  const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
+  const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
   const [isOpen, setIsOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [scrollOffset, setScrollOffset] = useState(0)
@@ -77,7 +82,7 @@ export default function CircularMobileNav() {
     // Push a state so that back button can be intercepted
     window.history.pushState({ menuOpen: true }, '')
 
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = () => {
       setIsOpen(false)
     }
 
@@ -104,7 +109,7 @@ export default function CircularMobileNav() {
       menuScrollRef.current.scrollTop = targetScroll
       setScrollOffset(targetScroll)
     }
-  }, [isOpen])
+  }, [activeIndex, isOpen])
 
   const handleMenuScroll = (e: React.UIEvent<HTMLDivElement>) => {
     setScrollOffset(e.currentTarget.scrollTop)
@@ -261,7 +266,7 @@ export default function CircularMobileNav() {
 
             </motion.div>
 
-            {/* Download Resume - Fixed at bottom right to align with close button */}
+            {/* View Resume - Fixed at bottom right to align with close button */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -270,12 +275,12 @@ export default function CircularMobileNav() {
               className="absolute bottom-6 right-4 pointer-events-auto"
             >
               <a
-                href="/resume.pdf"
-                download
-                className="flex items-center justify-center gap-2 h-14 px-6 rounded-full bg-[#111113]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[10px] sm:text-[11px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255,75,31,0.15)]"
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center h-14 px-6 rounded-full bg-[#111113]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[12px] sm:text-[13px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255,75,31,0.15)]"
               >
-                <span>Download Resume</span>
-                <DownloadIcon />
+                <span>View Resume</span>
               </a>
             </motion.div>
           </div>

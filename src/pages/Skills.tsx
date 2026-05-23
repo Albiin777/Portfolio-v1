@@ -9,6 +9,7 @@ import VSCodeLogo from '../assets/tech/vscode.svg'
 import CLogo from '../assets/tech/c.svg'
 import FirebaseLogo from '../assets/tech/firebase.svg'
 import AntigravityLogo from '../assets/tech/antigravity.svg'
+import { useCollectionData } from '../lib/content'
 
 // Category type definition
 interface Category {
@@ -16,6 +17,14 @@ interface Category {
   description: string
   icon: React.ReactNode
   skills: { name: string; icon: React.ReactNode }[]
+}
+
+interface SkillDoc {
+  __id?: string
+  title: string
+  description: string
+  skills: { name: string }[]
+  order?: number
 }
 
 // Category Icons (Sleek Orange SVGs)
@@ -185,7 +194,110 @@ const CATEGORIES: Category[] = [
   }
 ]
 
+const FALLBACK_SKILL_DOCS: SkillDoc[] = CATEGORIES.map((category, index) => ({
+  title: category.title,
+  description: category.description,
+  skills: category.skills.map((skill) => ({ name: skill.name })),
+  order: index
+}))
+
+const getCategoryIcon = (title: string) => {
+  const normalized = title.toLowerCase()
+  if (normalized.includes('backend')) return <BackendIcon />
+  if (normalized.includes('tool')) return <ToolsIcon />
+  return <FrontendIcon />
+}
+
+const toText = (value: unknown, fallback = '') => (
+  typeof value === 'string' && value.trim() ? value : fallback
+)
+
+const normalizeSkillList = (
+  skills: unknown,
+  fallbackSkills: Category['skills']
+): Category['skills'] => {
+  if (!Array.isArray(skills)) return fallbackSkills
+
+  const normalized: Category['skills'] = skills.flatMap((skill) => {
+      const name = typeof skill === 'string'
+        ? skill
+        : skill && typeof skill === 'object' && 'name' in skill
+          ? toText(skill.name)
+          : ''
+
+      return name ? [{ name, icon: getSkillIcon(name) }] : []
+    })
+
+  return normalized.length ? normalized : fallbackSkills
+}
+
+const getSkillIcon = (name: string) => {
+  switch (name) {
+    case 'React':
+    case 'React.js':
+      return <ReactIcon />
+    case 'TypeScript':
+      return <TSIcon />
+    case 'JavaScript':
+      return <JSIcon />
+    case 'HTML':
+      return <HTMLIcon />
+    case 'CSS':
+      return <CSSIcon />
+    case 'Tailwind CSS':
+      return <TailwindIcon />
+    case 'Vite':
+      return <ViteIcon />
+    case 'Node.js':
+      return <NodeIcon />
+    case 'Express':
+    case 'Express.js':
+      return <ExpressIcon />
+    case 'Java':
+      return <JavaIcon />
+    case 'Python':
+      return <PythonIcon />
+    case 'C':
+      return <CIcon />
+    case 'Firebase':
+      return <FirebaseIcon />
+    case 'MySQL':
+      return <MySQLIcon />
+    case 'VS Code':
+      return <VSCodeIcon />
+    case 'Git':
+      return <GitIcon />
+    case 'GitHub':
+      return <GitHubIcon />
+    case 'Antigravity':
+      return <AntigravityIcon />
+    default:
+      return null
+  }
+}
+
 export default function Skills() {
+  const skillDocs = useCollectionData<SkillDoc>('skills', [])
+  const categories: Category[] = FALLBACK_SKILL_DOCS.map((fallbackCategory, index) => {
+    const categoryId = index === 0 ? 'frontend' : index === 1 ? 'backend' : 'tools'
+    const override = skillDocs.find((skillDoc) => skillDoc.__id === categoryId)
+    const category = override || fallbackCategory
+
+    const title = toText(category.title, fallbackCategory.title)
+    const description = toText(category.description, fallbackCategory.description)
+    const fallbackSkills = fallbackCategory.skills.map((skill) => ({
+      name: skill.name,
+      icon: getSkillIcon(skill.name)
+    }))
+
+    return {
+      title,
+      description,
+      icon: getCategoryIcon(title),
+      skills: normalizeSkillList(category.skills, fallbackSkills)
+    }
+  })
+
   return (
     <div className="relative w-full py-16 md:py-20 bg-bg-dark text-white font-sans overflow-hidden">
       {/* Subtle background glow */}
@@ -211,7 +323,7 @@ export default function Skills() {
 
         {/* Grid Layout of Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto gap-6 mb-16">
-          {CATEGORIES.map((category, idx) => (
+          {categories.map((category, idx) => (
             <motion.div
               key={category.title}
               initial={{ opacity: 0, y: 20 }}

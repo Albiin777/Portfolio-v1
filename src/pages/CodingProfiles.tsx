@@ -29,6 +29,9 @@ interface LeetCodeData {
   submissionCalendar: Record<string, number>
 }
 
+type ContributionDay = { date: string; contributionCount: number; contributionLevel: string }
+type SubmissionSummary = { difficulty: string; count: number; submissions: number }
+
 const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: '#f7df1e',
   TypeScript: '#3178c6',
@@ -131,8 +134,6 @@ function calculateLeetCodeStreaks(calendar: Record<string, number> | undefined):
   }
 
   let maxStreak = 1
-  let calculatedCurrentStreak = 0
-
   const dates = uniqueDates.map(d => new Date(d))
   
   let tempStreak = 1
@@ -169,15 +170,18 @@ function calculateLeetCodeStreaks(calendar: Record<string, number> | undefined):
         break
       }
     }
-    calculatedCurrentStreak = activeStreak
+    const calculatedCurrentStreak = activeStreak
+    return {
+      activeDays: uniqueDates.length,
+      currentStreak: calculatedCurrentStreak,
+      maxStreak: Math.max(maxStreak, calculatedCurrentStreak)
+    }
   } else {
-    calculatedCurrentStreak = 0
-  }
-
-  return {
-    activeDays: uniqueDates.length,
-    currentStreak: calculatedCurrentStreak,
-    maxStreak: Math.max(maxStreak, calculatedCurrentStreak)
+    return {
+      activeDays: uniqueDates.length,
+      currentStreak: 0,
+      maxStreak
+    }
   }
 }
 
@@ -300,7 +304,7 @@ const PullRequestsIcon = () => (
 )
 
 
-const getMonthsFromCalendar = (calendarData: any) => {
+const getMonthsFromCalendar = (calendarData: ContributionDay[][]) => {
   const monthsList: Array<{ name: string; col: number }> = []
   if (!Array.isArray(calendarData)) return monthsList
   let lastMonth = ''
@@ -480,7 +484,7 @@ export default function CodingProfiles() {
           }
 
           if (Array.isArray(lcProfile.totalSubmissions)) {
-            const allSub = lcProfile.totalSubmissions.find((s: any) => s.difficulty === 'All')
+            const allSub = (lcProfile.totalSubmissions as SubmissionSummary[]).find((s) => s.difficulty === 'All')
             if (allSub && allSub.submissions > 0) {
               nextLeetcode.acceptanceRate = parseFloat(((allSub.count / allSub.submissions) * 100).toFixed(1))
             }
