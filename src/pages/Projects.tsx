@@ -188,6 +188,14 @@ const getTechIcon = (name: string) => {
       return (
         <img src={FirebaseLogo} alt="" aria-hidden="true" className="w-3.5 h-3.5" />
       )
+    case 'vite':
+    case 'vitejs':
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-[#ffdf00]">
+          <path d="M24 4.5L12 22L0 4.5h24z" fill="#bd34fe" />
+          <path d="M15 2L8 12h5l-3 8 9-11h-6l5-7z" fill="#ffdf00" />
+        </svg>
+      )
     default:
       return null
   }
@@ -795,12 +803,14 @@ export default function Projects() {
                     {/* DESKTOP LAYOUT (2 Columns) */}
                     <div className="hidden lg:grid grid-cols-2 gap-8 items-center h-full">
                       {/* Left side details */}
-                      <div className="flex flex-col h-full justify-between py-1">
+                      <div className="flex flex-col justify-center py-1">
                         <div>
                           {TitleHeader}
                           {DescriptionBlock}
                         </div>
-                        {Buttons}
+                        <div className="mt-8">
+                          {Buttons}
+                        </div>
                       </div>
 
                       {/* Right side screenshot + stack */}
@@ -888,7 +898,7 @@ export default function Projects() {
             </div>
             <div className="absolute left-0 top-[20%] w-[2px] h-[40px] bg-accent shadow-[0_0_12px_rgba(224,90,43,0.8)] rounded-r pointer-events-none z-10" />
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.02)] group-hover:border-white/20 transition-colors duration-300">
@@ -904,7 +914,7 @@ Projects that represent my passion for learning and building new things         
 
               {/* Slider wrapper */}
               <div
-                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between"
+                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
                 onMouseEnter={() => setCompactCarouselPaused(true)}
                 onMouseLeave={() => setCompactCarouselPaused(false)}
                 onFocus={() => setCompactCarouselPaused(true)}
@@ -980,7 +990,7 @@ Projects that represent my passion for learning and building new things         
                         </div>
 
                         {/* Tech list row */}
-                        <div className="pt-4 border-t border-white/5 mt-auto">
+                        <div className="pt-4 border-t border-white/5 mt-auto min-h-[76px]">
                           <div className="flex flex-wrap gap-1.5 min-w-0">
                             {project.tech.map((t) => (
                               <TechPill key={t.name} name={t.name} compact />
@@ -1056,7 +1066,7 @@ Projects that represent my passion for learning and building new things         
             </div>
             <div className="absolute right-0 top-0 w-[45px] h-[2px] bg-accent shadow-[0_0_12px_rgba(224,90,43,0.8)] rounded-l pointer-events-none z-10" />
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.02)] group-hover:border-white/20 transition-colors duration-300">
@@ -1073,7 +1083,7 @@ Projects that represent my passion for learning and building new things         
 
               {/* Slider wrapper */}
               <div
-                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex flex-col justify-between"
+                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
                 onMouseEnter={() => setCompactCarouselPaused(true)}
                 onMouseLeave={() => setCompactCarouselPaused(false)}
                 onFocus={() => setCompactCarouselPaused(true)}
@@ -1149,7 +1159,7 @@ Projects that represent my passion for learning and building new things         
                         </div>
 
                         {/* Tech list row */}
-                        <div className="pt-4 border-t border-white/5 mt-auto">
+                        <div className="pt-4 border-t border-white/5 mt-auto min-h-[76px]">
                           <div className="flex flex-wrap gap-1.5 min-w-0">
                             {project.tech.map((t) => (
                               <TechPill key={t.name} name={t.name} compact />
