@@ -918,8 +918,6 @@ Projects that represent my passion for learning and building new things         
                 >
                   {!personalProjects.length && <EmptyProjectState label="personal" />}
                   {personalSlides.map((project, idx) => {
-                    const projectKey = `personal-${project.title}`
-
                     return (
                       <div
                         key={idx}
@@ -1089,8 +1087,6 @@ Projects that represent my passion for learning and building new things         
                 >
                   {!academicProjects.length && <EmptyProjectState label="academic" />}
                   {academicSlides.map((project, idx) => {
-                    const projectKey = `academic-${project.title}`
-
                     return (
                       <div
                         key={idx}
