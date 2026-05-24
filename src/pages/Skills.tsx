@@ -310,7 +310,7 @@ export default function Skills() {
         {/* Section Header */}
         <div className="flex flex-col items-start mb-14 text-left max-w-3xl">
           <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-            03 // SKILLS
+            03
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             <span className="text-white">Tech </span>

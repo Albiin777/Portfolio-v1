@@ -11,6 +11,10 @@
     @apply w-full min-h-full overflow-x-hidden cursor-default bg-bg-dark text-white font-sans scroll-smooth;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
   /* Hide scrollbar universally for all elements */
   * {
     -ms-overflow-style: none;  /* IE and Edge */

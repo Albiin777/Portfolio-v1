@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useSpring } from 'framer-motion'
 
 const EXPERIENCE_DATA = [
   {
@@ -37,45 +38,98 @@ const EXPERIENCE_DATA = [
   }
 ]
 
+const orgItemVariants = {
+  hidden: { opacity: 0, x: 28, filter: 'blur(6px)' },
+  visible: { opacity: 1, x: 0, filter: 'blur(0px)' },
+}
+
+const roleItemVariants = {
+  hidden: { opacity: 0, x: 18, filter: 'blur(4px)' },
+  visible: { opacity: 1, x: 0, filter: 'blur(0px)' },
+}
+
+const nodeVariants = {
+  hidden: { scale: 0.65, opacity: 0 },
+  visible: { scale: 1, opacity: 1 },
+}
+
+const branchPathVariants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: { pathLength: 1, opacity: 1 },
+}
+
+const branchLineVariants = {
+  hidden: { scaleX: 0 },
+  visible: { scaleX: 1 },
+}
+
 export default function ExperienceColumn() {
+  const timelineRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ['start 75%', 'end 68%'],
+  })
+  const lineScale = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: 0.4 })
+
   return (
-    <div className="relative">
+    <div ref={timelineRef} className="relative">
       {/* Main vertical trunk */}
-      <div className="absolute left-[9px] top-0 bottom-6 w-[2px] bg-gradient-to-b from-accent via-accent/40 to-white/10" />
+      <div className="absolute left-[9px] top-0 bottom-6 w-[2px] bg-white/10" />
+      <div className="absolute left-[9px] top-0 bottom-6 w-[2px] overflow-hidden">
+        <motion.div
+          className="h-full w-full origin-top bg-gradient-to-b from-accent via-accent/50 to-white/10 shadow-[0_0_10px_rgba(255,176,0,0.42)]"
+          style={{ scaleY: lineScale }}
+        />
+      </div>
 
       <div className="flex flex-col gap-8">
         {EXPERIENCE_DATA.map((org, orgIndex) => (
           <motion.div
             key={orgIndex}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: orgIndex * 0.15 }}
+            variants={orgItemVariants}
+            initial="hidden"
+            whileInView="visible"
+            animate="hidden"
+            viewport={{ once: false, amount: 0.48, margin: '-8% 0px -8% 0px' }}
+            transition={{ delay: orgIndex * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
             {/* Org commit node on trunk */}
             <div className="absolute left-0 top-[10px] z-10">
-              <div className={`w-5 h-5 rounded-full border-2 bg-[#111111] flex items-center justify-center
+              <motion.div
+                variants={nodeVariants}
+                initial="hidden"
+                whileInView="visible"
+                animate="hidden"
+                viewport={{ once: false, amount: 0.7, margin: '-8% 0px -8% 0px' }}
+                transition={{ delay: orgIndex * 0.08 + 0.04, duration: 0.35, ease: 'easeOut' }}
+                className={`w-5 h-5 rounded-full border-2 bg-[#111111] flex items-center justify-center
                 ${org.active ? 'border-accent shadow-[0_0_12px_rgba(255, 176, 0,0.7)]' : 'border-white/30'}`}>
                 {org.active && <div className="w-2 h-2 rounded-full bg-accent" />}
-              </div>
+              </motion.div>
             </div>
 
             {/* Curved SVG connector from trunk node to org label */}
             <div className="absolute left-4 top-[8px] pointer-events-none">
               <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
-                <path
+                <motion.path
                   d={`M0,10 C8,10 12,14 20,14 L36,14`}
                   stroke={org.active ? 'rgba(255, 176, 0,0.55)' : 'rgba(255,255,255,0.18)'}
                   strokeWidth="1.5"
                   fill="none"
                   strokeLinecap="round"
+                  variants={branchPathVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  animate="hidden"
+                  viewport={{ once: false, amount: 0.8, margin: '-8% 0px -8% 0px' }}
+                  transition={{ delay: orgIndex * 0.08 + 0.1, duration: 0.45, ease: 'easeOut' }}
                 />
               </svg>
             </div>
 
             {/* Org block */}
-            <div className="ml-11">
+            <div className="ml-11 font-montserrat">
               {/* Org header row */}
               <div className="flex items-center gap-2 mb-3">
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-mono border rounded-full
@@ -99,20 +153,37 @@ export default function ExperienceColumn() {
                 {org.roles.map((item, roleIndex) => (
                   <motion.div
                     key={roleIndex}
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: orgIndex * 0.15 + roleIndex * 0.1 }}
+                    variants={roleItemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    animate="hidden"
+                    viewport={{ once: false, amount: 0.58, margin: '-8% 0px -8% 0px' }}
+                    transition={{ delay: roleIndex * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                     className={`flex items-start gap-3 px-5 py-5 group hover:bg-white/5 transition-colors
                       ${roleIndex < org.roles.length - 1 ? 'border-b border-white/5' : ''}`}
                   >
                     {/* Straight branch line + commit dot */}
                     <div className="flex items-center shrink-0 mt-1">
-                      <div className={`w-5 h-[1.5px] ${item.active ? 'bg-accent/50' : 'bg-white/15'}`} />
-                      <div className={`w-2.5 h-2.5 rounded-full border shrink-0 bg-[#111111]
+                      <motion.div
+                        className={`w-5 h-[1.5px] origin-left ${item.active ? 'bg-accent/50' : 'bg-white/15'}`}
+                        variants={branchLineVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        animate="hidden"
+                        viewport={{ once: false, amount: 0.8, margin: '-8% 0px -8% 0px' }}
+                        transition={{ delay: roleIndex * 0.08 + 0.1, duration: 0.3, ease: 'easeOut' }}
+                      />
+                      <motion.div
+                        variants={nodeVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        animate="hidden"
+                        viewport={{ once: false, amount: 0.8, margin: '-8% 0px -8% 0px' }}
+                        transition={{ delay: roleIndex * 0.08 + 0.18, duration: 0.28, ease: 'easeOut' }}
+                        className={`w-2.5 h-2.5 rounded-full border shrink-0 bg-[#111111]
                         ${item.active ? 'border-accent shadow-[0_0_6px_rgba(255, 176, 0,0.6)]' : 'border-white/25'}`}>
                         {item.active && <div className="w-full h-full rounded-full scale-[0.45] bg-accent" />}
-                      </div>
+                      </motion.div>
                     </div>
 
                     {/* Role info */}

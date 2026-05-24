@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
 export default function AnonymousChat() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isVisible] = useState(true)
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
@@ -36,9 +36,12 @@ export default function AnonymousChat() {
   }
 
   return (
-    <div className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none transition-all duration-300 ${
-      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <motion.div
+      className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end pointer-events-none"
+      initial={{ opacity: 0, y: 16, scale: 0.96, filter: 'blur(8px)' }}
+      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+      transition={{ delay: 3.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
       {/* Chat Window */}
       <div 
         className={`mb-4 w-80 bg-[#111111] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
@@ -87,9 +90,7 @@ export default function AnonymousChat() {
 
       {/* Floating Action Button */}
       <button 
-        className={`group relative w-14 h-14 bg-[#111111] border border-[#111111] rounded-full flex items-center justify-center hover:border-accent/40 transition-all duration-300 cursor-pointer ${
-          isVisible ? 'pointer-events-auto' : 'pointer-events-none'
-        }`}
+        className="group relative w-14 h-14 bg-[#111111] border border-[#111111] rounded-full flex items-center justify-center hover:border-accent/40 transition-all duration-300 cursor-pointer pointer-events-auto"
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/50 group-hover:text-accent transition-colors duration-300">
@@ -101,6 +102,6 @@ export default function AnonymousChat() {
           <div className="absolute top-0 right-0 w-3 h-3 bg-accent rounded-full border-2 border-[#111111] shadow-[0_0_10px_var(--accent)]" />
         )}
       </button>
-    </div>
+    </motion.div>
   )
 }

@@ -52,7 +52,7 @@ export default function FloatingNavbar() {
 
   const getLabel = (id: string) => {
     const map: Record<string, string> = {
-      home: 'HOME', journey: 'ABOUT', skills: 'SKILLS',
+      home: 'HOME', journey: 'JOURNEY', skills: 'SKILLS',
       projects: 'PROJECTS', contact: 'CONTACT',
     }
     return map[id] ?? id.toUpperCase()
@@ -93,7 +93,7 @@ export default function FloatingNavbar() {
                 className="flex items-center cursor-pointer shrink-0 -ml-1 sm:-ml-3"
                 aria-label="Home"
               >
-                <span className="font-orbitron font-bold text-[18px] sm:text-[19px] tracking-wider text-accent hover:text-accent/80 transition-colors duration-200 select-none">
+                <span className="font-grotesk font-bold text-[19px] sm:text-[20px] tracking-wide text-accent hover:text-accent/80 transition-colors duration-200 select-none">
                   Albin Thomas
                 </span>
               </a>
@@ -171,21 +171,25 @@ export default function FloatingNavbar() {
                 className="relative shrink-0 group -mr-1 sm:-mr-3"
                 aria-label="View Resume"
               >
-                {/* Subtle outer glow on hover */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                             bg-accent/15 blur-[6px] pointer-events-none"
-                  style={{ clipPath: 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)' }}
+                  className="absolute -inset-1 opacity-50 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,176,0,0.28), rgba(255,85,31,0.22), transparent)',
+                    filter: 'blur(9px)',
+                  }}
                 />
                 <div
-                  className="flex items-center gap-1.5 px-4 py-1.5
-                             border border-accent/30 bg-accent/[0.04]
-                             group-hover:border-accent/65 group-hover:bg-accent/[0.1]
+                  className="relative flex items-center justify-center px-5 py-2
+                             border border-accent/45 bg-[#0a0a0a]/75 overflow-hidden
+                             group-hover:border-accent group-hover:bg-accent
+                             group-hover:text-black group-hover:shadow-[0_0_24px_rgba(255,176,0,0.24),inset_0_1px_0_rgba(255,255,255,0.25)]
                              text-accent font-mono text-[13px] tracking-[0.22em] uppercase
                              transition-all duration-300 cursor-pointer select-none"
-                  style={{ clipPath: 'polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)' }}
                 >
-                  <span>RESUME</span>
+                  <span className="absolute inset-x-3 top-[4px] h-px bg-gradient-to-r from-transparent via-accent/45 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
+                  <span className="absolute inset-x-3 bottom-[4px] h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
+                  <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.26),transparent)] transition-transform duration-700 group-hover:translate-x-full" />
+                  <span className="relative leading-none">Resume</span>
                 </div>
               </a>
 

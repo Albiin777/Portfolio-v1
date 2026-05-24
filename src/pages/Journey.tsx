@@ -111,7 +111,7 @@ export default function Journey() {
           </svg>
         </div>
 
-        <p className="text-white/40 text-sm md:text-base font-mono max-w-2xl text-center">
+        <p className="text-white/40 text-sm md:text-base font-montserrat max-w-2xl text-center">
           From classrooms to real-world problem solving.
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.25 }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-6">
@@ -145,7 +145,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.25 }}
             transition={{ delay: 0.2 }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >

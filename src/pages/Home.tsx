@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NAV_PAGES } from '../context/NavigationContext'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { useDocData } from '../lib/content'
 
 type ProfileData = {
@@ -40,13 +40,19 @@ const TypewriterText = ({ text, delay = 0 }: { text: string, delay?: number }) =
 
 const STAGGER_CONTAINER = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
+  show: { opacity: 1 }
 } as const;
 
-const STAGGER_ITEM = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
-} as const;
+const STAGGER_ITEM: Variants = {
+  hidden: { opacity: 0, y: 10, scale: 0.985, filter: 'blur(8px)' },
+  show: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: { delay, duration: 0.95, ease: [0.22, 1, 0.36, 1] },
+  })
+};
 
 const DOT_ANGLES_DEG = [0, 72, 144, 216, 288]
 
@@ -258,7 +264,7 @@ export default function Home() {
       <div className="relative xl:absolute xl:left-[8%] 2xl:left-[10%] xl:top-1/2 xl:-translate-y-1/2 z-10 flex flex-col w-full max-w-[600px] xl:max-w-[700px] px-6 md:px-12 xl:px-0 order-2 xl:order-none pb-4 xl:pb-0 pt-0">
 
         {/* Header Line (Desktop Only) */}
-        <motion.div variants={STAGGER_ITEM} className="hidden xl:flex items-center gap-4 mb-[56px] w-full">
+        <motion.div variants={STAGGER_ITEM} custom={0.15} className="hidden xl:flex items-center gap-4 mb-[56px] w-full">
           <div className="flex items-center text-accent shrink-0">
             <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor">
               <path d="M0 0L8 6L0 12V0Z" />
@@ -274,17 +280,17 @@ export default function Home() {
         </motion.div>
 
         {/* Name Section */}
-        <motion.div variants={STAGGER_ITEM} className="flex flex-col items-start text-left">
-          <div className="text-[24px] md:text-[32px] xl:text-[40px] font-light text-white/90 leading-tight tracking-wide whitespace-nowrap">
+        <div className="flex flex-col items-start text-left">
+          <motion.div variants={STAGGER_ITEM} custom={0.25} className="font-manrope text-[24px] md:text-[32px] xl:text-[40px] font-light text-white/90 leading-tight tracking-wide whitespace-nowrap">
             <TypewriterText text="Hello, I'm" delay={300} />
-          </div>
-          <h1 className="text-[44px] md:text-[56px] xl:text-[72px] font-bold text-accent leading-[1.05] tracking-[-0.02em] whitespace-nowrap drop-shadow-lg">
+          </motion.div>
+          <motion.h1 variants={STAGGER_ITEM} custom={1.15} className="font-manrope text-[44px] md:text-[56px] xl:text-[72px] font-bold text-accent leading-[1.05] tracking-normal whitespace-nowrap drop-shadow-lg">
             Albin Thomas
-          </h1>
-        </motion.div>
+          </motion.h1>
+        </div>
 
         {/* Badges Section (Mobile Only) */}
-        <motion.div variants={STAGGER_ITEM} className="xl:hidden flex flex-nowrap items-center gap-1.5 w-full mt-4 overflow-x-auto no-scrollbar pb-1">
+        <motion.div variants={STAGGER_ITEM} custom={1.55} className="xl:hidden flex flex-nowrap items-center gap-1.5 w-full mt-4 overflow-x-auto no-scrollbar pb-1">
           <div className="px-2 py-1 bg-accent/10 border border-accent/20 rounded text-accent font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap shadow-[0_0_10px_rgba(255, 176, 0,0.1)]">AI Innovator</div>
           <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Full Stack Dev</div>
           <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Problem Solver</div>
@@ -292,17 +298,17 @@ export default function Home() {
 
         {/* Hero Text */}
         <div className="flex flex-col gap-4 xl:gap-6 mt-4 xl:mt-8">
-          <motion.div variants={STAGGER_ITEM} className="flex flex-col gap-3 xl:gap-5 max-w-[540px]">
-            <p className="text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-mono leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
+          <motion.div variants={STAGGER_ITEM} custom={1.75} className="flex flex-col gap-3 xl:gap-5 max-w-[540px]">
+            <p className="font-montserrat text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-normal leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
               Computer Science Engineering student and developer passionate about building intelligent, user-focused digital solutions for real-world problems.
             </p>
-            <p className="text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-mono leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
+            <p className="font-montserrat text-[13px] sm:text-[14px] md:text-[15px] xl:text-[16px] font-normal leading-[1.6] md:leading-[1.8] text-white/60 text-justify">
               I enjoy turning ideas into meaningful products through code, creativity, and innovation, with interests in AI, web development, and modern user experiences.
             </p>
           </motion.div>
 
           {/* Buttons */}
-          <motion.div variants={STAGGER_ITEM} className="mt-[15px] xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
+          <motion.div variants={STAGGER_ITEM} custom={2.2} className="mt-[15px] xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
             <button
               className="group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(255,176,0,0.12),_inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(255,176,0,0.25),_inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
               onClick={() => downloadResume(resumeUrl)}
@@ -327,9 +333,8 @@ export default function Home() {
 
       {/* Right Column - Mechanical Wheel */}
       <div className="relative xl:absolute xl:right-[2%] 2xl:right-[8%] xl:top-1/2 xl:-translate-y-1/2 z-10 order-1 xl:order-none flex items-center justify-center -mt-[60px] -mb-[21px] sm:my-0 xl:my-0">
-        <motion.div variants={STAGGER_ITEM}>
           {/* Desktop Mechanical Wheel (Hidden on Mobile) */}
-          <div className="hidden xl:flex relative w-[560px] h-[560px] flex items-center justify-center shrink-0">
+          <motion.div variants={STAGGER_ITEM} custom={1.15} className="hidden xl:flex relative w-[560px] h-[560px] flex items-center justify-center shrink-0">
 
             {/* Glowing Orbits Background (Desktop) */}
             <div className="absolute w-[800px] h-[800px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
@@ -525,7 +530,7 @@ export default function Home() {
 
               {/* Center Image Container */}
               <div
-                className="absolute inset-[64px] rounded-full overflow-hidden z-10 border border-white/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.9),_0_0_30px_rgba(0,0,0,0.8)] pointer-events-auto flex items-center justify-center bg-black cursor-pointer"
+                className="absolute inset-[48px] rounded-full overflow-hidden z-10 border border-white/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.9),_0_0_30px_rgba(0,0,0,0.8)] pointer-events-auto flex items-center justify-center bg-black cursor-pointer"
                 onMouseMove={handleImageMouseMove}
                 onMouseEnter={() => setIsHoveringImage(true)}
                 onMouseLeave={() => setIsHoveringImage(false)}
@@ -542,17 +547,17 @@ export default function Home() {
                   className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none transition-opacity duration-300"
                   style={{
                     opacity: isHoveringImage ? 1 : 0,
-                    WebkitMaskImage: `radial-gradient(circle 120px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,
-                    maskImage: `radial-gradient(circle 120px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`
+                    WebkitMaskImage: `radial-gradient(circle 165px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,
+                    maskImage: `radial-gradient(circle 165px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`
                   }}
                 />
               </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Mobile Profile Frame (Visible on phones/tablets) */}
-          <div className="flex xl:hidden relative w-[320px] h-[320px] flex items-center justify-center shrink-0 scale-[0.85] sm:scale-100">
+          <motion.div variants={STAGGER_ITEM} custom={0.1} className="flex xl:hidden relative w-[350px] h-[350px] flex items-center justify-center shrink-0 scale-[0.9] sm:scale-100">
             {/* Crossing Orbits Background (Mobile) */}
             <div className="absolute w-[440px] h-[440px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
               <svg className="w-full h-full" viewBox="0 0 440 440" fill="none">
@@ -591,7 +596,7 @@ export default function Home() {
                 {/* Interactive Orbit Nodes */}
                 {[
                   { id: 'journey', label: 'JOURNEY', pt: getEllipsePoint(220, 220, 200, 100, -22, Math.PI * 0.95), tx: -8, ty: 12, anchor: 'end' },
-                  { id: 'skills', label: 'SKILLS', pt: getEllipsePoint(220, 220, 200, 100, -22, Math.PI * -0.2), tx: 8, ty: -8, anchor: 'start' },
+                  { id: 'skills', label: 'SKILLS', pt: getEllipsePoint(220, 220, 200, 100, -22, Math.PI * -0.12), tx: 8, ty: -8, anchor: 'start' },
                   { id: 'projects', label: 'PROJECTS', pt: getEllipsePoint(220, 220, 200, 100, 22, Math.PI * 1.15), tx: -8, ty: -8, anchor: 'end' },
                   { id: 'contact', label: 'CONTACT', pt: getEllipsePoint(220, 220, 200, 100, 22, Math.PI * 0.05), tx: 8, ty: 12, anchor: 'start' },
                 ].map((node) => (
@@ -637,11 +642,11 @@ export default function Home() {
             </div>
 
             {/* Central Square Image Container (Mobile) */}
-            <div className="relative w-[220px] h-[220px] z-10 flex items-center justify-center">
+            <div className="relative w-[246px] h-[246px] z-10 flex items-center justify-center">
               <div 
-                className="w-[180px] h-[180px] overflow-hidden border border-white/5 bg-black"
+                className="w-[222px] h-[222px] overflow-hidden border border-white/5 bg-black"
                 style={{
-                  clipPath: "polygon(12px 0, 168px 0, 180px 12px, 180px 168px, 168px 180px, 12px 180px, 0 168px, 0 12px)"
+                  clipPath: "polygon(14px 0, 208px 0, 222px 14px, 222px 208px, 208px 222px, 14px 222px, 0 208px, 0 14px)"
                 }}
               >
                 <img 
@@ -692,8 +697,7 @@ export default function Home() {
                 <line x1="205" y1="100" x2="205" y2="120" stroke="#FFB000" strokeWidth="1.5" />
               </svg>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
       </div>
 
       <div className={`fixed inset-0 bg-bg-dark z-[100] pointer-events-none translate-y-full ${transitioning ? 'animate-slideUp' : ''}`} />

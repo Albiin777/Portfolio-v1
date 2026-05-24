@@ -8,7 +8,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Space Grotesk', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'],
+        grotesk: ['Space Grotesk', 'sans-serif'],
+        manrope: ['Manrope', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        sora: ['Sora', 'sans-serif'],
+        greattimes: ['"Times New Roman"', 'Times', 'serif'],
         mono: ['Space Mono', 'monospace'],
         orbitron: ['Orbitron', 'sans-serif'],
       },
@@ -38,7 +44,7 @@ export default {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(-6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
+        },
       },
       animation: {
         twinkle: 'twinkle var(--dur, 3s) ease-in-out infinite alternate',

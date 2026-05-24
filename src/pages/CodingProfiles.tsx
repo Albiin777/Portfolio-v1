@@ -563,7 +563,7 @@ export default function CodingProfiles() {
         {/* Section Header */}
         <div className="flex flex-col items-start mb-14 text-left max-w-3xl">
           <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3">
-            <span>04 // CODING</span>
+            <span>04 </span>
             {/* Sync Badge */}
             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-mono uppercase tracking-wider transition-all duration-500 ${
               syncStatus === 'syncing' ? 'border-amber-500/25 bg-amber-500/5 text-amber-500' :

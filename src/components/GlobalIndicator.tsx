@@ -1,33 +1,30 @@
 import { useState, useEffect } from 'react'
-import { NAV_PAGES } from '../context/NavigationContext'
 import { motion } from 'framer-motion'
 
 export default function GlobalIndicator() {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
+    let frameId = 0
+
     const handleScroll = () => {
-      // Find the currently active section based on scroll position
-      let currentIdx = 0
-      
-      for (let i = 0; i < NAV_PAGES.length; i++) {
-        const section = document.getElementById(NAV_PAGES[i].id)
-        if (section) {
-          const rect = section.getBoundingClientRect()
-          // If the top of the section is above the middle of the screen
-          if (rect.top <= window.innerHeight / 2) {
-            currentIdx = i
-          }
-        }
-      }
-      
-      setActiveIndex(currentIdx)
+      window.cancelAnimationFrame(frameId)
+      frameId = window.requestAnimationFrame(() => {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+        const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0
+        setScrollProgress(Math.min(1, Math.max(0, progress)))
+      })
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
     handleScroll() // Initial check
     
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.cancelAnimationFrame(frameId)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
   }, [])
 
   return (
@@ -50,7 +47,7 @@ export default function GlobalIndicator() {
         <div
           className="absolute w-[2px] h-[100px] shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            top: `calc(${(activeIndex / (NAV_PAGES.length - 1)) * 100}% - 50px)`,
+            top: `calc(${scrollProgress * 100}% - 50px)`,
             background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.9), transparent)'
           }}
         />
