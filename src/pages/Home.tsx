@@ -241,16 +241,6 @@ export default function Home() {
       initial="hidden" animate="show" variants={STAGGER_CONTAINER}
       className="relative min-h-screen w-full bg-bg-dark selection:bg-accent/30 selection:text-white flex flex-col xl:block items-center justify-center pb-8 xl:pb-0"
     >
-      {/* Subtle grid background */}
-      <div
-        className="absolute inset-0 z-1 pointer-events-none opacity-80"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-          backgroundPosition: 'center center'
-        }}
-      />
-
       {/* Ambient Glows */}
       <div className="absolute right-[2%] lg:right-[6%] xl:right-[10%] top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] pointer-events-none z-0" />
 
