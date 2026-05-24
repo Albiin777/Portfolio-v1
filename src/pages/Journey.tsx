@@ -6,7 +6,7 @@ import TechSeparator from '../components/TechSeparator'
 
 export default function Journey() {
   return (
-    <div id="journey" className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
+    <div className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
       {/* Subtle fire particles background behind all layout elements */}
       <FireParticles />
 
@@ -16,16 +16,16 @@ export default function Journey() {
         <div className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4">
           {/* Left Circuit Design */}
           <svg
-            className="hidden md:block flex-1 h-[60px]"
+            className="flex-1 h-[40px] md:h-[60px]"
             viewBox="0 0 300 60"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMaxYMid slice"
           >
             <defs>
               <linearGradient id="leftCircuitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0.05" />
-                <stop offset="50%" stopColor="#ff4b1f" stopOpacity="0.4" />
+                <stop offset="0%" stopColor="#FFB000" stopOpacity="0.05" />
+                <stop offset="50%" stopColor="#FFB000" stopOpacity="0.4" />
                 <stop offset="85%" stopColor="#ff8500" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#ffaa1f" stopOpacity="1" />
               </linearGradient>
@@ -46,13 +46,13 @@ export default function Journey() {
               strokeLinecap="round"
             />
             {/* Glow nodes */}
-            <circle cx="10" cy="25" r="2" fill="#ff4b1f" opacity="0.6" />
+            <circle cx="10" cy="25" r="2" fill="#FFB000" opacity="0.6" />
             <circle cx="220" cy="37" r="3" fill="#ff8500" filter="url(#glowLeft)" className="animate-pulse" style={{ animationDuration: '2s' }} />
             <circle cx="280" cy="25" r="4" fill="#ffaa1f" filter="url(#glowLeft)" />
             
             {/* Left secondary line */}
-            <line x1="70" y1="31" x2="130" y2="31" stroke="#ff4b1f" strokeWidth="0.8" opacity="0.25" />
-            <circle cx="70" cy="31" r="1.5" fill="#ff4b1f" opacity="0.3" />
+            <line x1="70" y1="31" x2="130" y2="31" stroke="#FFB000" strokeWidth="0.8" opacity="0.25" />
+            <circle cx="70" cy="31" r="1.5" fill="#FFB000" opacity="0.3" />
 
             {/* Right secondary line */}
             <line x1="240" y1="31" x2="275" y2="31" stroke="#ff8500" strokeWidth="0.8" opacity="0.35" />
@@ -67,16 +67,16 @@ export default function Journey() {
 
           {/* Right Circuit Design */}
           <svg
-            className="hidden md:block flex-1 h-[60px]"
+            className="flex-1 h-[40px] md:h-[60px]"
             viewBox="0 0 300 60"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMinYMid slice"
           >
             <defs>
               <linearGradient id="rightCircuitGrad" x1="100%" y1="0%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0.05" />
-                <stop offset="50%" stopColor="#ff4b1f" stopOpacity="0.4" />
+                <stop offset="0%" stopColor="#FFB000" stopOpacity="0.05" />
+                <stop offset="50%" stopColor="#FFB000" stopOpacity="0.4" />
                 <stop offset="85%" stopColor="#ff8500" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#ffaa1f" stopOpacity="1" />
               </linearGradient>
@@ -97,13 +97,13 @@ export default function Journey() {
               strokeLinecap="round"
             />
             {/* Glow nodes */}
-            <circle cx="290" cy="25" r="2" fill="#ff4b1f" opacity="0.6" />
+            <circle cx="290" cy="25" r="2" fill="#FFB000" opacity="0.6" />
             <circle cx="80" cy="37" r="3" fill="#ff8500" filter="url(#glowRight)" className="animate-pulse" style={{ animationDuration: '2s' }} />
             <circle cx="20" cy="25" r="4" fill="#ffaa1f" filter="url(#glowRight)" />
 
             {/* Right secondary line */}
-            <line x1="230" y1="31" x2="170" y2="31" stroke="#ff4b1f" strokeWidth="0.8" opacity="0.25" />
-            <circle cx="230" cy="31" r="1.5" fill="#ff4b1f" opacity="0.3" />
+            <line x1="230" y1="31" x2="170" y2="31" stroke="#FFB000" strokeWidth="0.8" opacity="0.25" />
+            <circle cx="230" cy="31" r="1.5" fill="#FFB000" opacity="0.3" />
 
             {/* Left secondary line */}
             <line x1="60" y1="31" x2="25" y2="31" stroke="#ff8500" strokeWidth="0.8" opacity="0.35" />
@@ -125,7 +125,7 @@ export default function Journey() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+            className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-6">
               <div className="flex items-center gap-4">
@@ -147,7 +147,7 @@ export default function Journey() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="relative bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+            className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-6">
               <div className="flex items-center gap-4">

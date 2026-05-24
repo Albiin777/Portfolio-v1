@@ -77,7 +77,7 @@ export default function FloatingNavbar() {
               className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px]"
               style={{
                 width: '40%',
-                background: 'linear-gradient(to right, transparent, #ff4b1f99 30%, #ff8500cc 50%, #ff4b1f99 70%, transparent)',
+                background: 'linear-gradient(to right, transparent, #FFB00099 30%, #ff8500cc 50%, #FFB00099 70%, transparent)',
               }}
             />
           </div>
@@ -133,7 +133,7 @@ export default function FloatingNavbar() {
                                 style={{ left: '18%', bottom: '1px', animationDelay: '0.1s', animationDuration: '1s' }} />
                               <span className="spark absolute w-[2px] h-[2px] rounded-full bg-[#ff8500]"
                                 style={{ left: '52%', bottom: '1px', animationDelay: '0.5s', animationDuration: '1.3s' }} />
-                              <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#ff4b1f]"
+                              <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#FFB000]"
                                 style={{ left: '78%', bottom: '1px', animationDelay: '0s',  animationDuration: '1.1s' }} />
                             </motion.div>
                           </div>

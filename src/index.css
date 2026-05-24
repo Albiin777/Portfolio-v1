@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --accent: #FFB000;
+  }
+  
   html, body, #root {
     @apply w-full min-h-full overflow-x-hidden cursor-default bg-bg-dark text-white font-sans scroll-smooth;
   }

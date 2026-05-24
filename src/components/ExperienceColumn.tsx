@@ -55,8 +55,8 @@ export default function ExperienceColumn() {
           >
             {/* Org commit node on trunk */}
             <div className="absolute left-0 top-[10px] z-10">
-              <div className={`w-5 h-5 rounded-full border-2 bg-[#111113] flex items-center justify-center
-                ${org.active ? 'border-accent shadow-[0_0_12px_rgba(255,75,31,0.7)]' : 'border-white/30'}`}>
+              <div className={`w-5 h-5 rounded-full border-2 bg-[#111111] flex items-center justify-center
+                ${org.active ? 'border-accent shadow-[0_0_12px_rgba(255, 176, 0,0.7)]' : 'border-white/30'}`}>
                 {org.active && <div className="w-2 h-2 rounded-full bg-accent" />}
               </div>
             </div>
@@ -66,7 +66,7 @@ export default function ExperienceColumn() {
               <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
                 <path
                   d={`M0,10 C8,10 12,14 20,14 L36,14`}
-                  stroke={org.active ? 'rgba(255,75,31,0.55)' : 'rgba(255,255,255,0.18)'}
+                  stroke={org.active ? 'rgba(255, 176, 0,0.55)' : 'rgba(255,255,255,0.18)'}
                   strokeWidth="1.5"
                   fill="none"
                   strokeLinecap="round"
@@ -109,8 +109,8 @@ export default function ExperienceColumn() {
                     {/* Straight branch line + commit dot */}
                     <div className="flex items-center shrink-0 mt-1">
                       <div className={`w-5 h-[1.5px] ${item.active ? 'bg-accent/50' : 'bg-white/15'}`} />
-                      <div className={`w-2.5 h-2.5 rounded-full border shrink-0 bg-[#111113]
-                        ${item.active ? 'border-accent shadow-[0_0_6px_rgba(255,75,31,0.6)]' : 'border-white/25'}`}>
+                      <div className={`w-2.5 h-2.5 rounded-full border shrink-0 bg-[#111111]
+                        ${item.active ? 'border-accent shadow-[0_0_6px_rgba(255, 176, 0,0.6)]' : 'border-white/25'}`}>
                         {item.active && <div className="w-full h-full rounded-full scale-[0.45] bg-accent" />}
                       </div>
                     </div>
@@ -142,10 +142,10 @@ export default function ExperienceColumn() {
 
         {/* HEAD node at bottom of trunk */}
         <div className="relative flex items-center h-8">
-          <div className="absolute left-[5px] top-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full bg-[#111113] border-2 border-white/20 z-10" />
+          <div className="absolute left-[5px] top-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full bg-[#111111] border-2 border-white/20 z-10" />
           <div className="absolute left-[15px] top-1/2 -translate-y-1/2 w-8 h-[1.5px] bg-white/15" />
           <div className="ml-11">
-            <span className="px-2.5 py-0.5 text-[10px] font-mono border border-white/10 text-white/25 bg-[#111113] rounded-full">B.Tech</span>
+            <span className="px-2.5 py-0.5 text-[10px] font-mono border border-white/10 text-white/25 bg-[#111111] rounded-full">B.Tech</span>
           </div>
         </div>
       </div>

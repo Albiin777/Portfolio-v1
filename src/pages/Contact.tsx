@@ -97,7 +97,7 @@ const InstagramSocialIcon = () => (
 // ─── Reusable card icon wrapper ───────────────────────────────────────────────
 const CardIcon = ({ children }: { children: React.ReactNode }) => (
   <div className="w-10 h-10 border border-accent/30 bg-accent/[0.06] flex items-center justify-center
-                  shadow-[0_0_12px_rgba(255,75,31,0.07)] group-hover:shadow-[0_0_18px_rgba(255,75,31,0.22)]
+                  shadow-[0_0_12px_rgba(255, 176, 0,0.07)] group-hover:shadow-[0_0_18px_rgba(255, 176, 0,0.22)]
                   group-hover:border-accent/55 group-hover:bg-accent/[0.12]
                   transition-all duration-300 shrink-0"
     style={{ clipPath: 'polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)' }}
@@ -208,31 +208,47 @@ export default function Contact() {
               <div className="w-20 h-[1px] bg-gradient-to-r from-accent/50 to-transparent ml-1" />
               <div className="relative w-2 h-2">
                 <span className="absolute inset-0 rounded-full bg-accent/40 animate-ping" />
-                <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255,75,31,0.5)]" />
+                <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255, 176, 0,0.5)]" />
               </div>
             </div>
           </div>
 
           {/* Right — orbital graphic */}
           <div className="lg:col-span-5 flex items-center justify-center">
-            <svg width="240" height="200" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-accent/50 opacity-75">
+            <svg width="240" height="110" viewBox="0 20 240 110" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[240px] lg:w-[300px] xl:w-[340px] h-auto text-accent/50 opacity-80">
               <defs>
                 <radialGradient id="cGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0.85" />
+                  <stop offset="0%" stopColor="#FFB000" stopOpacity="0.85" />
                   <stop offset="35%" stopColor="#ff8500" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#ff4b1f" stopOpacity="0" />
+                  <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
                 </radialGradient>
+                <filter id="contactOrbitGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2.8" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
-              <circle cx="120" cy="100" r="44" fill="url(#cGlow)" />
-              <circle cx="120" cy="100" r="4" fill="#ffaa1f" />
 
-              {/* Spinning core element */}
-              <circle cx="120" cy="100" r="9" stroke="#ff4b1f" strokeWidth="1" strokeDasharray="1.5 3" className="animate-spin" style={{ transformOrigin: '120px 100px', animationDuration: '8s' }} />
+              <g transform="rotate(-15 120 75)" opacity="0.6" filter="url(#contactOrbitGlow)">
+                <ellipse cx="120" cy="75" rx="92" ry="37" stroke="#FFB000" strokeWidth="0.35" strokeDasharray="1 9">
+                  <animate attributeName="opacity" values="0.16;0.5;0.16" dur="4.8s" repeatCount="indefinite" />
+                </ellipse>
+              </g>
+              
+              {/* Center Dot & Glow (Inclined to match orbits) */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="35" ry="16" fill="url(#cGlow)" />
+                <ellipse cx="120" cy="75" rx="4" ry="2" fill="#ffaa1f" />
+                {/* Static inner ring */}
+                <ellipse cx="120" cy="75" rx="8" ry="4" stroke="#FFB000" strokeWidth="0.4" strokeDasharray="1 2" />
+              </g>
 
-              {/* Orbit 1: rx=62, ry=26 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="62" ry="26" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 4" />
-                <path id="orbitPath1" d="M 58,100 A 62,26 0 1,0 182,100 A 62,26 0 1,0 58,100" fill="none" />
+              {/* Orbit 1: rx=50, ry=20 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="50" ry="20" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 4" />
+                <path id="orbitPath1" d="M 70,75 A 50,20 0 1,0 170,75 A 50,20 0 1,0 70,75" fill="none" />
                 <circle r="1.5" fill="#ff8500" className="animate-pulse">
                   <animateMotion dur="10s" repeatCount="indefinite">
                     <mpath href="#orbitPath1" />
@@ -240,35 +256,24 @@ export default function Contact() {
                 </circle>
               </g>
 
-              {/* Orbit 2: rx=92, ry=39 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="92" ry="39" stroke="currentColor" strokeWidth="0.7" strokeDasharray="3 6" />
-                <path id="orbitPath2" d="M 28,100 A 92,39 0 1,0 212,100 A 92,39 0 1,0 28,100" fill="none" />
-                <circle r="2" fill="#ff4b1f">
+              {/* Orbit 2: rx=80, ry=32 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="80" ry="32" stroke="currentColor" strokeWidth="0.7" strokeDasharray="3 6" />
+                <path id="orbitPath2" d="M 40,75 A 80,32 0 1,0 200,75 A 80,32 0 1,0 40,75" fill="none" />
+                <circle r="2" fill="#FFB000">
                   <animateMotion dur="16s" repeatCount="indefinite">
                     <mpath href="#orbitPath2" />
                   </animateMotion>
                 </circle>
               </g>
 
-              {/* Orbit 3: rx=126, ry=53 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="126" ry="53" stroke="currentColor" strokeWidth="0.55" strokeDasharray="1 5" />
-                <path id="orbitPath3" d="M -6,100 A 126,53 0 1,0 246,100 A 126,53 0 1,0 -6,100" fill="none" />
-                <circle r="1.5" fill="#ffaa1f">
-                  <animateMotion dur="24s" repeatCount="indefinite">
+              {/* Orbit 3 (Subtle inner ring): rx=30, ry=12 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="30" ry="12" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 3" opacity="0.5" />
+                <path id="orbitPath3" d="M 90,75 A 30,12 0 1,0 150,75 A 30,12 0 1,0 90,75" fill="none" />
+                <circle r="1" fill="#FFB000" opacity="0.6">
+                  <animateMotion dur="6s" repeatCount="indefinite">
                     <mpath href="#orbitPath3" />
-                  </animateMotion>
-                </circle>
-              </g>
-
-              {/* Orbit 4: rx=157, ry=66 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="157" ry="66" stroke="currentColor" strokeWidth="0.45" strokeDasharray="4 8" />
-                <path id="orbitPath4" d="M -37,100 A 157,66 0 1,0 277,100 A 157,66 0 1,0 -37,100" fill="none" />
-                <circle r="1" fill="#fff" opacity="0.7">
-                  <animateMotion dur="32s" repeatCount="indefinite">
-                    <mpath href="#orbitPath4" />
                   </animateMotion>
                 </circle>
               </g>
@@ -398,7 +403,7 @@ export default function Contact() {
                       placeholder="Enter your name"
                       required
                       className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
-                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255,75,31,0.1)]
+                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
                                  px-4 py-3 text-[12.5px] text-white placeholder-white/25
                                  outline-none transition-all duration-300 font-sans"
                       style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
@@ -421,7 +426,7 @@ export default function Contact() {
                       placeholder="Enter your email"
                       required
                       className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
-                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255,75,31,0.1)]
+                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
                                  px-4 py-3 text-[12.5px] text-white placeholder-white/25
                                  outline-none transition-all duration-300 font-sans"
                       style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
@@ -445,7 +450,7 @@ export default function Contact() {
                     rows={5}
                     required
                     className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
-                               focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255,75,31,0.1)]
+                               focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
                                px-4 py-3 text-[12.5px] text-white placeholder-white/25
                                outline-none resize-none transition-all duration-300 font-sans"
                     style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
@@ -473,7 +478,7 @@ export default function Contact() {
                   <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                   {/* Outer glow on hover */}
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                                  shadow-[0_0_20px_4px_rgba(255,75,31,0.4)] pointer-events-none" />
+                                  shadow-[0_0_20px_4px_rgba(255, 176, 0,0.4)] pointer-events-none" />
                   <button
                     type="submit"
                     disabled={status === 'sending' || status === 'success'}
@@ -510,17 +515,17 @@ export default function Contact() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  FOOTER — full-width, integrated with the page        */}
       {/* ══════════════════════════════════════════════════════ */}
-      <footer className="relative w-full mt-24 flex flex-col items-center overflow-hidden bg-[#090909] pb-6 z-10 px-4 sm:px-0">
+      <footer className="relative w-full mt-24 flex flex-col items-center overflow-hidden bg-[#050505] pb-6 z-10 px-4 sm:px-0">
 
         {/* Glowing divider — pure light bloom, angled end brackets */}
         <div className="relative w-full flex items-center justify-center h-[13px]">
           {/* Left arm */}
           <div className="absolute left-0 right-1/2 flex items-center justify-end">
             <svg width="22" height="13" viewBox="0 0 22 13" fill="none" className="shrink-0 mr-[-1px] opacity-55">
-              <polyline points="0,13 8,0 22,0" stroke="#ff4b1f" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points="0,13 8,0 22,0" stroke="#FFB000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="h-[1px] flex-1"
-              style={{ background: 'linear-gradient(to right, transparent 0%, #ff4b1f2a 20%, #ff4b1faa 100%)' }} />
+              style={{ background: 'linear-gradient(to right, transparent 0%, #FFB0002a 20%, #FFB000aa 100%)' }} />
           </div>
 
           {/* Center bloom glow — realistic multi-layered volumetric light beam */}
@@ -528,7 +533,7 @@ export default function Contact() {
             {/* 1. Widest soft ambient glow backdrop (non-clipped, centered at bottom) */}
             <div className="absolute bottom-[0px] w-[420px] h-[40px] -translate-y-1/2"
               style={{
-                background: 'radial-gradient(ellipse at bottom, rgba(255, 75, 31, 0.12) 0%, rgba(255, 110, 0, 0.02) 60%, transparent 90%)',
+                background: 'radial-gradient(ellipse at bottom, rgba(255, 176, 0, 0.12) 0%, rgba(255, 110, 0, 0.02) 60%, transparent 90%)',
                 filter: 'blur(15px)',
               }}
             />
@@ -536,7 +541,7 @@ export default function Contact() {
             {/* 2. Outer volumetric light beam (softer, wider cone) */}
             <div className="absolute bottom-[0px] w-[340px] h-[96px]"
               style={{
-                background: 'linear-gradient(to top, rgba(255, 75, 31, 0.16) 0%, rgba(255, 110, 0, 0.04) 50%, transparent 100%)',
+                background: 'linear-gradient(to top, rgba(255, 176, 0, 0.16) 0%, rgba(255, 110, 0, 0.04) 50%, transparent 100%)',
                 clipPath: 'polygon(15% 0, 85% 0, 62% 100%, 38% 100%)',
                 filter: 'blur(15px)',
               }}
@@ -571,9 +576,9 @@ export default function Contact() {
           {/* Right arm */}
           <div className="absolute left-1/2 right-0 flex items-center justify-start">
             <div className="h-[1px] flex-1"
-              style={{ background: 'linear-gradient(to right, #ff4b1faa 0%, #ff4b1f2a 80%, transparent 100%)' }} />
+              style={{ background: 'linear-gradient(to right, #FFB000aa 0%, #FFB0002a 80%, transparent 100%)' }} />
             <svg width="22" height="13" viewBox="0 0 22 13" fill="none" className="shrink-0 ml-[-1px] opacity-55">
-              <polyline points="22,13 14,0 0,0" stroke="#ff4b1f" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points="22,13 14,0 0,0" stroke="#FFB000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </div>

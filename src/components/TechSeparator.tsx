@@ -22,22 +22,22 @@ export default function TechSeparator() {
 
           {/* Central glowing gradient */}
           <linearGradient id="centerLineGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0" />
-            <stop offset="25%" stopColor="#ff4b1f" stopOpacity="0.25" />
+            <stop offset="0%" stopColor="#FFB000" stopOpacity="0" />
+            <stop offset="25%" stopColor="#FFB000" stopOpacity="0.25" />
             <stop offset="45%" stopColor="#ff8500" stopOpacity="0.9" />
             <stop offset="50%" stopColor="#ffaa1f" stopOpacity="1" />
             <stop offset="55%" stopColor="#ff8500" stopOpacity="0.9" />
-            <stop offset="75%" stopColor="#ff4b1f" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#ff4b1f" stopOpacity="0" />
+            <stop offset="75%" stopColor="#FFB000" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
           </linearGradient>
 
           {/* Circuit line gradients */}
           <linearGradient id="circuitLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0.03" />
-            <stop offset="30%" stopColor="#ff4b1f" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#FFB000" stopOpacity="0.03" />
+            <stop offset="30%" stopColor="#FFB000" stopOpacity="0.35" />
             <stop offset="50%" stopColor="#ffaa1f" stopOpacity="0.6" />
-            <stop offset="70%" stopColor="#ff4b1f" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#ff4b1f" stopOpacity="0.03" />
+            <stop offset="70%" stopColor="#FFB000" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#FFB000" stopOpacity="0.03" />
           </linearGradient>
         </defs>
 
@@ -75,28 +75,28 @@ export default function TechSeparator() {
           strokeLinecap="round"
         />
         {/* Glow dots at the endpoints of the bottom line */}
-        <circle cx="60" cy="40" r="2" fill="#ff4b1f" opacity="0.8" />
-        <circle cx="740" cy="40" r="2" fill="#ff4b1f" opacity="0.8" />
+        <circle cx="60" cy="40" r="2" fill="#FFB000" opacity="0.8" />
+        <circle cx="740" cy="40" r="2" fill="#FFB000" opacity="0.8" />
         
         {/* Small decorative dots along bottom step */}
-        <circle cx="325" cy="40" r="1.5" fill="#ff4b1f" opacity="0.6" />
-        <circle cx="475" cy="40" r="1.5" fill="#ff4b1f" opacity="0.6" />
+        <circle cx="325" cy="40" r="1.5" fill="#FFB000" opacity="0.6" />
+        <circle cx="475" cy="40" r="1.5" fill="#FFB000" opacity="0.6" />
         
         {/* 4. Extra decorative details: small dashed components */}
         {/* Left disconnected line */}
-        <line x1="100" y1="30" x2="160" y2="30" stroke="rgba(255, 75, 31, 0.15)" strokeWidth="1" strokeDasharray="3 3" />
+        <line x1="100" y1="30" x2="160" y2="30" stroke="rgba(255, 176, 0, 0.15)" strokeWidth="1" strokeDasharray="3 3" />
         {/* Right disconnected line */}
-        <line x1="640" y1="30" x2="700" y2="30" stroke="rgba(255, 75, 31, 0.15)" strokeWidth="1" strokeDasharray="3 3" />
+        <line x1="640" y1="30" x2="700" y2="30" stroke="rgba(255, 176, 0, 0.15)" strokeWidth="1" strokeDasharray="3 3" />
         
         {/* Faint dot groupings (cyberpunk accent) */}
-        <circle cx="270" cy="30" r="1" fill="rgba(255, 75, 31, 0.3)" />
-        <circle cx="280" cy="30" r="1" fill="rgba(255, 75, 31, 0.3)" />
-        <circle cx="520" cy="30" r="1" fill="rgba(255, 75, 31, 0.3)" />
-        <circle cx="530" cy="30" r="1" fill="rgba(255, 75, 31, 0.3)" />
+        <circle cx="270" cy="30" r="1" fill="rgba(255, 176, 0, 0.3)" />
+        <circle cx="280" cy="30" r="1" fill="rgba(255, 176, 0, 0.3)" />
+        <circle cx="520" cy="30" r="1" fill="rgba(255, 176, 0, 0.3)" />
+        <circle cx="530" cy="30" r="1" fill="rgba(255, 176, 0, 0.3)" />
 
         {/* Accent lines representing micro circuitry */}
-        <path d="M 180 40 L 200 40 L 205 43" stroke="rgba(255, 75, 31, 0.2)" strokeWidth="0.8" fill="none" />
-        <path d="M 620 40 L 600 40 L 595 43" stroke="rgba(255, 75, 31, 0.2)" strokeWidth="0.8" fill="none" />
+        <path d="M 180 40 L 200 40 L 205 43" stroke="rgba(255, 176, 0, 0.2)" strokeWidth="0.8" fill="none" />
+        <path d="M 620 40 L 600 40 L 595 43" stroke="rgba(255, 176, 0, 0.2)" strokeWidth="0.8" fill="none" />
       </svg>
     </div>
   )

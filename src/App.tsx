@@ -16,22 +16,22 @@ import SpaceCursor from './components/SpaceCursor'
 const PortfolioPage = () => (
   <>
     <main className="w-full flex flex-col">
-      <section id="home">
+      <section id="home" className="scroll-mt-6 md:scroll-mt-0">
         <Home />
       </section>
-      <section id="journey">
+      <section id="journey" className="scroll-mt-6 md:scroll-mt-0">
         <Journey />
       </section>
-      <section id="skills">
+      <section id="skills" className="scroll-mt-6 md:scroll-mt-0">
         <Skills />
       </section>
-      <section id="coding">
+      <section id="coding" className="scroll-mt-6 md:scroll-mt-0">
         <CodingProfiles />
       </section>
-      <section id="projects">
+      <section id="projects" className="scroll-mt-6 md:scroll-mt-0">
         <Projects />
       </section>
-      <section id="contact">
+      <section id="contact" className="scroll-mt-6 md:scroll-mt-0">
         <Contact />
       </section>
     </main>

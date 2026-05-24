@@ -337,6 +337,15 @@ export default function CodingProfiles() {
   const rows = [0, 1, 2, 3, 4, 5, 6]
   const cols = Array.from({ length: 24 }, (_, i) => i)
 
+  const [activeSlide, setActiveSlide] = useState(0)
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget
+    const slideWidth = container.clientWidth
+    const index = Math.round(container.scrollLeft / slideWidth)
+    setActiveSlide(index)
+  }
+
   const [githubData, setGithubData] = useState<GitHubData>(DEFAULT_GITHUB_DATA)
   const [leetcodeData, setLeetcodeData] = useState<LeetCodeData>(DEFAULT_LEETCODE_DATA)
   const [syncStatus, setSyncStatus] = useState<'syncing' | 'live' | 'cached' | 'offline'>('syncing')
@@ -585,16 +594,20 @@ export default function CodingProfiles() {
           </p>
         </div>
 
-        {/* 2-Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-8">
+        {/* 2-Column Grid / Mobile Slider */}
+        <div 
+          onScroll={handleScroll}
+          className="flex lg:grid lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto mb-4 overflow-x-auto lg:overflow-x-visible snap-x snap-mandatory no-scrollbar w-full pb-4 scroll-smooth"
+        >
           
           {/* GitHub Profile Card */}
           <motion.div
+            id="coding-github-card"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-emerald-500/15 transition-all duration-300 group overflow-hidden"
+            className="w-[calc(100vw-32px)] sm:w-[540px] lg:w-auto shrink-0 snap-center relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-emerald-500/15 transition-all duration-300 group overflow-hidden"
           >
             {/* Subtle glow border effect */}
             <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/[0.015] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
@@ -740,15 +753,16 @@ export default function CodingProfiles() {
 
           {/* LeetCode Profile Card */}
           <motion.div
+            id="coding-leetcode-card"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative z-20 bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden"
+            className="w-[calc(100vw-32px)] sm:w-[540px] lg:w-auto shrink-0 snap-center relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden"
           >
             {/* Subtle glow border effect */}
             <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.015] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="absolute right-0 top-0 w-[45px] h-[2px] bg-accent/80 shadow-[0_0_12px_rgba(255,75,31,0.8)] rounded-l pointer-events-none" />
+            <div className="absolute right-0 top-0 w-[45px] h-[2px] bg-accent/80 shadow-[0_0_12px_rgba(255, 176, 0,0.8)] rounded-l pointer-events-none" />
 
             <div>
               {/* Profile Header */}
@@ -983,6 +997,28 @@ export default function CodingProfiles() {
 
           </motion.div>
 
+        </div>
+
+        {/* Dot Indicators (Mobile Only) */}
+        <div className="lg:hidden flex items-center justify-center gap-2 mt-2 mb-6">
+          <button 
+            className={`w-8 h-1.5 rounded-full transition-all duration-300 ${activeSlide === 0 ? 'bg-accent shadow-[0_0_8px_var(--accent)]' : 'bg-white/10'}`}
+            onClick={() => {
+              const el = document.getElementById('coding-github-card')
+              el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+              setActiveSlide(0)
+            }}
+            aria-label="View GitHub stats"
+          />
+          <button 
+            className={`w-8 h-1.5 rounded-full transition-all duration-300 ${activeSlide === 1 ? 'bg-accent shadow-[0_0_8px_var(--accent)]' : 'bg-white/10'}`}
+            onClick={() => {
+              const el = document.getElementById('coding-leetcode-card')
+              el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+              setActiveSlide(1)
+            }}
+            aria-label="View LeetCode stats"
+          />
         </div>
 
       </div>

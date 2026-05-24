@@ -28,7 +28,7 @@ export default function EducationColumn() {
   return (
     <div className="relative">
       {/* Vertical Timeline Line */}
-      <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-accent via-accent/30 to-transparent shadow-[0_0_10px_rgba(255,75,31,0.4)]" />
+      <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-accent via-accent/30 to-transparent shadow-[0_0_10px_rgba(255, 176, 0,0.4)]" />
 
       <div className="flex flex-col gap-10">
         {EDUCATION_DATA.map((item, index) => (
@@ -41,8 +41,8 @@ export default function EducationColumn() {
             className="relative pl-10"
           >
             {/* Timeline Node */}
-            <div className={`absolute left-0 top-5 w-4 h-4 rounded-full border-2 bg-[#111113] z-10 transition-shadow
-              ${index === 0 ? 'border-accent shadow-[0_0_12px_rgba(255,75,31,0.8)]' : 'border-white/30'}`}
+            <div className={`absolute left-0 top-5 w-4 h-4 rounded-full border-2 bg-[#111111] z-10 transition-shadow
+              ${index === 0 ? 'border-accent shadow-[0_0_12px_rgba(255, 176, 0,0.8)]' : 'border-white/30'}`}
             >
               {index === 0 && (
                 <div className="absolute inset-[3px] rounded-full bg-accent" />
