@@ -6,7 +6,7 @@ import TechSeparator from '../components/TechSeparator'
 
 export default function Journey() {
   return (
-    <div id="journey" className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
+    <div className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
       {/* Subtle fire particles background behind all layout elements */}
       <FireParticles />
 
@@ -16,11 +16,11 @@ export default function Journey() {
         <div className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4">
           {/* Left Circuit Design */}
           <svg
-            className="hidden md:block flex-1 h-[60px]"
+            className="flex-1 h-[40px] md:h-[60px]"
             viewBox="0 0 300 60"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMaxYMid slice"
           >
             <defs>
               <linearGradient id="leftCircuitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -67,11 +67,11 @@ export default function Journey() {
 
           {/* Right Circuit Design */}
           <svg
-            className="hidden md:block flex-1 h-[60px]"
+            className="flex-1 h-[40px] md:h-[60px]"
             viewBox="0 0 300 60"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMinYMid slice"
           >
             <defs>
               <linearGradient id="rightCircuitGrad" x1="100%" y1="0%" x2="0%" y2="0%">

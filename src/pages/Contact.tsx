@@ -215,24 +215,40 @@ export default function Contact() {
 
           {/* Right — orbital graphic */}
           <div className="lg:col-span-5 flex items-center justify-center">
-            <svg width="240" height="200" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-accent/50 opacity-75">
+            <svg width="240" height="110" viewBox="0 20 240 110" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[240px] lg:w-[300px] xl:w-[340px] h-auto text-accent/50 opacity-80">
               <defs>
                 <radialGradient id="cGlow" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#FFB000" stopOpacity="0.85" />
                   <stop offset="35%" stopColor="#ff8500" stopOpacity="0.3" />
                   <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
                 </radialGradient>
+                <filter id="contactOrbitGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2.8" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
-              <circle cx="120" cy="100" r="44" fill="url(#cGlow)" />
-              <circle cx="120" cy="100" r="4" fill="#ffaa1f" />
 
-              {/* Spinning core element */}
-              <circle cx="120" cy="100" r="9" stroke="#FFB000" strokeWidth="1" strokeDasharray="1.5 3" className="animate-spin" style={{ transformOrigin: '120px 100px', animationDuration: '8s' }} />
+              <g transform="rotate(-15 120 75)" opacity="0.6" filter="url(#contactOrbitGlow)">
+                <ellipse cx="120" cy="75" rx="92" ry="37" stroke="#FFB000" strokeWidth="0.35" strokeDasharray="1 9">
+                  <animate attributeName="opacity" values="0.16;0.5;0.16" dur="4.8s" repeatCount="indefinite" />
+                </ellipse>
+              </g>
+              
+              {/* Center Dot & Glow (Inclined to match orbits) */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="35" ry="16" fill="url(#cGlow)" />
+                <ellipse cx="120" cy="75" rx="4" ry="2" fill="#ffaa1f" />
+                {/* Static inner ring */}
+                <ellipse cx="120" cy="75" rx="8" ry="4" stroke="#FFB000" strokeWidth="0.4" strokeDasharray="1 2" />
+              </g>
 
-              {/* Orbit 1: rx=62, ry=26 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="62" ry="26" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 4" />
-                <path id="orbitPath1" d="M 58,100 A 62,26 0 1,0 182,100 A 62,26 0 1,0 58,100" fill="none" />
+              {/* Orbit 1: rx=50, ry=20 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="50" ry="20" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 4" />
+                <path id="orbitPath1" d="M 70,75 A 50,20 0 1,0 170,75 A 50,20 0 1,0 70,75" fill="none" />
                 <circle r="1.5" fill="#ff8500" className="animate-pulse">
                   <animateMotion dur="10s" repeatCount="indefinite">
                     <mpath href="#orbitPath1" />
@@ -240,10 +256,10 @@ export default function Contact() {
                 </circle>
               </g>
 
-              {/* Orbit 2: rx=92, ry=39 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="92" ry="39" stroke="currentColor" strokeWidth="0.7" strokeDasharray="3 6" />
-                <path id="orbitPath2" d="M 28,100 A 92,39 0 1,0 212,100 A 92,39 0 1,0 28,100" fill="none" />
+              {/* Orbit 2: rx=80, ry=32 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="80" ry="32" stroke="currentColor" strokeWidth="0.7" strokeDasharray="3 6" />
+                <path id="orbitPath2" d="M 40,75 A 80,32 0 1,0 200,75 A 80,32 0 1,0 40,75" fill="none" />
                 <circle r="2" fill="#FFB000">
                   <animateMotion dur="16s" repeatCount="indefinite">
                     <mpath href="#orbitPath2" />
@@ -251,24 +267,13 @@ export default function Contact() {
                 </circle>
               </g>
 
-              {/* Orbit 3: rx=126, ry=53 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="126" ry="53" stroke="currentColor" strokeWidth="0.55" strokeDasharray="1 5" />
-                <path id="orbitPath3" d="M -6,100 A 126,53 0 1,0 246,100 A 126,53 0 1,0 -6,100" fill="none" />
-                <circle r="1.5" fill="#ffaa1f">
-                  <animateMotion dur="24s" repeatCount="indefinite">
+              {/* Orbit 3 (Subtle inner ring): rx=30, ry=12 */}
+              <g transform="rotate(-15 120 75)">
+                <ellipse cx="120" cy="75" rx="30" ry="12" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 3" opacity="0.5" />
+                <path id="orbitPath3" d="M 90,75 A 30,12 0 1,0 150,75 A 30,12 0 1,0 90,75" fill="none" />
+                <circle r="1" fill="#FFB000" opacity="0.6">
+                  <animateMotion dur="6s" repeatCount="indefinite">
                     <mpath href="#orbitPath3" />
-                  </animateMotion>
-                </circle>
-              </g>
-
-              {/* Orbit 4: rx=157, ry=66 */}
-              <g transform="rotate(-15 120 100)">
-                <ellipse cx="120" cy="100" rx="157" ry="66" stroke="currentColor" strokeWidth="0.45" strokeDasharray="4 8" />
-                <path id="orbitPath4" d="M -37,100 A 157,66 0 1,0 277,100 A 157,66 0 1,0 -37,100" fill="none" />
-                <circle r="1" fill="#fff" opacity="0.7">
-                  <animateMotion dur="32s" repeatCount="indefinite">
-                    <mpath href="#orbitPath4" />
                   </animateMotion>
                 </circle>
               </g>

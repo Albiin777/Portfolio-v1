@@ -439,7 +439,7 @@ export default function Home() {
             </div>
 
             {/* Rotating Mechanism */}
-            <div ref={wheelRef} className="absolute inset-[60px] rounded-full z-10 cursor-grab active:cursor-grabbing shadow-mech-ring bg-[#0f0f0f] touch-none"
+            <div className="absolute inset-[44px] rounded-full z-10 cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={onMouseDown}
               onTouchStart={e => { isDragging.current = true; hasDragged.current = false; lastAngle.current = getAngle(e.touches[0].clientX, e.touches[0].clientY) }}
               onClick={() => {
@@ -454,6 +454,7 @@ export default function Home() {
                 }, 600);
               }}
             >
+              <div ref={wheelRef} className="absolute inset-[16px] rounded-full shadow-mech-ring bg-[#0f0f0f]">
               {/* Top Label (Static) */}
               <div className="absolute top-[26px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1">
                 <span className="font-mono text-[9px] text-white/50 tracking-[0.2em]">{activePage.num}</span>
@@ -556,6 +557,7 @@ export default function Home() {
                   }}
                 />
               </div>
+              </div>
             </div>
           </div>
 
@@ -634,7 +636,7 @@ export default function Home() {
                       fontSize="7.5"
                       letterSpacing="0.5"
                       fill="rgba(255, 255, 255, 0.45)"
-                      textAnchor={node.anchor}
+                      textAnchor={node.anchor as 'start' | 'middle' | 'end'}
                       className="group-hover:fill-accent transition-colors font-bold select-none"
                     >
                       {node.label}
