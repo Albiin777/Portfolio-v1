@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { useDocData } from '../lib/content'
+import { smoothScrollToElement } from '../lib/smoothScroll'
 
 type ProfileData = {
   resumeUrl: string
@@ -131,15 +132,11 @@ export default function CircularMobileNav() {
 
     isNavigating.current = true
 
-    // Close menu after a brief delay so they see the dial snap, then scroll the page
-    setTimeout(() => {
-      setIsOpen(false)
-      section.scrollIntoView({ behavior: 'smooth' })
-      window.history.replaceState(null, '', `#${id}`)
-    }, 200)
-
+    setIsOpen(false)
+    const duration = smoothScrollToElement(section)
+    window.history.replaceState(null, '', `#${id}`)
     if (scrollTimeout.current !== null) window.clearTimeout(scrollTimeout.current)
-    scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, 1000)
+    scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, duration + 120)
   }
 
   const continuousIndex = scrollOffset / ITEM_HEIGHT
@@ -159,25 +156,31 @@ export default function CircularMobileNav() {
       </div>
 
       {/* Floating Top Header (Always Visible on Mobile) */}
-      <div className={`fixed top-5 left-5 right-5 z-[100] flex flex-row items-center ${activeSection === 'home' ? 'justify-end' : 'justify-between'} pointer-events-none transition-all duration-300`}>
+      <div className="fixed top-5 left-5 right-5 z-[100] flex flex-row items-center justify-between pointer-events-none transition-all duration-300">
         
-        {/* Left Capsule - Name (Only visible after scrolling past first page) */}
-        {activeSection !== 'home' && (
-          <a 
-            href="#home" 
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-              window.history.replaceState(null, '', '#home');
-              setIsOpen(false);
-            }}
-            className="h-12 px-5 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
-          >
-            <span className="font-orbitron font-bold text-[13px] tracking-widest text-accent whitespace-nowrap">
-              Albin Thomas
-            </span>
-          </a>
-        )}
+        {/* Left Capsule - Brand */}
+        <a
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            const section = document.getElementById('home');
+            if (section) smoothScrollToElement(section);
+            window.history.replaceState(null, '', '#home');
+            setIsOpen(false);
+          }}
+          className="h-11 pl-2 pr-4 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-1 pointer-events-auto active:scale-95 transition-all"
+          aria-label="Home"
+        >
+          <img
+            src="/logo-new.png"
+            alt=""
+            aria-hidden="true"
+            className="h-9 w-9 rounded-full object-contain"
+          />
+          <span className="font-orbitron font-bold text-[13px] tracking-widest text-accent whitespace-nowrap">
+            ALBIN
+          </span>
+        </a>
         
         {/* Right Capsule - Menu Toggle */}
         <button

@@ -190,13 +190,13 @@ export default function Contact() {
           {/* Left — typography */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-              06 // CONTACT
+              06 
             </div>
             <h2 className="text-[2.6rem] md:text-[3.2rem] font-bold tracking-tight mb-3 leading-[1.1]">
               <span className="text-white">Let's&nbsp;</span>
               <span className="text-accent">Connect.</span>
             </h2>
-            <p className="text-white/40 text-[13px] font-mono leading-relaxed mb-5 max-w-md">
+            <p className="text-white/40 text-[14px] font-montserrat leading-relaxed mb-5 max-w-md">
               Open to collaborations, projects, and meaningful conversations.
             </p>
 
@@ -362,13 +362,13 @@ export default function Contact() {
           {/* Left — heading only (plane removed) */}
           <div className="lg:col-span-5 flex flex-col items-start justify-center">
             <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-              07 // GET IN TOUCH
+              07
             </div>
             <h2 className="text-[2.6rem] md:text-[3rem] font-bold tracking-tight leading-[1.1] mb-3">
               <span className="text-white block">Send Me</span>
               <span className="text-accent block">a Message.</span>
             </h2>
-            <p className="text-white/40 text-[13px] font-mono leading-relaxed">
+            <p className="text-white/40 text-[14px] font-montserrat leading-relaxed">
               Interested in working together or just saying hello? Feel free to connect.
             </p>
 
@@ -585,7 +585,22 @@ export default function Contact() {
 
         {/* Copyright text */}
         <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-white/35 text-[10px] sm:text-[11px] font-mono tracking-wide select-none mt-3.5 text-center px-4">
-          <span>&copy; 2026 <span className="text-white/85 font-semibold">Albin Thomas</span>. All Rights Reserved</span>
+          <span className="inline-flex items-center justify-center gap-1.5">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="text-white/45"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M14.8 9.2a4 4 0 1 0 0 5.6" strokeLinecap="round" />
+            </svg>
+            <span>2026 <span className="text-white/85 font-semibold">Albin Thomas</span>. All Rights Reserved</span>
+          </span>
           <span className="hidden sm:inline text-white/10 mx-1.5">|</span>
           <div className="flex items-center gap-1">
             <span>Created with</span>

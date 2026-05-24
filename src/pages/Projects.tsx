@@ -43,7 +43,7 @@ const ExternalLinkIcon = ({ className = "w-3 h-3" }: { className?: string }) => 
 
 const GitHubIcon = ({ className = "w-3 h-3" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
   </svg>
 )
 
@@ -112,11 +112,11 @@ const getTechIcon = (name: string) => {
     case 'reactjs':
       return (
         <svg width="12" height="12" viewBox="-11.5 -10.23174 23 20.46348" className="text-[#61dafb] fill-none stroke-current" strokeWidth="1.2">
-          <circle cx="0" cy="0" r="2.05" fill="currentColor"/>
+          <circle cx="0" cy="0" r="2.05" fill="currentColor" />
           <g stroke="currentColor">
-            <ellipse rx="11" ry="4.2"/>
-            <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
-            <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+            <ellipse rx="11" ry="4.2" />
+            <ellipse rx="11" ry="4.2" transform="rotate(60)" />
+            <ellipse rx="11" ry="4.2" transform="rotate(120)" />
           </g>
         </svg>
       )
@@ -207,14 +207,13 @@ const TechPill = ({ name, compact = false }: { name: string; compact?: boolean }
   return (
     <div
       title={name}
-      className={`border border-white/5 bg-white/[0.02] rounded font-mono text-white/60 flex items-center justify-center transition-all duration-300 ${
-        compact
-          ? 'px-1.5 py-1 gap-1.5 text-[8.5px] sm:px-2 sm:py-0.5 sm:text-[8px] sm:justify-start'
+      className={`border border-white/5 bg-white/[0.02] rounded font-montserrat text-white/60 flex items-center justify-center transition-all duration-300 ${compact
+          ? 'px-2.5 py-1.5 gap-2 text-[9.5px] sm:px-3 sm:py-1.5 sm:text-[10px] sm:justify-start'
           : 'px-3 py-1.5 gap-2 text-[11px] hover:border-accent/40 hover:bg-accent/5 hover:text-white'
-      }`}
+        }`}
     >
       {icon && (
-        <span className={`flex shrink-0 items-center justify-center ${compact ? 'scale-90 sm:scale-75' : ''}`}>
+        <span className="flex shrink-0 items-center justify-center">
           {icon}
         </span>
       )}
@@ -345,7 +344,7 @@ export default function Projects() {
   const [featuredIdx, setFeaturedIdx] = useState(0)
   const [personalIdx, setPersonalIdx] = useState(0)
   const [academicIdx, setAcademicIdx] = useState(0)
-  const [expandedCompactProjectKey, ] = useState<string | null>(null)
+  const [expandedCompactProjectKey,] = useState<string | null>(null)
   const [compactCarouselPaused, setCompactCarouselPaused] = useState(false)
 
   const featuredScrollRef = useRef<HTMLDivElement>(null)
@@ -406,7 +405,7 @@ export default function Projects() {
     if (!featuredScrollRef.current) return
     const { scrollLeft, clientWidth } = featuredScrollRef.current
     if (clientWidth === 0) return
-    
+
     const N = featuredProjects.length
     if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
@@ -422,7 +421,7 @@ export default function Projects() {
     featuredSettleTimer.current = setTimeout(() => {
       if (!featuredScrollRef.current) return
       const curScrollLeft = featuredScrollRef.current.scrollLeft
-      
+
       if (curScrollLeft <= 15) {
         featuredScrollRef.current.scrollTo({ left: N * clientWidth, behavior: 'auto' })
         setFeaturedIdx(N - 1)
@@ -437,7 +436,7 @@ export default function Projects() {
     if (!personalScrollRef.current) return
     const { scrollLeft, clientWidth } = personalScrollRef.current
     if (clientWidth === 0) return
-    
+
     const N = personalProjects.length
     if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
@@ -453,7 +452,7 @@ export default function Projects() {
     personalSettleTimer.current = setTimeout(() => {
       if (!personalScrollRef.current) return
       const curScrollLeft = personalScrollRef.current.scrollLeft
-      
+
       if (curScrollLeft <= 15) {
         personalScrollRef.current.scrollTo({ left: N * clientWidth, behavior: 'auto' })
         setPersonalIdx(N - 1)
@@ -468,7 +467,7 @@ export default function Projects() {
     if (!academicScrollRef.current) return
     const { scrollLeft, clientWidth } = academicScrollRef.current
     if (clientWidth === 0) return
-    
+
     const N = academicProjects.length
     if (N === 0) return
     const domIdx = Math.round(scrollLeft / clientWidth)
@@ -484,7 +483,7 @@ export default function Projects() {
     academicSettleTimer.current = setTimeout(() => {
       if (!academicScrollRef.current) return
       const curScrollLeft = academicScrollRef.current.scrollLeft
-      
+
       if (curScrollLeft <= 15) {
         academicScrollRef.current.scrollTo({ left: N * clientWidth, behavior: 'auto' })
         setAcademicIdx(N - 1)
@@ -644,44 +643,80 @@ export default function Projects() {
       <div className="absolute right-[-10%] bottom-[20%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Section Header */}
-        <div className="flex flex-col items-start mb-14 text-left max-w-3xl">
-          <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3">
-            <span>05 // PROJECTS</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: false, amount: 0.6 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-start mb-14 text-left max-w-3xl"
+        >
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3"
+          >
+            <span>05</span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl md:text-5xl font-bold tracking-tight mb-4 flex items-center gap-3"
+          >
             <span className="text-white">My</span>
             <span className="text-accent">Projects</span>
-          </h2>
-          <p className="text-white/45 text-sm md:text-base font-mono leading-relaxed">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="text-white/45 text-sm md:text-base font-montserrat leading-relaxed"
+          >
             A showcase of selected work that demonstrates my skills, creativity and problem-solving approach.
-          </p>
-          <div className="w-16 h-[2px] bg-accent relative mt-4">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0 }}
+            whileInView={{ opacity: 1, scaleX: 1 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.38, delay: 0.23, ease: [0.22, 1, 0.36, 1] }}
+            className="w-16 h-[2px] bg-accent relative mt-4 origin-left"
+          >
             <div className="absolute top-1/2 left-full -translate-y-1/2 w-1.5 h-1.5 ml-1">
               <span className="absolute inset-0 rounded-full bg-accent opacity-80" />
               <span className="absolute inset-0 rounded-full bg-accent animate-ping" />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Featured Project Carousel Row */}
-        <div className="relative z-20 max-w-6xl mx-auto mb-16 px-4 md:px-8">
-          
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.982, filter: 'blur(10px)' }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+          viewport={{ once: false, amount: 0.18 }}
+          transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-20 max-w-6xl mx-auto mb-16 px-4 md:px-8"
+        >
+
           {/* Card Container */}
-          <div 
+          <div
             className="w-full bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group min-h-[500px] md:min-h-[440px] relative flex flex-col justify-between overflow-hidden"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0 overflow-hidden">
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   background: 'radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.14), transparent 80%)'
                 }}
               />
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
@@ -692,8 +727,8 @@ export default function Projects() {
                 }}
               />
             </div>
-            
-            <div 
+
+            <div
               ref={featuredScrollRef}
               onScroll={handleFeaturedScroll}
               className="w-full overflow-x-auto flex snap-x snap-mandatory no-scrollbar relative z-10 flex-1"
@@ -703,7 +738,7 @@ export default function Projects() {
                 const TitleHeader = (
                   <div>
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-accent/20 bg-accent/5 text-accent text-[10px] font-mono uppercase tracking-wider mb-3 lg:mb-4">
+                    <div className="inline-flex items-center gap-1.5 text-accent text-[10px] font-mono uppercase tracking-wider mb-3 lg:mb-4">
                       <StarIcon />
                       <span>Featured Project</span>
                     </div>
@@ -716,7 +751,7 @@ export default function Projects() {
 
                 const DescriptionBlock = (
                   <div>
-                    <p className="text-white/50 text-sm md:text-base font-mono mb-3 lg:mb-5 leading-relaxed">
+                    <p className="text-white/50 text-sm md:text-base font-montserrat mb-3 lg:mb-5 leading-relaxed">
                       {project.description}
                     </p>
 
@@ -724,7 +759,7 @@ export default function Projects() {
                     {project.bullets && (
                       <ul className="flex flex-col gap-1.5 lg:gap-2 mb-4 lg:mb-0">
                         {project.bullets?.map((bullet, i) => (
-                          <li key={i} className="flex items-start gap-2.5 text-xs text-white/70 font-mono">
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-white/70 font-montserrat">
                             <CheckIcon />
                             <span>{bullet}</span>
                           </li>
@@ -785,7 +820,7 @@ export default function Projects() {
                 );
 
                 return (
-                  <div 
+                  <div
                     key={idx}
                     className="w-full shrink-0 snap-center relative z-10 h-full"
                   >
@@ -827,12 +862,11 @@ export default function Projects() {
             {/* Carousel dots indicators */}
             <div className="flex justify-center gap-2 mt-6 relative z-30">
               {featuredProjects.map((_, idx) => (
-                <button 
+                <button
                   key={idx}
                   onClick={() => scrollFeaturedTo(idx)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    featuredIdx === idx ? 'bg-accent w-4' : 'bg-white/20 hover:bg-white/40'
-                  }`}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${featuredIdx === idx ? 'bg-accent w-4' : 'bg-white/20 hover:bg-white/40'
+                    }`}
                 />
               ))}
             </div>
@@ -863,29 +897,29 @@ export default function Projects() {
             </button>
           )}
 
-        </div>
+        </motion.div>
 
         {/* 2-Column Grid: Personal Projects & Academic Projects */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          
+
           {/* Left Column: Personal Projects */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, x: -36, y: 24, filter: 'blur(10px)' }}
+            whileInView={{ opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.18 }}
+            transition={{ duration: 0.68, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0 overflow-hidden">
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.12), transparent 80%)'
                 }}
               />
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
@@ -900,17 +934,15 @@ export default function Projects() {
 
             <div className="relative z-10 flex flex-col h-full">
               {/* Header */}
-              <div className="flex items-center gap-4 mb-3">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.02)] group-hover:border-white/20 transition-colors duration-300">
                   <UserIcon />
                 </div>
                 <div className="flex flex-col">
                   <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors duration-300">Personal Projects</h3>
-                  <span className="text-[10px] text-white/45 font-mono">My side projects & experiments</span>
+                  <span className="text-[12px] text-white/45 font-montserrat">My side projects & experiments</span>
                 </div>
               </div>
-              <p className="text-white/40 text-xs font-mono leading-relaxed mb-6">
-Projects that represent my passion for learning and building new things              </p>
 
               {/* Slider wrapper */}
               <div
@@ -920,8 +952,8 @@ Projects that represent my passion for learning and building new things         
                 onFocus={() => setCompactCarouselPaused(true)}
                 onBlur={() => setCompactCarouselPaused(false)}
               >
-                
-                <div 
+
+                <div
                   ref={personalScrollRef}
                   onScroll={handlePersonalScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
@@ -939,7 +971,7 @@ Projects that represent my passion for learning and building new things         
                           compact
                           overlay={
                             <div className="flex gap-2 w-full">
-                              <a 
+                              <a
                                 href={getProjectUrl(project.liveUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -957,7 +989,7 @@ Projects that represent my passion for learning and building new things         
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
                                 <ExternalLinkIcon className="w-3.5 h-3.5" />
                               </a>
-                              <a 
+                              <a
                                 href={getProjectUrl(project.codeUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -981,10 +1013,10 @@ Projects that represent my passion for learning and building new things         
 
                         {/* Title & Description right below the image */}
                         <div className="flex flex-col gap-1.5 mt-4 mb-2">
-                          <h4 className="text-sm font-bold text-white truncate">
+                          <h4 className="text-base font-bold text-white truncate">
                             {project.title}
                           </h4>
-                          <p className="text-white/70 text-[11px] font-mono leading-relaxed line-clamp-3">
+                          <p className="text-white/70 text-[13px] font-montserrat leading-relaxed line-clamp-3">
                             {project.description}
                           </p>
                         </div>
@@ -1003,14 +1035,14 @@ Projects that represent my passion for learning and building new things         
                 </div>
 
                 {/* Internal arrows */}
-                <button 
+                <button
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={prevPersonal}
                   className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">←</span>
                 </button>
-                <button 
+                <button
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={nextPersonal}
                   className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
@@ -1024,12 +1056,11 @@ Projects that represent my passion for learning and building new things         
             {/* Slider dots indicators */}
             <div className="flex justify-center gap-1.5 mt-5">
               {personalProjects.map((_, idx) => (
-                <button 
+                <button
                   key={idx}
                   onClick={() => scrollPersonalTo(idx)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                    personalIdx === idx ? 'bg-accent w-3.5' : 'bg-white/20 hover:bg-white/40'
-                  }`}
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${personalIdx === idx ? 'bg-accent w-3.5' : 'bg-white/20 hover:bg-white/40'
+                    }`}
                 />
               ))}
             </div>
@@ -1038,22 +1069,22 @@ Projects that represent my passion for learning and building new things         
 
           {/* Right Column: Academic Projects */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            initial={{ opacity: 0, x: 36, y: 24, filter: 'blur(10px)' }}
+            whileInView={{ opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.18 }}
+            transition={{ duration: 0.68, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0 overflow-hidden">
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.12), transparent 80%)'
                 }}
               />
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
@@ -1068,18 +1099,15 @@ Projects that represent my passion for learning and building new things         
 
             <div className="relative z-10 flex flex-col h-full">
               {/* Header */}
-              <div className="flex items-center gap-4 mb-3">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.02)] group-hover:border-white/20 transition-colors duration-300">
                   <GraduationCapIcon />
                 </div>
                 <div className="flex flex-col">
                   <h3 className="text-lg font-bold text-white group-hover:text-accent transition-colors duration-300">Academic Projects</h3>
-                  <span className="text-[10px] text-white/45 font-mono">Coursework & university projects</span>
+                  <span className="text-[12px] text-white/45 font-montserrat">Coursework & university projects</span>
                 </div>
               </div>
-              <p className="text-white/40 text-xs font-mono leading-relaxed mb-6">
-                Academic and coursework projects built to learn and solve real-world problems.
-              </p>
 
               {/* Slider wrapper */}
               <div
@@ -1089,8 +1117,8 @@ Projects that represent my passion for learning and building new things         
                 onFocus={() => setCompactCarouselPaused(true)}
                 onBlur={() => setCompactCarouselPaused(false)}
               >
-                
-                <div 
+
+                <div
                   ref={academicScrollRef}
                   onScroll={handleAcademicScroll}
                   className="w-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative z-10 h-full flex-1"
@@ -1108,7 +1136,7 @@ Projects that represent my passion for learning and building new things         
                           compact
                           overlay={
                             <div className="flex gap-2 w-full">
-                              <a 
+                              <a
                                 href={getProjectUrl(project.liveUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -1126,7 +1154,7 @@ Projects that represent my passion for learning and building new things         
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
                                 <ExternalLinkIcon className="w-3.5 h-3.5" />
                               </a>
-                              <a 
+                              <a
                                 href={getProjectUrl(project.codeUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -1150,10 +1178,10 @@ Projects that represent my passion for learning and building new things         
 
                         {/* Title & Description right below the image */}
                         <div className="flex flex-col gap-1.5 mt-4 mb-2">
-                          <h4 className="text-sm font-bold text-white truncate">
+                          <h4 className="text-base font-bold text-white truncate">
                             {project.title}
                           </h4>
-                          <p className="text-white/70 text-[11px] font-mono leading-relaxed line-clamp-3">
+                          <p className="text-white/70 text-[13px] font-montserrat leading-relaxed line-clamp-3">
                             {project.description}
                           </p>
                         </div>
@@ -1172,14 +1200,14 @@ Projects that represent my passion for learning and building new things         
                 </div>
 
                 {/* Internal arrows */}
-                <button 
+                <button
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={prevAcademic}
                   className="absolute left-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
                 >
                   <span className="text-xs">←</span>
                 </button>
-                <button 
+                <button
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={nextAcademic}
                   className="absolute right-2 top-[35%] w-7 h-7 rounded-full border border-white/10 bg-black/80 hover:bg-accent/10 hover:border-accent/40 flex items-center justify-center transition-all duration-300 text-white/60 hover:text-accent cursor-pointer z-50"
@@ -1193,12 +1221,11 @@ Projects that represent my passion for learning and building new things         
             {/* Slider dots indicators */}
             <div className="flex justify-center gap-1.5 mt-5">
               {academicProjects.map((_, idx) => (
-                <button 
+                <button
                   key={idx}
                   onClick={() => scrollAcademicTo(idx)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                    academicIdx === idx ? 'bg-accent w-3.5' : 'bg-white/20 hover:bg-white/40'
-                  }`}
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${academicIdx === idx ? 'bg-accent w-3.5' : 'bg-white/20 hover:bg-white/40'
+                    }`}
                 />
               ))}
             </div>

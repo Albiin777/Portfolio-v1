@@ -561,8 +561,20 @@ export default function CodingProfiles() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col items-start mb-14 text-left max-w-3xl">
-          <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: false, amount: 0.6 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-start mb-14 text-left max-w-3xl"
+        >
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3"
+          >
             <span>04 </span>
             {/* Sync Badge */}
             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-mono uppercase tracking-wider transition-all duration-500 ${
@@ -584,15 +596,27 @@ export default function CodingProfiles() {
                 'Offline'
               }</span>
             </span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+          >
             <span className="text-white">Coding </span>
             <span className="text-accent">Profiles</span>
-          </h2>
-          <p className="text-white/45 text-sm md:text-base font-mono leading-relaxed">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.6 }}
+            transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="text-white/45 text-sm md:text-base font-montserrat leading-relaxed"
+          >
             A snapshot of my coding journey on GitHub and LeetCode.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* 2-Column Grid / Mobile Slider */}
         <div 
@@ -603,10 +627,10 @@ export default function CodingProfiles() {
           {/* GitHub Profile Card */}
           <motion.div
             id="coding-github-card"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, x: -34, y: 20, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.28 }}
+            transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
             className="w-[calc(100vw-32px)] sm:w-[540px] lg:w-auto shrink-0 snap-center relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-emerald-500/15 transition-all duration-300 group overflow-hidden"
           >
             {/* Subtle glow border effect */}
@@ -754,10 +778,10 @@ export default function CodingProfiles() {
           {/* LeetCode Profile Card */}
           <motion.div
             id="coding-leetcode-card"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            initial={{ opacity: 0, x: 34, y: 20, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.28 }}
+            transition={{ duration: 0.48, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="w-[calc(100vw-32px)] sm:w-[540px] lg:w-auto shrink-0 snap-center relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden"
           >
             {/* Subtle glow border effect */}

@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { motion, useAnimation, useScroll, useSpring } from 'framer-motion'
 
 const EDUCATION_DATA = [
   {
@@ -35,6 +35,60 @@ const educationNodeVariants = {
   visible: { scale: 1, opacity: 1 },
 }
 
+type EducationItem = (typeof EDUCATION_DATA)[number]
+
+function EducationTimelineItem({ item, index }: { item: EducationItem; index: number }) {
+  const controls = useAnimation()
+
+  return (
+    <motion.div
+      variants={educationItemVariants}
+      initial="hidden"
+      animate={controls}
+      onViewportEnter={() => controls.start('visible')}
+      onViewportLeave={(entry) => {
+        if (entry && entry.boundingClientRect.top > 0) {
+          controls.start('hidden')
+        }
+      }}
+      viewport={{ once: false, amount: 0.45, margin: '0px 0px -30% 0px' }}
+      transition={{ delay: index * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className="relative pl-10"
+    >
+      {/* Timeline Node */}
+      <motion.div
+        variants={educationNodeVariants}
+        initial="hidden"
+        animate={controls}
+        transition={{ delay: index * 0.08 + 0.05, duration: 0.35, ease: 'easeOut' }}
+        className={`absolute left-0 top-5 w-4 h-4 rounded-full border-2 bg-[#111111] z-10 transition-shadow
+        ${index === 0 ? 'border-accent shadow-[0_0_12px_rgba(255, 176, 0,0.8)]' : 'border-white/30'}`}
+      >
+        {index === 0 && (
+          <div className="absolute inset-[3px] rounded-full bg-accent" />
+        )}
+      </motion.div>
+
+      {/* Card */}
+      <div className="bg-black/40 border border-white/5 rounded-xl p-5 hover:border-white/10 transition-all hover:bg-black/60 group font-montserrat">
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <div className={`font-mono text-xs tracking-wider ${index === 0 ? 'text-accent' : 'text-white/35'}`}>{item.year}</div>
+          {item.badge && (
+            <span className="px-2 py-0.5 text-[10px] font-mono text-accent border border-accent/30 rounded bg-accent/5 shrink-0">
+              {item.badge}
+            </span>
+          )}
+        </div>
+        <h3 className="text-base font-bold text-white/90 mb-1.5 group-hover:text-white transition-colors leading-snug">
+          {item.title}
+        </h3>
+        <div className="text-white/50 text-sm mb-2">{item.institution}</div>
+        <div className="font-mono text-xs text-white/35">{item.score}</div>
+      </div>
+    </motion.div>
+  )
+}
+
 export default function EducationColumn() {
   const timelineRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -56,49 +110,7 @@ export default function EducationColumn() {
 
       <div className="flex flex-col gap-10">
         {EDUCATION_DATA.map((item, index) => (
-          <motion.div
-            key={index}
-            variants={educationItemVariants}
-            initial="hidden"
-            whileInView="visible"
-            animate="hidden"
-            viewport={{ once: false, amount: 0.58, margin: '-8% 0px -8% 0px' }}
-            transition={{ delay: index * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="relative pl-10"
-          >
-            {/* Timeline Node */}
-            <motion.div
-              variants={educationNodeVariants}
-              initial="hidden"
-              whileInView="visible"
-              animate="hidden"
-              viewport={{ once: false, amount: 0.7, margin: '-8% 0px -8% 0px' }}
-              transition={{ delay: index * 0.08 + 0.05, duration: 0.35, ease: 'easeOut' }}
-              className={`absolute left-0 top-5 w-4 h-4 rounded-full border-2 bg-[#111111] z-10 transition-shadow
-              ${index === 0 ? 'border-accent shadow-[0_0_12px_rgba(255, 176, 0,0.8)]' : 'border-white/30'}`}
-            >
-              {index === 0 && (
-                <div className="absolute inset-[3px] rounded-full bg-accent" />
-              )}
-            </motion.div>
-
-            {/* Card */}
-            <div className="bg-black/40 border border-white/5 rounded-xl p-5 hover:border-white/10 transition-all hover:bg-black/60 group font-montserrat">
-              <div className="flex items-start justify-between mb-3 gap-2">
-                <div className={`font-mono text-xs tracking-wider ${index === 0 ? 'text-accent' : 'text-white/35'}`}>{item.year}</div>
-                {item.badge && (
-                  <span className="px-2 py-0.5 text-[10px] font-mono text-accent border border-accent/30 rounded bg-accent/5 shrink-0">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-base font-bold text-white/90 mb-1.5 group-hover:text-white transition-colors leading-snug">
-                {item.title}
-              </h3>
-              <div className="text-white/50 text-sm mb-2">{item.institution}</div>
-              <div className="font-mono text-xs text-white/35">{item.score}</div>
-            </div>
-          </motion.div>
+          <EducationTimelineItem key={index} item={item} index={index} />
         ))}
       </div>
     </div>

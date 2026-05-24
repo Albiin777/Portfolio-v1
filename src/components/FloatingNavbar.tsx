@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { useDocData } from '../lib/content'
+import { smoothScrollToElement } from '../lib/smoothScroll'
 
 type ProfileData = {
   resumeUrl: string
@@ -45,9 +46,9 @@ export default function FloatingNavbar() {
     isProgrammaticScroll.current = true
     setActiveSection(id)
     if (scrollTimeout.current !== null) window.clearTimeout(scrollTimeout.current)
-    section.scrollIntoView({ behavior: 'smooth' })
+    const duration = smoothScrollToElement(section)
     window.history.pushState(null, '', `#${id}`)
-    scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, 800)
+    scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, duration + 120)
   }
 
   const getLabel = (id: string) => {
@@ -90,11 +91,17 @@ export default function FloatingNavbar() {
               <a
                 href="#home"
                 onClick={e => handleNavClick(e, 'home')}
-                className="flex items-center cursor-pointer shrink-0 -ml-1 sm:-ml-3"
+                className="flex items-center gap-1.5 cursor-pointer shrink-0 -ml-1 sm:-ml-3"
                 aria-label="Home"
               >
+                <img
+                  src="/logo-new.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-10 w-10 rounded-full object-contain"
+                />
                 <span className="font-grotesk font-bold text-[19px] sm:text-[20px] tracking-wide text-accent hover:text-accent/80 transition-colors duration-200 select-none">
-                  Albin Thomas
+                  ALBIN THOMAS
                 </span>
               </a>
 
@@ -102,7 +109,6 @@ export default function FloatingNavbar() {
               <nav className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-7 h-full" aria-label="Main navigation">
                 {NAV_PAGES.map(page => {
                   const isActive = activeSection === page.id
-                  const isSkills = page.id === 'skills'
 
                   return (
                     <div key={page.id} className="relative h-full flex items-center group">
@@ -140,24 +146,6 @@ export default function FloatingNavbar() {
                         )}
                       </a>
 
-                      {/* Dropdown for Coding section under Skills */}
-                      {isSkills && (
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
-                          <div className="bg-[#060608]/90 backdrop-blur-md border border-white/10 rounded-lg p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex flex-col min-w-[140px] items-center">
-                            <a
-                              href="#coding"
-                              onClick={(e) => {
-                                handleNavClick(e, 'coding')
-                                // Keep Skills active visually when navigating to Coding
-                                setActiveSection('skills')
-                              }}
-                              className="w-full text-center text-[12px] font-mono tracking-[0.2em] font-bold text-white/50 hover:text-accent hover:bg-white/5 px-4 py-3 rounded-md transition-colors whitespace-nowrap"
-                            >
-                              CODING STATS
-                            </a>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )
                 })}

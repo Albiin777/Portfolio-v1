@@ -1,5 +1,5 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useRef, useState } from 'react'
+import { motion, useMotionValueEvent, useScroll } from 'framer-motion'
 import PythonLogo from '../assets/tech/python.svg'
 import Html5Logo from '../assets/tech/html5.svg'
 import Css3Logo from '../assets/tech/css3.svg'
@@ -201,6 +201,57 @@ const FALLBACK_SKILL_DOCS: SkillDoc[] = CATEGORIES.map((category, index) => ({
   order: index
 }))
 
+const SkillStageCard = ({
+  category,
+  index,
+  isVisible
+}: {
+  category: Category
+  index: number
+  isVisible: boolean
+}) => (
+  <motion.div
+    key={category.title}
+    initial={false}
+    animate={
+      isVisible
+        ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
+        : { opacity: 0, y: 26, scale: 0.98, filter: 'blur(8px)' }
+    }
+    transition={{ duration: 0.42, delay: isVisible ? index * 0.035 : 0, ease: [0.22, 1, 0.36, 1] }}
+    className={`relative h-full min-w-0 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-[border-color,background-color] duration-300 group overflow-hidden ${
+      isVisible ? 'pointer-events-auto' : 'pointer-events-none'
+    }`}
+  >
+    <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-10 h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255,176,0,0.1)] group-hover:shadow-[0_0_20px_rgba(255,176,0,0.25)] group-hover:border-accent/40 transition-all duration-300">
+        {category.icon}
+      </div>
+      <h3 className="text-lg font-bold text-white/90 group-hover:text-white transition-colors duration-300">
+        {category.title}
+      </h3>
+    </div>
+
+    <p className="text-white/50 text-[13px] leading-relaxed mb-6 font-montserrat min-h-[60px]">
+      {category.description}
+    </p>
+
+    <div className="flex flex-wrap gap-2">
+      {category.skills.map((skill) => (
+        <div
+          key={skill.name}
+          className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-2.5 py-1.5 flex items-center gap-2 text-[11px] font-montserrat text-white/80 hover:text-white transition-all duration-300"
+        >
+          {skill.icon && <span className="flex shrink-0 items-center justify-center">{skill.icon}</span>}
+          <span>{skill.name}</span>
+        </div>
+      ))}
+    </div>
+  </motion.div>
+)
+
 const getCategoryIcon = (title: string) => {
   const normalized = title.toLowerCase()
   if (normalized.includes('backend')) return <BackendIcon />
@@ -277,7 +328,45 @@ const getSkillIcon = (name: string) => {
 }
 
 export default function Skills() {
+  const stageRef = useRef<HTMLDivElement>(null)
+  const visibleStepRef = useRef(1)
+  const [visibleStep, setVisibleStep] = useState(1)
   const skillDocs = useCollectionData<SkillDoc>('skills', [])
+  const { scrollYProgress } = useScroll({
+    target: stageRef,
+    offset: ['start 56%', 'end 46%']
+  })
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const currentStep = visibleStepRef.current
+    let nextStep = currentStep
+
+    if (currentStep === 1) {
+      if (latest >= 0.68) nextStep = 4
+      else if (latest >= 0.42) nextStep = 3
+      else if (latest >= 0.18) nextStep = 2
+    } else if (currentStep === 2) {
+      if (latest >= 0.68) nextStep = 4
+      else if (latest >= 0.42) nextStep = 3
+      else if (latest < 0.12) nextStep = 1
+    } else if (currentStep === 3) {
+      if (latest >= 0.68) nextStep = 4
+      else if (latest < 0.12) nextStep = 1
+      else if (latest < 0.34) nextStep = 2
+    } else if (latest < 0.12) {
+      nextStep = 1
+    } else if (latest < 0.34) {
+      nextStep = 2
+    } else if (latest < 0.6) {
+      nextStep = 3
+    }
+
+    setVisibleStep((currentStep) => (
+      currentStep === nextStep ? currentStep : nextStep
+    ))
+    visibleStepRef.current = nextStep
+  })
+
   const categories: Category[] = FALLBACK_SKILL_DOCS.map((fallbackCategory, index) => {
     const categoryId = index === 0 ? 'frontend' : index === 1 ? 'backend' : 'tools'
     const override = skillDocs.find((skillDoc) => skillDoc.__id === categoryId)
@@ -297,96 +386,97 @@ export default function Skills() {
       skills: normalizeSkillList(category.skills, fallbackSkills)
     }
   })
-
   return (
-    <div className="relative w-full py-16 md:py-20 bg-bg-dark text-white font-sans overflow-hidden">
+    <div className="relative w-full pt-2 pb-4 md:pt-3 md:pb-6 bg-bg-dark text-white font-sans overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
       <div className="absolute right-[-10%] bottom-[10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
 
       {/* Main Grid Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col items-start mb-14 text-left max-w-3xl">
-          <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-            03
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            <span className="text-white">Tech </span>
-            <span className="text-accent">Stack</span>
-          </h2>
-          <p className="text-white/40 text-sm md:text-base font-mono leading-relaxed">
-            Tools and technologies I use to bring ideas to life.
-          </p>
-        </div>
-
-        {/* Grid Layout of Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto gap-6 mb-16">
-          {categories.map((category, idx) => (
+        {/* Scroll-driven Card Stage */}
+        <div ref={stageRef} className="relative max-w-6xl mx-auto h-[96vh] min-h-[640px] mb-0">
+          <div className="sticky top-24 md:top-[13vh]">
+            {/* Section Header */}
             <motion.div
-              key={category.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.05, duration: 0.5 }}
-              className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 group overflow-hidden"
+              initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: false, amount: 0.6 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-start mb-7 text-left max-w-3xl"
             >
-              {/* Subtle inner hover glow card accent */}
-              <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              
-              {/* Header inside Card */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255, 176, 0,0.1)] group-hover:shadow-[0_0_20px_rgba(255, 176, 0,0.25)] group-hover:border-accent/40 transition-all duration-300">
-                  {category.icon}
-                </div>
-                <h3 className="text-lg font-bold text-white/90 group-hover:text-white transition-colors duration-300">
-                  {category.title}
-                </h3>
-              </div>
-
-              {/* Description text */}
-              <p className="text-white/50 text-[13px] leading-relaxed mb-6 font-mono min-h-[60px]">
-                {category.description}
-              </p>
-
-              {/* Tech Pills */}
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <div
-                    key={skill.name}
-                    className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-2.5 py-1.5 flex items-center gap-2 text-[11px] font-mono text-white/80 hover:text-white transition-all duration-300"
-                  >
-                    {skill.icon && <span className="flex shrink-0 items-center justify-center">{skill.icon}</span>}
-                    <span>{skill.name}</span>
-                  </div>
-                ))}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.6 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="font-mono text-white/40 text-xs mb-3 tracking-[0.2em] uppercase"
+              >
+                03
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.6 }}
+                transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="text-4xl md:text-5xl font-bold tracking-tight mb-3"
+              >
+                <span className="text-white">Tech </span>
+                <span className="text-accent">Stack</span>
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.6 }}
+                transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+                className="text-white/40 text-sm md:text-base font-montserrat leading-relaxed"
+              >
+                Tools and technologies I use to bring ideas to life.
+              </motion.p>
             </motion.div>
-          ))}
-        </div>
 
-        {/* Explore My Projects Button */}
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={() => {
-              const targetSection = document.getElementById('projects');
-              if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/30 text-white font-mono text-[11px] tracking-[0.2em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.1)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_25px_rgba(224,90,43,0.25)] hover:-translate-y-0.5 rounded-xl"
-          >
-            {/* Box Icon */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent shrink-0">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-              <line x1="12" y1="22.08" x2="12" y2="12" />
-            </svg>
-            <span>Explore My Projects</span>
-            {/* Arrow Icon */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-x-1">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+              {categories.map((category, index) => (
+                <SkillStageCard
+                  key={category.title}
+                  category={category}
+                  index={index}
+                  isVisible={index < Math.min(visibleStep, categories.length)}
+                />
+              ))}
+            </div>
+
+            <motion.div
+              initial={false}
+              animate={
+                visibleStep > categories.length
+                  ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                  : { opacity: 0, y: 24, filter: 'blur(8px)' }
+              }
+              transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+              className={`flex justify-center mt-8 ${
+                visibleStep > categories.length ? 'pointer-events-auto' : 'pointer-events-none'
+              }`}
+            >
+              <button
+                onClick={() => {
+                  const targetSection = document.getElementById('projects');
+                  if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/30 text-white font-mono text-[11px] tracking-[0.2em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.1)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_25px_rgba(224,90,43,0.25)] hover:-translate-y-0.5 rounded-xl"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent shrink-0">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+                <span>Explore My Projects</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </motion.div>
+          </div>
         </div>
 
       </div>

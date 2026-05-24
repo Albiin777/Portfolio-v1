@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { motion, type Variants } from 'framer-motion'
 import { useDocData } from '../lib/content'
+import { smoothScrollToElement } from '../lib/smoothScroll'
 
 type ProfileData = {
   resumeUrl: string
@@ -191,7 +192,7 @@ export default function Home() {
       setTimeout(() => {
         const sectionId = NAV_PAGES[dotIndex].id
         const section = document.getElementById(sectionId)
-        if (section) section.scrollIntoView({ behavior: 'smooth' })
+        if (section) smoothScrollToElement(section)
         setTransitioning(false)
       }, 600)
     }, 500)
@@ -200,7 +201,7 @@ export default function Home() {
   const scrollToProjects = () => {
     const scroll = () => {
       const projectsSection = document.getElementById('projects')
-      if (projectsSection) projectsSection.scrollIntoView({ behavior: 'smooth' })
+      if (projectsSection) smoothScrollToElement(projectsSection)
     }
 
     if (window.location.pathname !== '/') {
@@ -444,7 +445,7 @@ export default function Home() {
                 setTimeout(() => {
                   const sectionId = NAV_PAGES[activeIndex].id
                   const section = document.getElementById(sectionId)
-                  if (section) section.scrollIntoView({ behavior: 'smooth' })
+                  if (section) smoothScrollToElement(section)
                   setTransitioning(false)
                 }, 600);
               }}
@@ -604,7 +605,8 @@ export default function Home() {
                     key={node.id} 
                     className="cursor-pointer pointer-events-auto group"
                     onClick={() => {
-                      document.getElementById(node.id)?.scrollIntoView({ behavior: 'smooth' })
+                      const section = document.getElementById(node.id)
+                      if (section) smoothScrollToElement(section)
                       window.history.replaceState(null, '', `#${node.id}`)
                     }}
                   >

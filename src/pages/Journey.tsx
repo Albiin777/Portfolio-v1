@@ -6,14 +6,34 @@ import TechSeparator from '../components/TechSeparator'
 
 export default function Journey() {
   return (
-    <div className="relative min-h-screen bg-bg-dark text-white font-sans pb-10 md:pb-20 pt-12 md:pt-20 overflow-hidden">
+    <div className="relative min-h-screen bg-bg-dark text-white font-sans pb-3 md:pb-4 pt-12 md:pt-20 overflow-hidden">
       {/* Subtle fire particles background behind all layout elements */}
       <FireParticles />
 
       {/* Header Section */}
-      <div className="relative z-10 flex flex-col items-center mb-10 md:mb-20 px-6">
-        <div className="font-mono text-white/40 text-sm mb-4 tracking-widest">02</div>
-        <div className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4">
+      <motion.div
+        initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        viewport={{ once: false, amount: 0.6 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 flex flex-col items-center mb-10 md:mb-20 px-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.6 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="font-mono text-white/40 text-sm mb-4 tracking-widest"
+        >
+          02
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: false, amount: 0.6 }}
+          transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4"
+        >
           {/* Left Circuit Design */}
           <svg
             className="flex-1 h-[40px] md:h-[60px]"
@@ -109,12 +129,18 @@ export default function Journey() {
             <line x1="60" y1="31" x2="25" y2="31" stroke="#ff8500" strokeWidth="0.8" opacity="0.35" />
             <circle cx="25" cy="31" r="1.5" fill="#ffaa1f" opacity="0.4" />
           </svg>
-        </div>
+        </motion.div>
 
-        <p className="text-white/40 text-sm md:text-base font-montserrat max-w-2xl text-center">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.6 }}
+          transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+          className="text-white/40 text-sm md:text-base font-montserrat max-w-2xl text-center"
+        >
           From classrooms to real-world problem solving.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Main Grid Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
