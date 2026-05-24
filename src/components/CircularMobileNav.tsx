@@ -158,11 +158,11 @@ export default function CircularMobileNav() {
         />
       </div>
 
-      {/* Floating Top Header (Visible after small scroll) */}
-      {activeSection !== 'home' && (
-        <div className="fixed top-5 left-5 right-5 z-[100] flex flex-row items-center justify-between pointer-events-none transition-all duration-300">
-          
-          {/* Left Capsule - Name */}
+      {/* Floating Top Header (Always Visible on Mobile) */}
+      <div className={`fixed top-5 left-5 right-5 z-[100] flex flex-row items-center ${activeSection === 'home' ? 'justify-end' : 'justify-between'} pointer-events-none transition-all duration-300`}>
+        
+        {/* Left Capsule - Name (Only visible after scrolling past first page) */}
+        {activeSection !== 'home' && (
           <a 
             href="#home" 
             onClick={(e) => {
@@ -171,36 +171,51 @@ export default function CircularMobileNav() {
               window.history.replaceState(null, '', '#home');
               setIsOpen(false);
             }}
-            className="h-12 px-5 rounded-full bg-[#111113]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
+            className="h-12 px-5 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
           >
             <span className="font-orbitron font-bold text-[13px] tracking-widest text-accent whitespace-nowrap">
               Albin Thomas
             </span>
           </a>
-          
-          {/* Right Capsule - Menu Toggle */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={`w-12 h-12 rounded-full backdrop-blur-xl border shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto transition-all active:scale-95 shrink-0 ${isOpen ? 'bg-[#111113]/90 border-accent/40 text-accent' : 'bg-[#111113]/80 border-white/10 text-accent hover:bg-white/5'}`}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={isOpen ? 'close' : 'menu'}
-                initial={{ scale: 0, rotate: -90 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                {isOpen ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                ) : (
-                  getIconForPage(activeSection)
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </button>
-        </div>
-      )}
+        )}
+        
+        {/* Right Capsule - Menu Toggle */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`h-11 px-4 rounded-full backdrop-blur-xl border shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-2.5 pointer-events-auto transition-all active:scale-95 shrink-0 ${
+            isOpen 
+              ? 'bg-[#111111]/90 border-accent/40 text-accent font-bold' 
+              : 'bg-[#111111]/80 border-white/10 text-accent hover:bg-white/5'
+          }`}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isOpen ? 'close' : activeSection}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex items-center gap-2"
+            >
+              {isOpen ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                  <span className="font-mono text-[9px] tracking-[0.2em] text-accent uppercase font-bold">CLOSE</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-accent flex items-center justify-center shrink-0">
+                    {getIconForPage(activeSection)}
+                  </span>
+                  <span className="font-mono text-[9.5px] tracking-[0.2em] text-white uppercase font-bold">
+                    {getLabel(activeSection)}
+                  </span>
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </button>
+      </div>
 
       {/* Overlay & Circular Menu */}
       <AnimatePresence>
@@ -259,7 +274,7 @@ export default function CircularMobileNav() {
                         <button
                           onClick={() => handleNavClick(page.id, index)}
                           className={`relative flex items-center gap-4 transition-all duration-75 group
-                            ${isVisuallyActive ? 'px-4 py-2 bg-white/5 border border-white/20 rounded-2xl shadow-[0_0_15px_rgba(255,75,31,0.2)]' : ''}`}
+                            ${isVisuallyActive ? 'px-4 py-2 bg-white/5 border border-white/20 rounded-2xl shadow-[0_0_15px_rgba(255, 176, 0,0.2)]' : ''}`}
                           style={{
                             transform: `translateX(${-xOffset}px) scale(${scale})`,
                             opacity: opacity,
@@ -298,7 +313,7 @@ export default function CircularMobileNav() {
                 href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center h-14 px-6 rounded-full bg-[#111113]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[12px] sm:text-[13px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255,75,31,0.15)]"
+                className="flex items-center justify-center h-14 px-6 rounded-full bg-[#111111]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[12px] sm:text-[13px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255, 176, 0,0.15)]"
               >
                 <span>View Resume</span>
               </a>

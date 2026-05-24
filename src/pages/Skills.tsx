@@ -330,14 +330,14 @@ export default function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05, duration: 0.5 }}
-              className="relative bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 group overflow-hidden"
+              className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-all duration-300 group overflow-hidden"
             >
               {/* Subtle inner hover glow card accent */}
               <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               {/* Header inside Card */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255,75,31,0.1)] group-hover:shadow-[0_0_20px_rgba(255,75,31,0.25)] group-hover:border-accent/40 transition-all duration-300">
+                <div className="w-10 h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255, 176, 0,0.1)] group-hover:shadow-[0_0_20px_rgba(255, 176, 0,0.25)] group-hover:border-accent/40 transition-all duration-300">
                   {category.icon}
                 </div>
                 <h3 className="text-lg font-bold text-white/90 group-hover:text-white transition-colors duration-300">

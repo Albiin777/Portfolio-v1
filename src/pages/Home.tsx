@@ -72,6 +72,15 @@ function topDotIndex(ringRotation: number): number {
   return closest
 }
 
+const getEllipsePoint = (cx: number, cy: number, rx: number, ry: number, angleDeg: number, tRad: number) => {
+  const x0 = rx * Math.cos(tRad)
+  const y0 = ry * Math.sin(tRad)
+  const theta = (angleDeg * Math.PI) / 180
+  const x = cx + x0 * Math.cos(theta) - y0 * Math.sin(theta)
+  const y = cy + x0 * Math.sin(theta) + y0 * Math.cos(theta)
+  return { x, y }
+}
+
 export default function Home() {
   const navigate = useNavigate()
   const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
@@ -286,7 +295,7 @@ export default function Home() {
 
         {/* Badges Section (Mobile Only) */}
         <motion.div variants={STAGGER_ITEM} className="xl:hidden flex flex-nowrap items-center gap-1.5 w-full mt-4 overflow-x-auto no-scrollbar pb-1">
-          <div className="px-2 py-1 bg-accent/10 border border-accent/20 rounded text-accent font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap shadow-[0_0_10px_rgba(255,75,31,0.1)]">AI Innovator</div>
+          <div className="px-2 py-1 bg-accent/10 border border-accent/20 rounded text-accent font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap shadow-[0_0_10px_rgba(255, 176, 0,0.1)]">AI Innovator</div>
           <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Full Stack Dev</div>
           <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-white/60 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase whitespace-nowrap">Problem Solver</div>
         </motion.div>
@@ -303,9 +312,9 @@ export default function Home() {
           </motion.div>
 
           {/* Buttons */}
-          <motion.div variants={STAGGER_ITEM} className="mt-4 xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
+          <motion.div variants={STAGGER_ITEM} className="mt-[15px] xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
             <button
-              className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.15)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(224,90,43,0.3)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
+              className="group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(255,176,0,0.12),_inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(255,176,0,0.25),_inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
               onClick={() => downloadResume(resumeUrl)}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-y-0.5">
@@ -314,7 +323,7 @@ export default function Home() {
               <span>DOWNLOAD RESUME</span>
             </button>
             <button
-              className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-white/10 hover:border-white/40 hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
+              className="group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-white/10 hover:border-white/40 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
               onClick={scrollToProjects}
             >
               <span>VIEW PROJECTS</span>
@@ -327,19 +336,94 @@ export default function Home() {
       </div>
 
       {/* Right Column - Mechanical Wheel */}
-      <div className="relative xl:absolute xl:right-[2%] 2xl:right-[8%] xl:top-1/2 xl:-translate-y-1/2 z-10 order-1 xl:order-none flex items-center justify-center -mt-[110px] -mb-[110px] sm:-my-[50px] xl:my-0">
+      <div className="relative xl:absolute xl:right-[2%] 2xl:right-[8%] xl:top-1/2 xl:-translate-y-1/2 z-10 order-1 xl:order-none flex items-center justify-center -mt-[60px] -mb-[21px] sm:my-0 xl:my-0">
         <motion.div variants={STAGGER_ITEM}>
-          <div className="relative w-[560px] h-[560px] flex items-center justify-center shrink-0 scale-[0.55] sm:scale-[0.7] lg:scale-100">
+          {/* Desktop Mechanical Wheel (Hidden on Mobile) */}
+          <div className="hidden xl:flex relative w-[560px] h-[560px] flex items-center justify-center shrink-0">
+
+            {/* Glowing Orbits Background (Desktop) */}
+            <div className="absolute w-[800px] h-[800px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
+              <svg className="w-full h-full" viewBox="0 0 800 800" fill="none">
+                <defs>
+                  <filter id="orbit-glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                    <feMerge>
+                      <feMergeNode in="coloredBlur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="dot-glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                    <feMerge>
+                      <feMergeNode in="coloredBlur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                {/* Ellipse 1 (Tilted down-left) */}
+                <ellipse
+                  cx="400"
+                  cy="400"
+                  rx="370"
+                  ry="175"
+                  stroke="rgba(255, 176, 0, 0.12)"
+                  strokeWidth="1"
+                  transform="rotate(-22 400 400)"
+                />
+
+                {/* Ellipse 2 (Tilted down-right) */}
+                <ellipse
+                  cx="400"
+                  cy="400"
+                  rx="370"
+                  ry="175"
+                  stroke="rgba(255, 176, 0, 0.12)"
+                  strokeWidth="1"
+                  transform="rotate(22 400 400)"
+                />
+
+                {/* Glowing Orbit Dots */}
+                {[
+                  // Ellipse 1 Dots
+                  getEllipsePoint(400, 400, 370, 175, -22, Math.PI * 0.95),
+                  getEllipsePoint(400, 400, 370, 175, -22, Math.PI * -0.2),
+                  // Ellipse 2 Dots
+                  getEllipsePoint(400, 400, 370, 175, 22, Math.PI * 0.05),
+                  getEllipsePoint(400, 400, 370, 175, 22, Math.PI * 1.15),
+                  getEllipsePoint(400, 400, 370, 175, 22, Math.PI * 0.6),
+                ].map((pt, idx) => (
+                  <g key={`orbit-dot-${idx}`}>
+                    {/* Outer Glow */}
+                    <circle
+                      cx={pt.x}
+                      cy={pt.y}
+                      r="7"
+                      fill="#FFB000"
+                      opacity="0.6"
+                      filter="url(#dot-glow)"
+                    />
+                    {/* Inner Sharp Point */}
+                    <circle
+                      cx={pt.x}
+                      cy={pt.y}
+                      r="2.5"
+                      fill="#FFB000"
+                    />
+                  </g>
+                ))}
+              </svg>
+            </div>
 
             {/* Outer Casing / Brackets */}
             <div className="absolute inset-0 z-20 pointer-events-none">
               {/* Static Outer Ring */}
-              <div className="absolute inset-[30px] rounded-full border-[12px] border-[#171717] shadow-mech-outer" />
+              <div className="absolute inset-[30px] rounded-full border-[12px] border-[#111111] shadow-mech-outer" />
 
               {/* 4 Brackets */}
               {[45, 135, 225, 315].map((angle, i) => (
                 <div key={i} className="absolute inset-0 flex items-center justify-center" style={{ transform: `rotate(${angle}deg)` }}>
-                  <div className="absolute top-0 w-24 h-12 bg-[#121212] border border-white/5 rounded-t-lg shadow-mech-inner flex items-center justify-center">
+                  <div className="absolute top-0 w-24 h-12 bg-[#111111] border border-white/5 rounded-t-lg shadow-mech-inner flex items-center justify-center">
                     <div className="w-12 h-1 bg-white/10 rounded-full" />
                     <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
                     <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
@@ -441,7 +525,7 @@ export default function Home() {
                       <line
                         x1={pos.x} y1={pos.y}
                         x2={polarToXY(DOT_ANGLES_DEG[i], R_INNER).x} y2={polarToXY(DOT_ANGLES_DEG[i], R_INNER).y}
-                        stroke={isActive ? 'rgba(255, 75, 31, 0.2)' : 'rgba(255,255,255,0.05)'} strokeWidth="1"
+                        stroke={isActive ? 'rgba(255, 176, 0, 0.2)' : 'rgba(255,255,255,0.05)'} strokeWidth="1"
                       />
                     </g>
                   )
@@ -472,6 +556,149 @@ export default function Home() {
                   }}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Mobile Profile Frame (Visible on phones/tablets) */}
+          <div className="flex xl:hidden relative w-[320px] h-[320px] flex items-center justify-center shrink-0 scale-[0.85] sm:scale-100">
+            {/* Crossing Orbits Background (Mobile) */}
+            <div className="absolute w-[440px] h-[440px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0">
+              <svg className="w-full h-full" viewBox="0 0 440 440" fill="none">
+                <defs>
+                  <filter id="mobile-dot-glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                    <feMerge>
+                      <feMergeNode in="coloredBlur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                {/* Ellipse 1 (Tilted down-left) */}
+                <ellipse
+                  cx="220"
+                  cy="220"
+                  rx="200"
+                  ry="100"
+                  stroke="rgba(255, 176, 0, 0.12)"
+                  strokeWidth="1"
+                  transform="rotate(-22 220 220)"
+                />
+
+                {/* Ellipse 2 (Tilted down-right) */}
+                <ellipse
+                  cx="220"
+                  cy="220"
+                  rx="200"
+                  ry="100"
+                  stroke="rgba(255, 176, 0, 0.12)"
+                  strokeWidth="1"
+                  transform="rotate(22 220 220)"
+                />
+
+                {/* Interactive Orbit Nodes */}
+                {[
+                  { id: 'journey', label: 'JOURNEY', pt: getEllipsePoint(220, 220, 200, 100, -22, Math.PI * 0.95), tx: -8, ty: 12, anchor: 'end' },
+                  { id: 'skills', label: 'SKILLS', pt: getEllipsePoint(220, 220, 200, 100, -22, Math.PI * -0.2), tx: 8, ty: -8, anchor: 'start' },
+                  { id: 'projects', label: 'PROJECTS', pt: getEllipsePoint(220, 220, 200, 100, 22, Math.PI * 1.15), tx: -8, ty: -8, anchor: 'end' },
+                  { id: 'contact', label: 'CONTACT', pt: getEllipsePoint(220, 220, 200, 100, 22, Math.PI * 0.05), tx: 8, ty: 12, anchor: 'start' },
+                ].map((node) => (
+                  <g 
+                    key={node.id} 
+                    className="cursor-pointer pointer-events-auto group"
+                    onClick={() => {
+                      document.getElementById(node.id)?.scrollIntoView({ behavior: 'smooth' })
+                      window.history.replaceState(null, '', `#${node.id}`)
+                    }}
+                  >
+                    <circle
+                      cx={node.pt.x}
+                      cy={node.pt.y}
+                      r="8"
+                      fill="#FFB000"
+                      opacity="0.5"
+                      className="group-hover:opacity-85 transition-opacity"
+                      filter="url(#mobile-dot-glow)"
+                    />
+                    <circle
+                      cx={node.pt.x}
+                      cy={node.pt.y}
+                      r="2.5"
+                      fill="#FFB000"
+                      className="group-hover:fill-white transition-colors"
+                    />
+                    <text
+                      x={node.pt.x + node.tx}
+                      y={node.pt.y + node.ty}
+                      fontFamily="Space Mono, monospace"
+                      fontSize="7.5"
+                      letterSpacing="0.5"
+                      fill="rgba(255, 255, 255, 0.45)"
+                      textAnchor={node.anchor}
+                      className="group-hover:fill-accent transition-colors font-bold select-none"
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            </div>
+
+            {/* Central Square Image Container (Mobile) */}
+            <div className="relative w-[220px] h-[220px] z-10 flex items-center justify-center">
+              <div 
+                className="w-[180px] h-[180px] overflow-hidden border border-white/5 bg-black"
+                style={{
+                  clipPath: "polygon(12px 0, 168px 0, 180px 12px, 180px 168px, 168px 180px, 12px 180px, 0 168px, 0 12px)"
+                }}
+              >
+                <img 
+                  src="/albin.png" 
+                  alt="Albin Thomas"
+                  className="w-full h-full object-cover object-[center_20%] grayscale opacity-80"
+                />
+              </div>
+
+              {/* Sci-Fi HUD Overlay Frame */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 220 220">
+                {/* Outer corner bracket top-left */}
+                <path d="M 10 25 L 10 10 L 25 10" stroke="rgba(255, 176, 0, 0.4)" strokeWidth="1.5" fill="none" />
+                <path d="M 5 35 L 5 5 L 35 5" stroke="#FFB000" strokeWidth="1.2" fill="none" />
+                
+                {/* Outer corner bracket top-right */}
+                <path d="M 210 25 L 210 10 L 195 10" stroke="rgba(255, 176, 0, 0.4)" strokeWidth="1.5" fill="none" />
+                <path d="M 215 35 L 215 5 L 185 5" stroke="#FFB000" strokeWidth="1.2" fill="none" />
+
+                {/* Outer corner bracket bottom-left */}
+                <path d="M 10 195 L 10 210 L 25 210" stroke="rgba(255, 176, 0, 0.4)" strokeWidth="1.5" fill="none" />
+                <path d="M 5 185 L 5 215 L 35 215" stroke="#FFB000" strokeWidth="1.2" fill="none" />
+
+                {/* Outer corner bracket bottom-right */}
+                <path d="M 210 195 L 210 210 L 195 210" stroke="rgba(255, 176, 0, 0.4)" strokeWidth="1.5" fill="none" />
+                <path d="M 215 185 L 215 215 L 185 215" stroke="#FFB000" strokeWidth="1.2" fill="none" />
+
+                {/* Inner Chamfered Box Outline */}
+                <path 
+                  d="M 32 20 L 188 20 L 200 32 L 200 188 L 188 200 L 32 200 L 20 188 L 20 32 Z" 
+                  stroke="#FFB000" 
+                  strokeWidth="2" 
+                  fill="none" 
+                  className="drop-shadow-[0_0_6px_rgba(255,176,0,0.5)]" 
+                />
+
+                {/* Decorative dots */}
+                <circle cx="45" cy="15" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                <circle cx="53" cy="15" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                <circle cx="61" cy="15" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                
+                <circle cx="159" cy="205" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                <circle cx="167" cy="205" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                <circle cx="175" cy="205" r="1.2" fill="rgba(255, 176, 0, 0.5)" />
+                
+                {/* Side accent bars */}
+                <line x1="15" y1="100" x2="15" y2="120" stroke="#FFB000" strokeWidth="1.5" />
+                <line x1="205" y1="100" x2="205" y2="120" stroke="#FFB000" strokeWidth="1.5" />
+              </svg>
             </div>
           </div>
         </motion.div>

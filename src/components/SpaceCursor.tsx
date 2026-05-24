@@ -90,8 +90,8 @@ export default function SpaceCursor() {
           width: ringSize,
           height: ringSize,
           boxShadow: isInteractive
-            ? '0 0 20px rgba(255,75,31,0.32), inset 0 0 14px rgba(255,75,31,0.12)'
-            : '0 0 14px rgba(255,75,31,0.2), inset 0 0 10px rgba(255,75,31,0.08)',
+            ? '0 0 20px rgba(255, 176, 0,0.32), inset 0 0 14px rgba(255, 176, 0,0.12)'
+            : '0 0 14px rgba(255, 176, 0,0.2), inset 0 0 10px rgba(255, 176, 0,0.08)',
           transition: 'width 160ms ease, height 160ms ease, border-color 160ms ease, box-shadow 160ms ease'
         }}
       >
@@ -100,7 +100,7 @@ export default function SpaceCursor() {
           style={{
             width: dotSize,
             height: dotSize,
-            boxShadow: '0 0 10px rgba(255,122,26,0.95), 0 0 22px rgba(255,75,31,0.42)',
+            boxShadow: '0 0 10px rgba(255,122,26,0.95), 0 0 22px rgba(255, 176, 0,0.42)',
             transition: 'width 120ms ease, height 120ms ease'
           }}
         />

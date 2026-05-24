@@ -88,7 +88,7 @@ const ProjectImage = ({ src, alt, compact, overlay, onClick }: ProjectImageProps
         className="w-full h-full rounded-[4px] border border-white/5 bg-[#050507]"
         style={{
           backgroundImage:
-            'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(120deg, rgba(255,255,255,0.03), transparent 40%, rgba(255,75,31,0.06))',
+            'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(120deg, rgba(255,255,255,0.03), transparent 40%, rgba(255, 176, 0,0.06))',
           backgroundSize: '10px 10px, 100% 100%'
         }}
       />
@@ -307,7 +307,7 @@ const openExternalUrl = (url: string) => {
 }
 
 const EmptyProjectState = ({ label }: { label: string }) => (
-  <div className="relative z-10 flex min-h-[260px] w-full flex-col items-center justify-center rounded-xl border border-white/5 bg-[#08080a]/50 px-6 text-center">
+  <div className="relative z-10 flex min-h-[260px] w-full flex-col items-center justify-center rounded-xl border border-white/5 bg-[#0B0B0B]/50 px-6 text-center">
     <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent/80">
       No {label} projects
     </div>
@@ -670,7 +670,7 @@ export default function Projects() {
           
           {/* Card Container */}
           <div 
-            className="w-full bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group min-h-[500px] md:min-h-[440px] relative flex flex-col justify-between overflow-hidden"
+            className="w-full bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group min-h-[500px] md:min-h-[440px] relative flex flex-col justify-between overflow-hidden"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
@@ -678,13 +678,13 @@ export default function Projects() {
               <div 
                 className="absolute inset-0"
                 style={{
-                  background: 'radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 75, 31, 0.14), transparent 80%)'
+                  background: 'radial-gradient(220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.14), transparent 80%)'
                 }}
               />
               <div 
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: 'radial-gradient(circle, #ff4b1f 1.2px, transparent 1.2px)',
+                  backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
                   backgroundSize: '10px 10px',
                   WebkitMaskImage: 'radial-gradient(160px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
                   maskImage: 'radial-gradient(160px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
@@ -874,7 +874,7 @@ export default function Projects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative z-20 bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
+            className="relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
@@ -882,13 +882,13 @@ export default function Projects() {
               <div 
                 className="absolute inset-0"
                 style={{
-                  background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 75, 31, 0.12), transparent 80%)'
+                  background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.12), transparent 80%)'
                 }}
               />
               <div 
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: 'radial-gradient(circle, #ff4b1f 1.2px, transparent 1.2px)',
+                  backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
                   backgroundSize: '10px 10px',
                   WebkitMaskImage: 'radial-gradient(130px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
                   maskImage: 'radial-gradient(130px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
@@ -914,7 +914,7 @@ Projects that represent my passion for learning and building new things         
 
               {/* Slider wrapper */}
               <div
-                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
+                className="relative z-20 border border-white/5 bg-[#0B0B0B]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
                 onMouseEnter={() => setCompactCarouselPaused(true)}
                 onMouseLeave={() => setCompactCarouselPaused(false)}
                 onFocus={() => setCompactCarouselPaused(true)}
@@ -952,7 +952,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.liveUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111111]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
                                 <ExternalLinkIcon className="w-3.5 h-3.5" />
@@ -970,7 +970,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.codeUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111111]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
                                 <GitHubIcon className="w-3.5 h-3.5" />
@@ -1042,7 +1042,7 @@ Projects that represent my passion for learning and building new things         
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative z-20 bg-[#111113]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
+            className="relative z-20 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/15 transition-all duration-300 group overflow-hidden flex flex-col justify-between"
             onMouseMove={handleMouseMove}
           >
             {/* Mouse-following splash glow & dots */}
@@ -1050,13 +1050,13 @@ Projects that represent my passion for learning and building new things         
               <div 
                 className="absolute inset-0"
                 style={{
-                  background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 75, 31, 0.12), transparent 80%)'
+                  background: 'radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255, 176, 0, 0.12), transparent 80%)'
                 }}
               />
               <div 
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: 'radial-gradient(circle, #ff4b1f 1.2px, transparent 1.2px)',
+                  backgroundImage: 'radial-gradient(circle, #FFB000 1.2px, transparent 1.2px)',
                   backgroundSize: '10px 10px',
                   WebkitMaskImage: 'radial-gradient(130px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
                   maskImage: 'radial-gradient(130px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), black, transparent 80%)',
@@ -1083,7 +1083,7 @@ Projects that represent my passion for learning and building new things         
 
               {/* Slider wrapper */}
               <div
-                className="relative z-20 border border-white/5 bg-[#08080a]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
+                className="relative z-20 border border-white/5 bg-[#0B0B0B]/60 rounded-xl p-4 overflow-hidden min-h-[310px] flex-1 flex flex-col justify-between"
                 onMouseEnter={() => setCompactCarouselPaused(true)}
                 onMouseLeave={() => setCompactCarouselPaused(false)}
                 onFocus={() => setCompactCarouselPaused(true)}
@@ -1121,7 +1121,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.liveUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111111]/90 backdrop-blur-md border border-accent/40 text-accent hover:bg-accent hover:text-white rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(224,90,43,0.15)] pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Demo</span>
                                 <ExternalLinkIcon className="w-3.5 h-3.5" />
@@ -1139,7 +1139,7 @@ Projects that represent my passion for learning and building new things         
                                   event.stopPropagation()
                                   openExternalUrl(project.codeUrl)
                                 }}
-                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111113]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
+                                className="flex-1 flex items-center justify-center gap-2 py-2 sm:py-3 bg-[#111111]/90 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:border-white/40 rounded-xl transition-all cursor-pointer pointer-events-auto"
                               >
                                 <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Code</span>
                                 <GitHubIcon className="w-3.5 h-3.5" />

@@ -39,7 +39,7 @@ export default function FireParticles() {
     }
 
     const colors = [
-      'rgba(255, 75, 31, ',   // Accent orange (#ff4b1f)
+      'rgba(255, 176, 0, ',   // Accent orange (#FFB000)
       'rgba(255, 110, 30, ',  // Fiery orange
       'rgba(255, 180, 20, ',  // Golden yellow-orange
       'rgba(230, 40, 40, ',   // Soft red-orange

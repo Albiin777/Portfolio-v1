@@ -4,8 +4,8 @@ export default function ConcentricRadar() {
       <svg width="300" height="300" viewBox="0 0 300 300" className="opacity-80">
         <defs>
           <radialGradient id="radarGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#ff4b1f" stopOpacity="0.5" />
-            <stop offset="20%" stopColor="#ff4b1f" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#FFB000" stopOpacity="0.5" />
+            <stop offset="20%" stopColor="#FFB000" stopOpacity="0.1" />
             <stop offset="100%" stopColor="transparent" stopOpacity="0" />
           </radialGradient>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -16,10 +16,10 @@ export default function ConcentricRadar() {
         
         {/* Center Glow */}
         <circle cx="150" cy="150" r="100" fill="url(#radarGlow)" />
-        <circle cx="150" cy="150" r="6" fill="#ff4b1f" filter="url(#glow)" />
+        <circle cx="150" cy="150" r="6" fill="#FFB000" filter="url(#glow)" />
         
         {/* Inner Rings */}
-        <circle cx="150" cy="150" r="20" fill="none" stroke="rgba(255, 75, 31, 0.5)" strokeWidth="1" />
+        <circle cx="150" cy="150" r="20" fill="none" stroke="rgba(255, 176, 0, 0.5)" strokeWidth="1" />
         <circle cx="150" cy="150" r="40" fill="none" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" strokeDasharray="4 4" />
         <circle cx="150" cy="150" r="60" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
         
@@ -34,9 +34,9 @@ export default function ConcentricRadar() {
         <line x1="170" y1="150" x2="270" y2="150" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />
         
         {/* Orbiting Planets/Dots */}
-        <circle cx="150" cy="60" r="3" fill="#ff4b1f" filter="url(#glow)" />
+        <circle cx="150" cy="60" r="3" fill="#FFB000" filter="url(#glow)" />
         <circle cx="210" cy="150" r="2" fill="#fff" opacity="0.5" />
-        <circle cx="110" cy="220" r="4" fill="#ff4b1f" filter="url(#glow)" opacity="0.8" />
+        <circle cx="110" cy="220" r="4" fill="#FFB000" filter="url(#glow)" opacity="0.8" />
         <circle cx="50" cy="100" r="2" fill="#fff" opacity="0.3" />
       </svg>
     </div>

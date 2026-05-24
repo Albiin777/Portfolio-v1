@@ -13,17 +13,18 @@ export default {
         orbitron: ['Orbitron', 'sans-serif'],
       },
       colors: {
-        accent: '#ff4b1f',
-        'accent-dim': 'rgba(255, 75, 31, 0.4)',
-        'bg-dark': '#090909',
-        'bg-light': '#f2f2f2',
-        'panel': '#121212',
+        accent: '#FFB000',
+        'accent-dim': 'rgba(255, 176, 0, 0.4)',
+        'bg-dark': '#050505',
+        'bg-light': '#111111',
+        'panel': '#0B0B0B',
+        white: '#F5F5F5',
       },
       boxShadow: {
         'mech-outer': '0 0 0 1px rgba(255,255,255,0.05), inset 0 20px 40px -10px rgba(0,0,0,0.8), 0 30px 60px -15px rgba(0,0,0,0.9), inset 0 0 0 4px rgba(255,255,255,0.02)',
         'mech-inner': 'inset 0 10px 20px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.5)',
         'mech-ring': 'inset 0 0 20px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1), 0 0 15px rgba(0,0,0,0.5)',
-        'mech-glow': '0 0 15px rgba(255, 75, 31, 0.5), inset 0 0 10px rgba(255, 75, 31, 0.3)',
+        'mech-glow': '0 0 15px rgba(255, 176, 0, 0.5), inset 0 0 10px rgba(255, 176, 0, 0.3)',
       },
       keyframes: {
         twinkle: {
