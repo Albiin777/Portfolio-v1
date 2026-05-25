@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useDocData } from '../lib/content'
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 
 type ProfileData = {
   resumeUrl: string
@@ -17,7 +19,7 @@ const downloadResume = (resumeUrl: string) => {
   link.remove()
 }
 
-// ─── Icon Components ──────────────────────────────────────────────────────────
+// ─── Original Icons ──────────────────────────────────────────────────────────
 const PhoneIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent shrink-0">
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -94,6 +96,117 @@ const InstagramSocialIcon = () => (
   </svg>
 )
 
+// ─── Solar Nodes ──────────────────────────────────────────────────────────────
+const EMBER_PARTICLES = Array.from({ length: 50 }, (_, i) => {
+  const seed = (i + 1) * 12.9898
+  const wave = Math.sin(seed) * 43758.5453
+  const rand = (offset: number) => {
+    const value = Math.sin(seed + offset) * wave
+    return value - Math.floor(value)
+  }
+
+  return {
+    left: `${rand(1) * 100}%`,
+    top: `${rand(2) * 100}%`,
+    size: `${rand(3) * 2 + 0.5}px`,
+    opacity: rand(4) * 0.4 + 0.1,
+    animationDelay: `${rand(5) * 5}s`,
+    animationDuration: `${rand(6) * 3 + 2}s`
+  }
+})
+
+const SolarNode = ({ icon, href, title, textAlignment, opacity, scale, textOpacity, ringOrientation = 'top' }: { icon: React.ReactNode, href: string, title: string, textAlignment: 'left' | 'right' | 'top' | 'bottom' | 'top-left', opacity: MotionValue<number>, scale: MotionValue<number>, textOpacity: MotionValue<number>, ringOrientation?: 'top' | 'bottom' }) => {
+  const outerMaskClass = ringOrientation === 'top' ? '[mask-image:linear-gradient(to_bottom,black_10%,transparent_80%)]' : '[mask-image:linear-gradient(to_top,black_10%,transparent_80%)]';
+
+  const getTextPositionClass = () => {
+    switch (textAlignment) {
+      case 'left': return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end';
+      case 'right': return 'top-1/2 -translate-y-1/2 left-[calc(100%+1.5rem)] text-left items-start';
+      case 'top': return 'bottom-[calc(100%+1.5rem)] left-1/2 -translate-x-1/2 text-center items-center pointer-events-none';
+      case 'top-left': return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end pointer-events-none md:bottom-[calc(100%+0.5rem)] md:top-auto md:translate-y-0 md:left-auto md:right-[calc(50%+2rem)] md:text-right md:items-end';
+      case 'bottom': return 'top-[calc(100%+1.5rem)] left-1/2 -translate-x-1/2 text-center items-center pointer-events-none';
+      default: return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end';
+    }
+  };
+
+  return (
+    <motion.div style={{ opacity, scale, x: "-50%", y: "-50%" }} className="absolute flex items-center justify-center pointer-events-auto group z-30">
+      
+      <a href={href} target="_blank" rel="noreferrer" className="relative flex items-center justify-center pointer-events-auto w-14 h-14 md:w-16 md:h-16">
+        
+        {/* Outermost faint ring - fades away opposite to the center */}
+        <div className={`absolute inset-0 rounded-full border-[0.5px] border-[#FFB000]/20 scale-[1.5] pointer-events-none ${outerMaskClass}`} />
+        
+        {/* Orbiting Tiny Glowing Dots on the tighter 1.25x ring - fades away in the middle */}
+        <div className="absolute inset-0 scale-[1.25] rounded-full border-[0.5px] border-[#FFB000]/40 group-hover:rotate-180 transition-transform duration-[3000ms] ease-linear pointer-events-none [mask-image:linear-gradient(45deg,black_20%,transparent_50%,black_80%)]">
+           {/* Top arc bright highlight */}
+           <div className="absolute top-[-1px] left-1/2 -translate-x-1/2 w-[30%] h-[2px] bg-white rounded-full blur-[1px] shadow-[0_0_10px_3px_#FFB000]" />
+           
+           {/* 8 orbiting dots */}
+           {[...Array(8)].map((_, i) => (
+             <div key={i} className="absolute w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_5px_2px_#FFB000]"
+                  style={{
+                    top: `${50 - Math.cos(i * Math.PI / 4) * 50}%`,
+                    left: `${50 + Math.sin(i * Math.PI / 4) * 50}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }} />
+           ))}
+        </div>
+
+        {/* Connection Flare (Horizontal anamorphic) aggressively tapering and fading towards edges */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[2px] bg-white opacity-70 blur-[0.5px] rounded-[50%] pointer-events-none group-hover:opacity-100 transition-all duration-500 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_80%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[8px] bg-[#FFB000] opacity-80 blur-[3px] rounded-[50%] pointer-events-none group-hover:opacity-100 transition-all duration-500 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_80%)]" />
+
+        {/* Background radial glow */}
+        <div className="absolute inset-0 rounded-full bg-[#FFB000] blur-[20px] scale-[1.2] opacity-40 group-hover:opacity-70 transition-opacity duration-300 pointer-events-none" />
+
+        {/* Core - Solid Black with intense gradient border */}
+        <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-b from-white via-[#FFB000] to-[#FFB000]/10 shadow-[0_0_15px_rgba(255,176,0,0.6)] z-10 group-hover:shadow-[0_0_25px_rgba(255,176,0,0.9)] transition-all duration-300">
+           <div className="w-full h-full rounded-full bg-[#050505] shadow-[inset_0_0_15px_rgba(255,176,0,0.2)]" />
+        </div>
+        
+        {/* Icon */}
+        <div className="relative z-20 text-white scale-[0.95] group-hover:scale-[1.05] transition-transform drop-shadow-[0_0_2px_rgba(255,255,255,0.8)]">
+           {icon}
+        </div>
+
+        {/* Title */}
+        <motion.div 
+          style={{ opacity: textOpacity }} 
+          className={`absolute hidden md:flex flex-col ${getTextPositionClass()}`}
+        >
+           <span className="text-white/60 font-mono text-[9px] md:text-[10px] tracking-[0.3em] font-medium uppercase whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] group-hover:text-[#FFB000] transition-colors">{title}</span>
+        </motion.div>
+      </a>
+    </motion.div>
+  )
+}
+
+const CenterSun = ({ onClick, opacity, scale }: { onClick: () => void, opacity: MotionValue<number>, scale: MotionValue<number> }) => (
+  <motion.div style={{ opacity, scale, x: "-50%", y: "-50%" }} onClick={onClick} className="absolute left-[50%] top-[50%] flex flex-col items-center justify-center pointer-events-auto cursor-pointer group z-40">
+    
+    {/* Eruption / Sun Aura */}
+    <div className="absolute inset-0 rounded-full bg-[#FFB000]/10 blur-[60px] scale-[3.5] group-hover:bg-[#FFB000]/20 transition-all duration-700 pointer-events-none" />
+    <div className="absolute inset-0 rounded-full bg-[#FFB000]/20 blur-[30px] scale-[2.0] pointer-events-none" />
+    
+    {/* The Core Container */}
+    <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full p-[1px] bg-gradient-to-br from-[#FFB000]/80 via-[#FFB000]/40 to-[#FFB000]/10 shadow-[0_0_30px_rgba(255,176,0,0.4)] group-hover:shadow-[0_0_50px_rgba(255,176,0,0.6)] transition-all duration-500 z-10">
+       
+       <div className="w-full h-full rounded-full bg-[#050505] flex items-center justify-center p-4 md:p-5 shadow-[inset_0_0_40px_rgba(255,176,0,0.3)] relative">
+         {/* Sharp bright inner ring */}
+         <div className="absolute inset-0 rounded-full border-[1.5px] border-[#FFB000] opacity-80 pointer-events-none" />
+         
+         <img src="/logo-new.png" alt="Logo" className="relative z-10 w-full h-full object-contain brightness-150 drop-shadow-[0_0_15px_rgba(255,176,0,0.8)] group-hover:drop-shadow-[0_0_25px_rgba(255,176,0,1)] transition-all duration-500" />
+       </div>
+    </div>
+
+    {/* Linktree Label */}
+    <div className="absolute -bottom-12 md:-bottom-14 left-1/2 -translate-x-1/2 text-white/60 font-mono text-[9px] md:text-[10px] tracking-[0.3em] font-medium uppercase whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] group-hover:text-[#FFB000] transition-colors pointer-events-none">
+      LINKTREE
+    </div>
+  </motion.div>
+)
+
 // ─── Reusable card icon wrapper ───────────────────────────────────────────────
 const CardIcon = ({ children }: { children: React.ReactNode }) => (
   <div className="w-10 h-10 border border-accent/30 bg-accent/[0.06] flex items-center justify-center
@@ -106,7 +219,6 @@ const CardIcon = ({ children }: { children: React.ReactNode }) => (
   </div>
 )
 
-// ─── Contact Card ─────────────────────────────────────────────────────────────
 interface ContactCardProps {
   icon: React.ReactNode
   label: string
@@ -114,26 +226,40 @@ interface ContactCardProps {
   sub?: string
   onClick?: () => void
 }
+
+const contactCardVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 18,
+    filter: 'blur(6px)'
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.68,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
+}
+
 const ContactCard = ({ icon, label, value, sub, onClick }: ContactCardProps) => (
-  <div
-    className={`group relative bg-[#0e0e10]/70 border border-white/[0.07] p-5 flex flex-col gap-3
-               hover:border-accent/20 transition-all duration-300 overflow-hidden ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
+  <motion.div
+    variants={contactCardVariants}
+    className={`group relative p-5 flex flex-col gap-3 transition-all duration-300 overflow-hidden ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
     style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)' }}
     onClick={onClick}
   >
-    {/* top-right angled corner accent */}
-    <span className="absolute top-0 right-[10px] w-[calc(100%-10px)] h-[1px] bg-accent/10 group-hover:bg-accent/25 transition-colors duration-300" />
-    <span className="absolute top-[10px] right-0 w-[1px] h-[calc(100%-10px)] bg-accent/10 group-hover:bg-accent/25 transition-colors duration-300" />
-
     <CardIcon>{icon}</CardIcon>
     <div className="flex flex-col gap-0.5">
       <span className="text-[9.5px] text-white/40 font-mono uppercase tracking-[0.22em]">{label}</span>
-      <span className="text-[12.5px] font-semibold text-white font-sans group-hover:text-accent transition-colors duration-300 leading-snug">
+      <span className="text-[12.5px] font-semibold text-white font-montserrat group-hover:text-accent transition-colors duration-300 leading-snug">
         {value}
       </span>
       {sub && <span className="text-[10px] text-white/30 font-mono mt-0.5 leading-snug">{sub}</span>}
     </div>
-  </div>
+  </motion.div>
 )
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
@@ -142,6 +268,16 @@ export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
   const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
+
+  const [isMobile, setIsMobile] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -173,194 +309,300 @@ export default function Contact() {
     }
   }
 
+  // Animation scroll transforms
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'] // Track full container height
+  })
+
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 20, restDelta: 0.001 })
+
+  // 1. Outer nodes fade in (0 to 0.15)
+  const nodesOpacity = useTransform(smoothProgress, [0, 0.15], [0, 1])
+  const nodesScale = useTransform(smoothProgress, [0, 0.15], [0.5, 1])
+  
+  // 2. SVG Fire Roots draw inward to the center (0.15 to 0.45)
+  const lineProgress = useTransform(smoothProgress, [0.15, 0.45], [0, 1])
+  
+  // 3. Center Sun Erupts (0.45 to 0.65)
+  const sunOpacity = useTransform(smoothProgress, [0.45, 0.65], [0, 1])
+  const sunScale = useTransform(smoothProgress, [0.45, 0.65], [0.1, 1])
+  
+  // 4. Node text descriptions fade in (0.65 to 0.85)
+  const textOpacity = useTransform(smoothProgress, [0.65, 0.85], [0, 1])
+
+  // Prevent text fading so the top doesn't feel blank
+  const heroOpacityValue = 1 
+  const heroYValue = 0 
+
+  const orbitScale = isMobile ? 1.02 : 0.68
+  const scaleVal = (value: number) => 50 + (value - 50) * orbitScale
+  const pathD = (c1x: number, c1y: number, c2x: number, c2y: number, ex: number, ey: number) => (
+    `M 50,50 C ${scaleVal(c1x)},${scaleVal(c1y)} ${scaleVal(c2x)},${scaleVal(c2y)} ${scaleVal(ex)},${scaleVal(ey)}`
+  )
+  const nodePos = {
+    topLeft: { x: scaleVal(20), y: scaleVal(25) },
+    topRight: { x: scaleVal(80), y: scaleVal(25) },
+    bottomLeft: { x: isMobile ? scaleVal(26) : scaleVal(30), y: scaleVal(75) },
+    bottomRight: { x: isMobile ? scaleVal(74) : scaleVal(70), y: scaleVal(75) }
+  }
+
   return (
-    <div className="relative w-full pt-16 md:pt-20 pb-0 bg-bg-dark text-white font-sans overflow-hidden border-t border-white/[0.03] flex flex-col items-center">
+    <div className="relative w-full pt-0 pb-0 bg-[#050505] text-white font-sans flex flex-col items-center">
 
-      {/* Ambient glows */}
-      <div className="absolute right-[-8%] top-[8%]  w-[500px] h-[500px] bg-accent/[0.04] rounded-full blur-[130px] pointer-events-none z-0" />
-      <div className="absolute left-[-8%] bottom-[15%] w-[500px] h-[500px] bg-accent/[0.04] rounded-full blur-[130px] pointer-events-none z-0" />
+      {/* Ambient glows safely contained */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute right-[-8%] top-[8%] w-[500px] h-[500px] bg-accent/[0.04] rounded-full blur-[130px]" />
+        <div className="absolute left-[-8%] bottom-[15%] w-[500px] h-[500px] bg-accent/[0.04] rounded-full blur-[130px]" />
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col">
-
-        {/* ══════════════════════════════════════════════════════ */}
-        {/*  06 // CONTACT — Hero Row                             */}
-        {/* ══════════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-center mb-10">
-
-          {/* Left — typography */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
-            <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-              06 
+      {/* ══════════════════════════════════════════════════════ */}
+      {/*  NEW: Solar Constellation Sequence                    */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <div ref={containerRef} className={`relative w-full ${isMobile ? 'h-[250vh]' : 'h-[300vh]'}`}>
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
+          <div className="absolute top-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-[#050505]/90 via-[#050505]/50 to-transparent pointer-events-none z-20" />
+          <div className="absolute bottom-0 left-0 right-0 h-36 md:h-44 bg-gradient-to-t from-[#050505] via-[#050505]/75 to-transparent pointer-events-none z-20" />
+          <div className="hidden md:block absolute top-0 bottom-0 left-0 w-16 md:w-24 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent pointer-events-none z-20" />
+          
+          {/* Background: Embers & Space */}
+          <div className="absolute inset-0 z-0 bg-[#050505]">
+            {/* Large center subtle glow */}
+            <div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] bg-[#FFB000]/[0.02] rounded-full blur-[120px]" />
+            
+            {/* Milky Way / Nebula Diagonal Dust Band */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[170vw] md:w-[140vw] h-[78vh] md:h-[56vh] rotate-[-35deg] pointer-events-none opacity-70 [mask-image:radial-gradient(ellipse_at_center,black_0%,black_38%,rgba(0,0,0,0.45)_56%,transparent_78%)]">
+               {/* Core bright cosmic dust lane */}
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,176,0,0.12)_0%,transparent_60%)] blur-[80px]" />
+               
+               {/* Intense Nebula Clusters */}
+               <div className="absolute top-[20%] left-[15%] w-[40%] h-[80%] bg-[#FFB000]/10 blur-[90px] rounded-[50%]" />
+               <div className="absolute top-[35%] left-[50%] w-[45%] h-[90%] bg-[#ff5500]/10 blur-[120px] rounded-[50%]" />
+               <div className="absolute top-[10%] left-[30%] w-[30%] h-[60%] bg-[#FFF2D1]/5 blur-[70px] rounded-[50%]" />
+               
+               {/* Star cluster overlay within the milky way */}
+               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjAuNSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIxIiBmaWxsPSIjRkZCMDAwIiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSI1MCIgcj0iMS41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC42Ii8+PGNpcmNsZSBjeD0iMzIwIiBjeT0iMjAwIiByPSIwLjUiIGZpbGw9IiNGRkIwMDAiIG9wYWNpdHk9IjAuNSIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjI4MCIgcj0iMC41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC43Ii8+PGNpcmNsZSBjeD0iMTAiIGN5PSIzMDAiIHI9IjEiIGZpbGw9IiNGRkIwMDAiIG9wYWNpdHk9IjAuNSIvPjxjaXJjbGUgY3g9IjI4MCIgY3k9IjM1MCIgcj0iMC41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+')] opacity-30 mix-blend-screen" style={{ backgroundSize: '200px 200px' }} />
             </div>
-            <h2 className="text-[2.6rem] md:text-[3.2rem] font-bold tracking-tight mb-3 leading-[1.1]">
-              <span className="text-white">Let's&nbsp;</span>
-              <span className="text-accent">Connect.</span>
-            </h2>
-            <p className="text-white/40 text-[14px] font-montserrat leading-relaxed mb-5 max-w-md">
-              Open to collaborations, projects, and meaningful conversations.
-            </p>
+            
+            {/* Bokeh Orbs (from reference image) */}
 
-            {/* Accent dashes + line */}
-            <div className="flex items-center gap-1.5">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className="w-[7px] h-[3px] bg-accent/80 -skew-x-12 inline-block" />
-              ))}
-              <div className="w-20 h-[1px] bg-gradient-to-r from-accent/50 to-transparent ml-1" />
-              <div className="relative w-2 h-2">
-                <span className="absolute inset-0 rounded-full bg-accent/40 animate-ping" />
-                <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255, 176, 0,0.5)]" />
+            {EMBER_PARTICLES.map((particle, i) => (
+              <div key={i} className="absolute rounded-full bg-[#FFB000] animate-pulse" style={{
+                left: particle.left,
+                top: particle.top,
+                width: particle.size,
+                height: particle.size,
+                opacity: particle.opacity,
+                animationDelay: particle.animationDelay,
+                animationDuration: particle.animationDuration,
+                boxShadow: '0 0 8px 1px rgba(255,176,0,0.5)'
+              }} />
+            ))}
+          </div>
+          
+          <div className="absolute inset-0">
+            {/* Static Hero Text Inside Sticky Block */}
+            <motion.div style={{ opacity: heroOpacityValue, y: heroYValue }} className="absolute top-20 md:top-24 left-0 w-full flex justify-center z-30 pointer-events-none text-left">
+              <div className="w-full max-w-7xl px-6 flex flex-col items-start">
+                <div className="-ml-1 sm:-ml-3">
+                  <div className="font-mono text-white/55 text-[11px] md:text-xs mb-2 md:mb-4 tracking-[0.2em] uppercase drop-shadow-md">
+                    06
+                  </div>
+                  <h2 className="text-[2.6rem] md:text-[3.8rem] font-bold tracking-tight mb-2 md:mb-3 leading-[1.1] drop-shadow-lg">
+                    <span className="text-white block">Let's </span>
+                    <span className="text-accent block">Connect.</span>
+                  </h2>
+                  <p className="text-white/40 text-[14px] md:text-[15px] font-montserrat leading-relaxed mb-5 max-w-[280px] md:max-w-md drop-shadow-md">
+                    Open to collaborations, projects, and meaningful conversations.
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="w-[7px] h-[3px] bg-accent/80 -skew-x-12 inline-block" />
+                    ))}
+                    <div className="w-20 h-[1px] bg-gradient-to-r from-accent/50 to-transparent ml-1" />
+                    <div className="relative w-2 h-2">
+                      <span className="absolute inset-0 rounded-full bg-accent/40 animate-ping" />
+                      <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255, 176, 0,0.5)]" />
+                    </div>
+                  </div>
+                </div>
               </div>
+            </motion.div>
+
+            {/* Constellation Container - shifted right and sized down to create a 2-column layout feel */}
+            <div className="absolute inset-0 top-[20vh] md:top-[8vh] md:translate-x-[5%] lg:translate-x-[8%]">
+              {/* SVG Connection Lines */}
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-none overflow-visible">
+                  <defs>
+                  <linearGradient id="fireLineGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                    <stop offset="25%" stopColor="#ff4500" stopOpacity="0.2" />
+                    <stop offset="35%" stopColor="#FFB000" stopOpacity="0.8" />
+                    <stop offset="50%" stopColor="#FFF2D1" stopOpacity="1" />
+                    <stop offset="65%" stopColor="#FFB000" stopOpacity="0.8" />
+                    <stop offset="75%" stopColor="#ff4500" stopOpacity="0.2" />
+                  </linearGradient>
+                  <radialGradient id="rootFade" cx="50%" cy="50%" r="25%">
+                    <stop offset="0%" stopColor="#FFF2D1" stopOpacity="0.8" />
+                    <stop offset="30%" stopColor="#FFB000" stopOpacity="0.6" />
+                    <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
+                  </radialGradient>
+                  <filter id="glowBlur">
+                     <feGaussianBlur stdDeviation="0.8" result="coloredBlur"/>
+                     <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                     </feMerge>
+                  </filter>
+                </defs>
+                
+                <g filter="url(#glowBlur)">
+                  {/* TOP LEFT (GitHub) */}
+                  <motion.path d={pathD(40, 55, 25, 20, 20, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
+                  <motion.path d={pathD(50, 30, 35, 35, 20, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
+
+                  {/* TOP RIGHT (LinkedIn) */}
+                  <motion.path d={pathD(60, 55, 75, 20, 80, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
+                  <motion.path d={pathD(50, 30, 65, 35, 80, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
+
+                  {/* BOTTOM LEFT (X) */}
+                  <motion.path d={pathD(40, 45, 25, 80, 30, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
+                  <motion.path d={pathD(50, 70, 35, 65, 30, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
+
+                  {/* BOTTOM RIGHT (Instagram) */}
+                  <motion.path d={pathD(60, 45, 75, 80, 70, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
+                  <motion.path d={pathD(50, 70, 65, 65, 70, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
+                </g>
+              </svg>
+            </div>
+
+            {/* Constellation Nodes */}
+            <div className="absolute inset-0 z-30 pointer-events-none">
+              
+              {/* Center Sun Node (Linktree) */}
+              <CenterSun 
+                opacity={sunOpacity} 
+                scale={sunScale}
+                onClick={() => {
+                  window.open('https://linktr.ee/albin.thomas?utm_source=qr_code', '_blank')
+                }} 
+              />
+
+              {/* Node 1: GitHub (Top Left) */}
+              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.topLeft.x}%`, top: `${nodePos.topLeft.y}%` }}>
+                <SolarNode 
+                  icon={<GitHubSocialIcon />} 
+                  href="https://github.com/Albiin777" 
+                  title="GITHUB" 
+                  textAlignment="top-left" 
+                  opacity={nodesOpacity} 
+                  scale={nodesScale} 
+                  textOpacity={textOpacity} 
+                  ringOrientation="top"
+                />
+              </div>
+
+              {/* Node 2: LinkedIn (Top Right) */}
+              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.topRight.x}%`, top: `${nodePos.topRight.y}%` }}>
+                <SolarNode 
+                  icon={<LinkedInSocialIcon />} 
+                  href="https://www.linkedin.com/in/albinthomas18/" 
+                  title="LINKEDIN" 
+                  textAlignment="right" 
+                  opacity={nodesOpacity} 
+                  scale={nodesScale} 
+                  textOpacity={textOpacity} 
+                  ringOrientation="top"
+                />
+              </div>
+
+              {/* Node 3: X / Twitter (Bottom Left) */}
+              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.bottomLeft.x}%`, top: `${nodePos.bottomLeft.y}%` }}>
+                <SolarNode 
+                  icon={<TwitterSocialIcon />} 
+                  href="https://x.com/albiin7777" 
+                  title="TWITTER / X" 
+                  textAlignment="left" 
+                  opacity={nodesOpacity} 
+                  scale={nodesScale} 
+                  textOpacity={textOpacity} 
+                  ringOrientation="bottom"
+                />
+              </div>
+
+              {/* Node 4: Instagram (Bottom Right) */}
+              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.bottomRight.x}%`, top: `${nodePos.bottomRight.y}%` }}>
+                <SolarNode 
+                  icon={<InstagramSocialIcon />} 
+                  href="https://instagram.com/albiin.thomas/" 
+                  title="INSTAGRAM" 
+                  textAlignment="right" 
+                  opacity={nodesOpacity} 
+                  scale={nodesScale} 
+                  textOpacity={textOpacity} 
+                  ringOrientation="bottom"
+                />
+              </div>
+
             </div>
           </div>
-
-          {/* Right — orbital graphic */}
-          <div className="lg:col-span-5 flex items-center justify-center">
-            <svg width="240" height="110" viewBox="0 20 240 110" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[240px] lg:w-[300px] xl:w-[340px] h-auto text-accent/50 opacity-80">
-              <defs>
-                <radialGradient id="cGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#FFB000" stopOpacity="0.85" />
-                  <stop offset="35%" stopColor="#ff8500" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
-                </radialGradient>
-                <filter id="contactOrbitGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="2.8" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <g transform="rotate(-15 120 75)" opacity="0.6" filter="url(#contactOrbitGlow)">
-                <ellipse cx="120" cy="75" rx="92" ry="37" stroke="#FFB000" strokeWidth="0.35" strokeDasharray="1 9">
-                  <animate attributeName="opacity" values="0.16;0.5;0.16" dur="4.8s" repeatCount="indefinite" />
-                </ellipse>
-              </g>
-              
-              {/* Center Dot & Glow (Inclined to match orbits) */}
-              <g transform="rotate(-15 120 75)">
-                <ellipse cx="120" cy="75" rx="35" ry="16" fill="url(#cGlow)" />
-                <ellipse cx="120" cy="75" rx="4" ry="2" fill="#ffaa1f" />
-                {/* Static inner ring */}
-                <ellipse cx="120" cy="75" rx="8" ry="4" stroke="#FFB000" strokeWidth="0.4" strokeDasharray="1 2" />
-              </g>
-
-              {/* Orbit 1: rx=50, ry=20 */}
-              <g transform="rotate(-15 120 75)">
-                <ellipse cx="120" cy="75" rx="50" ry="20" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 4" />
-                <path id="orbitPath1" d="M 70,75 A 50,20 0 1,0 170,75 A 50,20 0 1,0 70,75" fill="none" />
-                <circle r="1.5" fill="#ff8500" className="animate-pulse">
-                  <animateMotion dur="10s" repeatCount="indefinite">
-                    <mpath href="#orbitPath1" />
-                  </animateMotion>
-                </circle>
-              </g>
-
-              {/* Orbit 2: rx=80, ry=32 */}
-              <g transform="rotate(-15 120 75)">
-                <ellipse cx="120" cy="75" rx="80" ry="32" stroke="currentColor" strokeWidth="0.7" strokeDasharray="3 6" />
-                <path id="orbitPath2" d="M 40,75 A 80,32 0 1,0 200,75 A 80,32 0 1,0 40,75" fill="none" />
-                <circle r="2" fill="#FFB000">
-                  <animateMotion dur="16s" repeatCount="indefinite">
-                    <mpath href="#orbitPath2" />
-                  </animateMotion>
-                </circle>
-              </g>
-
-              {/* Orbit 3 (Subtle inner ring): rx=30, ry=12 */}
-              <g transform="rotate(-15 120 75)">
-                <ellipse cx="120" cy="75" rx="30" ry="12" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 3" opacity="0.5" />
-                <path id="orbitPath3" d="M 90,75 A 30,12 0 1,0 150,75 A 30,12 0 1,0 90,75" fill="none" />
-                <circle r="1" fill="#FFB000" opacity="0.6">
-                  <animateMotion dur="6s" repeatCount="indefinite">
-                    <mpath href="#orbitPath3" />
-                  </animateMotion>
-                </circle>
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════ */}
-        {/*  4-Card Info Grid                                     */}
-        {/* ══════════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full mb-4">
-          <ContactCard
-            icon={<PhoneIcon />}
-            label="CALL"
-            value="+91 80785 74876"
-            onClick={() => window.location.href = 'tel:+918078574876'}
-          />
-          <ContactCard
-            icon={<EnvelopeIcon />}
-            label="EMAIL"
-            value="albiin7777@gmail.com"
-            onClick={() => window.location.href = 'mailto:albiin7777@gmail.com'}
-          />
-          <ContactCard
-            icon={<MapPinIcon />}
-            label="LOCATION"
-            value="Thiruvalla, Keralam"
-            onClick={() => window.open('https://goo.gl/maps/gLy71usGCQFwps9K7', '_blank')}
-          />
-          <ContactCard
-            icon={<DocumentIcon />}
-            label="RESUME"
-            value="Download My Resume ↗"
-            onClick={() => downloadResume(resumeUrl)}
-          />
-        </div>
-
-        {/* ══════════════════════════════════════════════════════ */}
-        {/*  Social Panel — CONNECT WITH ME inside the box       */}
-        {/* ══════════════════════════════════════════════════════ */}
-        <div className="relative z-20 w-full border border-white/[0.07] bg-[#0e0e10]/50 mb-12 overflow-hidden"
-          style={{ clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)' }}>
-
-          {/* Label row */}
-          <div className="flex items-center justify-center gap-3 py-3 border-b border-white/[0.06]">
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-accent/30 ml-6" />
-            <span className="text-[9px] font-mono tracking-[0.3em] text-white/50 uppercase select-none">
-              CONNECT WITH ME
-            </span>
-            <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-accent/30 mr-6" />
           </div>
 
-          {/* Social links */}
-          <div className="flex flex-row flex-wrap items-center justify-center gap-4 px-6 py-5">
-            <a href="https://github.com/Albiin777" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-white/55 hover:text-accent transition-all duration-300 font-sans font-semibold text-[13px] group">
-              <GitHubSocialIcon />
-              <span>GitHub</span>
-            </a>
-            <span className="w-[1px] h-5 bg-white/8" />
-            <a href="https://www.linkedin.com/in/albinthomas18/" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-white/55 hover:text-accent transition-all duration-300 font-sans font-semibold text-[13px] group">
-              <LinkedInSocialIcon />
-              <span>LinkedIn</span>
-            </a>
-            <span className="w-[1px] h-5 bg-white/8" />
-            <a href="https://x.com/albiin7777" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-white/55 hover:text-accent transition-all duration-300 font-sans font-semibold text-[13px] group">
-              <TwitterSocialIcon />
-              <span>Twitter / X</span>
-            </a>
-            <span className="w-[1px] h-5 bg-white/8" />
-            <a href="https://instagram.com/albiin.thomas/" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-white/55 hover:text-accent transition-all duration-300 font-sans font-semibold text-[13px] group">
-              <InstagramSocialIcon />
-              <span>Instagram</span>
-            </a>
-          </div>
         </div>
+      </div>
 
-        {/* ══════════════════════════════════════════════════════ */}
-        {/*  07 // GET IN TOUCH — two-col layout                 */}
-        {/* ══════════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col overflow-visible">
+        <div className="absolute left-1/2 top-0 bottom-0 w-screen -translate-x-1/2 bg-[#050505] pointer-events-none z-0" />
+        <div className="-ml-1 sm:-ml-3 w-full relative z-10">
+          {/* ══════════════════════════════════════════════════════ */}
+          {/*  Original 4-Card Info Grid                            */}
+          {/* ══════════════════════════════════════════════════════ */}
+          <motion.div
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full mb-16 mt-[30px] relative z-20"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.12, margin: '0px 0px -6% 0px' }}
+            transition={{ staggerChildren: 0.075 }}
+          >
+            <ContactCard
+              icon={<PhoneIcon />}
+              label="CALL"
+              value="+91 80785 74876"
+              onClick={() => window.location.href = 'tel:+918078574876'}
+            />
+            <ContactCard
+              icon={<EnvelopeIcon />}
+              label="EMAIL"
+              value="albiin7777@gmail.com"
+              onClick={() => window.location.href = 'mailto:albiin7777@gmail.com'}
+            />
+            <ContactCard
+              icon={<MapPinIcon />}
+              label="LOCATION"
+              value="Thiruvalla, Keralam"
+              onClick={() => window.open('https://goo.gl/maps/gLy71usGCQFwps9K7', '_blank')}
+            />
+            <ContactCard
+              icon={<DocumentIcon />}
+              label="RESUME"
+              value="Download My Resume ↗"
+              onClick={() => downloadResume(resumeUrl)}
+            />
+          </motion.div>
 
-          {/* Left — heading only (plane removed) */}
-          <div className="lg:col-span-5 flex flex-col items-start justify-center">
+          {/* ══════════════════════════════════════════════════════ */}
+          {/*  07 // GET IN TOUCH — Original Form Layout            */}
+          {/* ══════════════════════════════════════════════════════ */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start relative z-20 pb-20">
+
+          {/* Left — heading */}
+          <motion.div
+            className="lg:col-span-5 flex flex-col items-start justify-center"
+            initial={{ opacity: 0, x: -28, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.35 }}
+            transition={{ duration: 0.62, ease: 'easeOut' }}
+          >
             <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
               07
             </div>
@@ -382,10 +624,16 @@ export default function Contact() {
                 <span className="absolute inset-0 rounded-full bg-accent/35 animate-pulse" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right — form with button inside */}
-          <div className="lg:col-span-7 flex flex-col w-full">
+          <motion.div
+            className="lg:col-span-7 flex flex-col w-full"
+            initial={{ opacity: 0, x: 28, filter: 'blur(8px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ duration: 0.66, ease: 'easeOut', delay: 0.08 }}
+          >
             <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
 
               {/* Name + Email row */}
@@ -506,27 +754,33 @@ export default function Contact() {
               </div>
 
             </form>
-          </div>
+          </motion.div>
 
         </div>{/* end grid: 07 GET IN TOUCH */}
-
+        </div>
       </div>{/* end max-w-7xl container */}
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  FOOTER — full-width, integrated with the page        */}
+      {/*  FOOTER — Original Full-Width                         */}
       {/* ══════════════════════════════════════════════════════ */}
-      <footer className="relative w-full mt-24 flex flex-col items-center overflow-hidden bg-[#050505] pb-6 z-10 px-4 sm:px-0">
+      <footer className="relative w-full flex flex-col items-center overflow-hidden bg-[#050505] pb-6 z-10 px-4 sm:px-0 mt-8">
 
         {/* Glowing divider — pure light bloom, angled end brackets */}
         <div className="relative w-full flex items-center justify-center h-[13px]">
           {/* Left arm */}
-          <div className="absolute left-0 right-1/2 flex items-center justify-end">
+          <motion.div
+            className="absolute left-0 right-1/2 flex items-center justify-end origin-right"
+            initial={{ scaleX: 0, opacity: 0.35 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: false, amount: 0.7 }}
+            transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+          >
             <svg width="22" height="13" viewBox="0 0 22 13" fill="none" className="shrink-0 mr-[-1px] opacity-55">
               <polyline points="0,13 8,0 22,0" stroke="#FFB000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <div className="h-[1px] flex-1"
               style={{ background: 'linear-gradient(to right, transparent 0%, #FFB0002a 20%, #FFB000aa 100%)' }} />
-          </div>
+          </motion.div>
 
           {/* Center bloom glow — realistic multi-layered volumetric light beam */}
           <div className="relative z-10 pointer-events-none w-full h-0 flex items-center justify-center">
@@ -574,17 +828,23 @@ export default function Contact() {
           </div>
 
           {/* Right arm */}
-          <div className="absolute left-1/2 right-0 flex items-center justify-start">
+          <motion.div
+            className="absolute left-1/2 right-0 flex items-center justify-start origin-left"
+            initial={{ scaleX: 0, opacity: 0.35 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: false, amount: 0.7 }}
+            transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="h-[1px] flex-1"
               style={{ background: 'linear-gradient(to right, #FFB000aa 0%, #FFB0002a 80%, transparent 100%)' }} />
             <svg width="22" height="13" viewBox="0 0 22 13" fill="none" className="shrink-0 ml-[-1px] opacity-55">
               <polyline points="22,13 14,0 0,0" stroke="#FFB000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
+          </motion.div>
         </div>
 
         {/* Copyright text */}
-        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-white/35 text-[10px] sm:text-[11px] font-mono tracking-wide select-none mt-3.5 text-center px-4">
+        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-white/35 text-[10px] sm:text-[11px] font-montserrat tracking-wide select-none mt-3.5 text-center px-4">
           <span className="inline-flex items-center justify-center gap-1.5">
             <svg
               width="11"

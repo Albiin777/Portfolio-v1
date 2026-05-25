@@ -91,16 +91,16 @@ export default function FloatingNavbar() {
               <a
                 href="#home"
                 onClick={e => handleNavClick(e, 'home')}
-                className="flex items-center gap-1.5 cursor-pointer shrink-0 -ml-1 sm:-ml-3"
+                className="flex items-center gap-2.5 cursor-pointer shrink-0 -ml-1 sm:-ml-3"
                 aria-label="Home"
               >
                 <img
                   src="/logo-new.png"
                   alt=""
                   aria-hidden="true"
-                  className="h-10 w-10 rounded-full object-contain"
+                  className="h-11 w-11 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_12px_rgba(255,176,0,0.45)] brightness-110 contrast-125"
                 />
-                <span className="font-grotesk font-bold text-[19px] sm:text-[20px] tracking-wide text-accent hover:text-accent/80 transition-colors duration-200 select-none">
+                <span className="font-grotesk font-bold text-[19px] sm:text-[20px] tracking-wide text-accent hover:text-accent/80 transition-colors duration-200 select-none mt-[2px]">
                   ALBIN THOMAS
                 </span>
               </a>
