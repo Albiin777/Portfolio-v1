@@ -219,30 +219,30 @@ const SkillStageCard = ({
         : { opacity: 0, y: 26, scale: 0.98, filter: 'blur(8px)' }
     }
     transition={{ duration: 0.42, delay: isVisible ? index * 0.035 : 0, ease: [0.22, 1, 0.36, 1] }}
-    className={`relative h-full min-w-0 bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-8 hover:border-accent/20 transition-[border-color,background-color] duration-300 group overflow-hidden ${
+    className={`relative h-full min-w-0 bg-[#111111]/40 border border-white/5 rounded-2xl p-4 md:p-8 hover:border-accent/20 transition-[border-color,background-color] duration-300 group overflow-hidden ${
       isVisible ? 'pointer-events-auto' : 'pointer-events-none'
     }`}
   >
     <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-    <div className="flex items-center gap-3 mb-4">
-      <div className="w-10 h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255,176,0,0.1)] group-hover:shadow-[0_0_20px_rgba(255,176,0,0.25)] group-hover:border-accent/40 transition-all duration-300">
+    <div className="flex items-center gap-3 mb-3 md:mb-4">
+      <div className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-accent/20 bg-accent/5 flex items-center justify-center shadow-[0_0_15px_rgba(255,176,0,0.1)] group-hover:shadow-[0_0_20px_rgba(255,176,0,0.25)] group-hover:border-accent/40 transition-all duration-300">
         {category.icon}
       </div>
-      <h3 className="text-lg font-bold text-white/90 group-hover:text-white transition-colors duration-300">
+      <h3 className="text-base md:text-lg font-bold text-white/90 group-hover:text-white transition-colors duration-300">
         {category.title}
       </h3>
     </div>
 
-    <p className="text-white/50 text-[13px] leading-relaxed mb-6 font-montserrat min-h-[60px]">
+    <p className="text-white/50 text-[11px] md:text-[13px] leading-relaxed mb-4 md:mb-6 font-montserrat md:min-h-[60px]">
       {category.description}
     </p>
 
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5 md:gap-2">
       {category.skills.map((skill) => (
         <div
           key={skill.name}
-          className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-2.5 py-1.5 flex items-center gap-2 text-[11px] font-montserrat text-white/80 hover:text-white transition-all duration-300"
+          className="border border-white/5 bg-white/[0.02] hover:border-accent/40 hover:bg-accent/5 rounded-lg px-2 py-1 md:px-2.5 md:py-1.5 flex items-center gap-1.5 md:gap-2 text-[9.5px] md:text-[11px] font-montserrat text-white/80 hover:text-white transition-all duration-300"
         >
           {skill.icon && <span className="flex shrink-0 items-center justify-center">{skill.icon}</span>}
           <span>{skill.name}</span>
@@ -396,7 +396,7 @@ export default function Skills() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Scroll-driven Card Stage */}
         <div ref={stageRef} className="relative max-w-6xl mx-auto h-[96vh] min-h-[640px] mb-0">
-          <div className="sticky top-24 md:top-[13vh]">
+          <div className="sticky top-20 md:top-[13vh]">
             {/* Section Header */}
             <motion.div
               initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
