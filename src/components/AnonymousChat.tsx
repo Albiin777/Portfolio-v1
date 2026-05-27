@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { db } from '../lib/firebase'
+import { sendPortfolioMessage } from '../lib/messages'
 
 export default function AnonymousChat() {
   const [isOpen, setIsOpen] = useState(false)
@@ -13,14 +12,9 @@ export default function AnonymousChat() {
     setStatus('sending')
 
     try {
-      if (!db) {
-        throw new Error('Firebase is not configured.')
-      }
-
-      await addDoc(collection(db, 'messages'), {
+      await sendPortfolioMessage({
         type: 'anonymous',
-        message: message.trim(),
-        createdAt: serverTimestamp()
+        message: message.trim()
       })
 
       setStatus('sent')

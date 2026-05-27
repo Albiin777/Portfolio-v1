@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { db } from '../lib/firebase'
 import { useDocData } from '../lib/content'
+import { sendPortfolioMessage } from '../lib/messages'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 
@@ -216,16 +215,11 @@ const LegacyContact = () => {
     if (!formData.name || !formData.email || !formData.message) return
     setStatus('sending')
     try {
-      if (!db) {
-        throw new Error('Firebase is not configured.')
-      }
-
-      await addDoc(collection(db, 'messages'), {
+      await sendPortfolioMessage({
         type: 'direct',
         name: formData.name.trim(),
         email: formData.email.trim(),
-        message: formData.message.trim(),
-        createdAt: serverTimestamp()
+        message: formData.message.trim()
       })
       setStatus('success')
       setFormData({ name: '', email: '', message: '' })
@@ -242,7 +236,6 @@ const LegacyContact = () => {
   })
 
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 92, damping: 24, restDelta: 0.001 })
-  const sectionOpacity = useTransform(smoothProgress, [0, 0.08], [0.45, 1])
   const cardOpacity = useTransform(smoothProgress, [0, 0.08], [0, 1])
   const cardScale = useTransform(smoothProgress, [0, 0.08], [0.96, 1])
   const logoOpacity = useTransform(smoothProgress, [0.02, 0.22], [1, 0])

@@ -370,20 +370,38 @@ const MessagesPanel = () => {
   const known = messages.filter((m) => m.data.type === 'direct')
   const unknown = messages.filter((m) => m.data.type === 'anonymous')
 
-  const renderMessage = (item: MessageItem) => (
-    <div key={item.id} className="border border-white/10 rounded-lg p-3">
-      <div className="text-[10px] text-white/40 font-mono mb-1">ID: {item.id}</div>
-      <div className="text-[12px] text-white/80 font-mono whitespace-pre-wrap">
-        {(item.data.message as string) || ''}
-      </div>
-      {Boolean(item.data.name || item.data.email) && (
-        <div className="text-[11px] text-white/50 mt-2">
-          {item.data.name ? `Name: ${item.data.name}` : ''}
-          {item.data.email ? ` ${item.data.name ? '•' : ''} Email: ${item.data.email}` : ''}
+  const renderMessage = (item: MessageItem) => {
+    const ts = item.data.createdAt as { toDate?: () => Date } | null
+    const date = ts?.toDate?.()
+    const formatted = date
+      ? date.toLocaleString('en-IN', {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: true
+        })
+      : null
+
+    return (
+      <div key={item.id} className="border border-white/10 rounded-lg p-3">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="text-[10px] text-white/30 font-mono">ID: {item.id}</div>
+          {formatted && (
+            <div className="text-[10px] text-accent/70 font-mono whitespace-nowrap">
+              ⏱ {formatted}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  )
+        <div className="text-[12px] text-white/80 font-mono whitespace-pre-wrap">
+          {(item.data.message as string) || ''}
+        </div>
+        {Boolean(item.data.name || item.data.email) && (
+          <div className="text-[11px] text-white/50 mt-2">
+            {item.data.name ? `Name: ${item.data.name}` : ''}
+            {item.data.email ? ` ${item.data.name ? '•' : ''} Email: ${item.data.email}` : ''}
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <section className="border border-white/10 bg-white/[0.02] rounded-xl p-5">
