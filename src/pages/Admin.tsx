@@ -357,6 +357,9 @@ type MessageItem = {
 const MessagesPanel = () => {
   const [messages, setMessages] = useState<MessageItem[]>([])
   const [isExpanded, setIsExpanded] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!db) return
@@ -369,6 +372,21 @@ const MessagesPanel = () => {
 
   const known = messages.filter((m) => m.data.type === 'direct')
   const unknown = messages.filter((m) => m.data.type === 'anonymous')
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!db) return
+    setDeletingId(id)
+    setDeleteError(null)
+
+    try {
+      await deleteDoc(doc(db, 'messages', id))
+      setConfirmDeleteId(null)
+    } catch (error) {
+      setDeleteError(getFirebaseErrorMessage(error, 'Failed to delete message.'))
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   const renderMessage = (item: MessageItem) => {
     const ts = item.data.createdAt as { toDate?: () => Date } | null
@@ -399,6 +417,33 @@ const MessagesPanel = () => {
             {item.data.email ? ` ${item.data.name ? '•' : ''} Email: ${item.data.email}` : ''}
           </div>
         )}
+        <div className="mt-3 flex items-center justify-end gap-2">
+          {confirmDeleteId === item.id ? (
+            <>
+              <button
+                onClick={() => handleDeleteMessage(item.id)}
+                disabled={deletingId === item.id}
+                className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest border border-red-500/40 text-red-300 hover:border-red-400 hover:text-red-200 disabled:opacity-50 transition-colors"
+              >
+                {deletingId === item.id ? 'Deleting...' : 'Confirm'}
+              </button>
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deletingId === item.id}
+                className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest border border-white/15 text-white/50 hover:border-white/30 hover:text-white/70 disabled:opacity-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setConfirmDeleteId(item.id)}
+              className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest border border-white/15 text-white/45 hover:border-red-500/40 hover:text-red-300 transition-colors"
+            >
+              Delete
+            </button>
+          )}
+        </div>
       </div>
     )
   }
@@ -412,6 +457,7 @@ const MessagesPanel = () => {
         <h3 className="text-sm font-mono tracking-[0.2em] uppercase text-white/70">Messages</h3>
         <span className="text-accent text-[13px]">{isExpanded ? '[-]' : `[+] ${messages.length}`}</span>
       </button>
+      {deleteError && <div className="mt-3 text-[11px] text-red-300">{deleteError}</div>}
       {isExpanded && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <div>
           <div className="text-[11px] font-mono text-white/50 mb-2 uppercase tracking-widest">Known</div>
