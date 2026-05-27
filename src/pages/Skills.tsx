@@ -329,15 +329,17 @@ const getSkillIcon = (name: string) => {
 
 export default function Skills() {
   const stageRef = useRef<HTMLDivElement>(null)
-  const visibleStepRef = useRef(1)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const visibleStepRef = useRef(0)
   const cardsUnlockTimer = useRef<number | null>(null)
-  const [visibleStep, setVisibleStep] = useState(1)
+  const [visibleStep, setVisibleStep] = useState(0)
   const [sequenceStarted, setSequenceStarted] = useState(false)
   const [cardsUnlocked, setCardsUnlocked] = useState(false)
   const skillDocs = useCollectionData<SkillDoc>('skills', [])
-  const stageEntered = useInView(stageRef, {
-    amount: 0.08,
-    margin: '0px 0px 12% 0px'
+  const headerEntered = useInView(headerRef, {
+    amount: 0.45,
+    margin: '0px 0px -8% 0px',
+    once: true
   })
   const { scrollYProgress } = useScroll({
     target: stageRef,
@@ -348,7 +350,10 @@ export default function Skills() {
     const currentStep = visibleStepRef.current
     let nextStep = currentStep
 
-    if (currentStep === 1) {
+    if (!cardsUnlocked) return
+
+    if (currentStep <= 1) {
+      nextStep = 1
       if (latest >= 0.58) nextStep = 4
       else if (latest >= 0.42) nextStep = 3
       else if (latest >= 0.18) nextStep = 2
@@ -375,14 +380,16 @@ export default function Skills() {
   })
 
   useEffect(() => {
-    if (!stageEntered || sequenceStarted) return
+    if (!headerEntered || sequenceStarted) return
 
     setSequenceStarted(true)
     cardsUnlockTimer.current = window.setTimeout(() => {
+      setVisibleStep(1)
+      visibleStepRef.current = 1
       setCardsUnlocked(true)
       cardsUnlockTimer.current = null
-    }, 520)
-  }, [stageEntered, sequenceStarted])
+    }, 920)
+  }, [headerEntered, sequenceStarted])
 
   useEffect(() => () => {
     if (cardsUnlockTimer.current) window.clearTimeout(cardsUnlockTimer.current)
@@ -420,6 +427,7 @@ export default function Skills() {
           <div className="sticky top-16 md:top-[10vh]">
             {/* Section Header */}
             <motion.div
+              ref={headerRef}
               initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
               animate={sequenceStarted ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 18, filter: 'blur(6px)' }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
