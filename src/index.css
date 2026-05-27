@@ -71,6 +71,10 @@
     background-color: #fffdf7 !important;
   }
 
+  .day-mode .mobile-nav-logo-mark {
+    background-color: #000000 !important;
+  }
+
   .day-mode .text-white,
   .day-mode [class*="text-white"] {
     color: rgba(24, 19, 11, 0.92) !important;
@@ -154,7 +158,21 @@
   }
 
   .day-mode .anonymous-chat-window {
+    background-color: #fffdf7 !important;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .day-mode .anonymous-chat-window > div {
+    background-color: #fffdf7 !important;
+  }
+
+  .day-mode .anonymous-chat-window textarea {
+    background-color: #fffdf7 !important;
+  }
+
+  .day-mode .anonymous-chat-window button {
+    background-color: #fffaf0 !important;
+    color: #9a5f00 !important;
   }
 
   .day-mode .space-cursor-ring {
@@ -241,6 +259,10 @@
   .day-mode .contact-section .text-white,
   .day-mode .contact-section [class*="text-white"] {
     color: rgba(24, 19, 11, 0.9) !important;
+  }
+
+  .day-mode .coding-profiles-section {
+    border-top-color: transparent !important;
   }
 
   .day-mode .tracker-dashes {

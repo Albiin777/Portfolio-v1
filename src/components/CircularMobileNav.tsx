@@ -186,7 +186,7 @@ export default function CircularMobileNav({ isDayMode, onToggleDayMode }: Circul
           aria-label="Home"
         >
           <div 
-            className="w-[78px] h-[28px] origin-left transition-colors duration-200 bg-white"
+            className="mobile-nav-logo-mark w-[78px] h-[28px] origin-left transition-colors duration-200 bg-white"
             style={{
               maskImage: 'url(/logo-mask-mid.png)',
               maskSize: 'auto 100%',
@@ -223,14 +223,14 @@ export default function CircularMobileNav({ isDayMode, onToggleDayMode }: Circul
               {isOpen ? (
                 <>
                   <svg className={isDayMode ? 'text-black' : 'text-accent'} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                  <span className={`font-mono text-[9px] tracking-[0.2em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-accent'}`}>CLOSE</span>
+                  <span className={`font-montserrat text-[9px] tracking-[0.16em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-accent'}`}>CLOSE</span>
                 </>
               ) : (
                 <>
                   <span className={`flex items-center justify-center shrink-0 ${isDayMode ? 'text-black' : 'text-accent'}`}>
                     {getIconForPage(activeSection)}
                   </span>
-                  <span className={`font-mono text-[9.5px] tracking-[0.2em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-white'}`}>
+                  <span className={`font-montserrat text-[9.5px] tracking-[0.16em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-white'}`}>
                     {getLabel(activeSection)}
                   </span>
                 </>
@@ -304,7 +304,7 @@ export default function CircularMobileNav({ isDayMode, onToggleDayMode }: Circul
                             filter: `blur(${blurAmount}px)`
                           }}
                         >
-                          <span className={`font-sans tracking-wide ${isVisuallyActive ? 'text-white font-bold text-base' : 'text-white/80 font-medium text-sm'}`}>
+                          <span className={`font-montserrat tracking-wide ${isVisuallyActive ? 'text-white font-bold text-base' : 'text-white/80 font-medium text-sm'}`}>
                             {getLabel(page.id)}
                           </span>
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-colors

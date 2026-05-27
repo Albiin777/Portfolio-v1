@@ -304,7 +304,7 @@ const LegacyContact = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
                     whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, amount: 0.35 }}
+                    viewport={{ once: true, amount: 0.18 }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                     className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/55 drop-shadow-md md:mb-4 md:text-xs"
                   >
@@ -314,7 +314,7 @@ const LegacyContact = () => {
                   <motion.h2
                     initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
                     whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, amount: 0.35 }}
+                    viewport={{ once: true, amount: 0.18 }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                     className="mb-4 text-[2.6rem] font-bold leading-[1.05] tracking-tight drop-shadow-lg md:text-[3.8rem]"
                   >
@@ -325,7 +325,7 @@ const LegacyContact = () => {
                   <motion.p
                     initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
                     whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, amount: 0.35 }}
+                    viewport={{ once: true, amount: 0.18 }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
                     className="mb-8 md:mb-6 max-w-[280px] font-montserrat text-[14px] leading-relaxed text-white/60 drop-shadow-md md:max-w-md md:text-[15px]"
                   >
@@ -335,7 +335,7 @@ const LegacyContact = () => {
                   <motion.div
                     initial={{ opacity: 0, x: -15, filter: 'blur(4px)' }}
                     whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, amount: 0.35 }}
+                    viewport={{ once: true, amount: 0.18 }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
                     className="hidden md:flex items-center gap-4 mb-8 w-full max-w-[280px] opacity-90"
                   >
@@ -353,7 +353,7 @@ const LegacyContact = () => {
                   <motion.a
                     initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
                     whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: true, amount: 0.35 }}
+                    viewport={{ once: true, amount: 0.18 }}
                     transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
                     href="https://wa.me/918078574876" target="_blank" rel="noreferrer" className="contact-start-btn group flex items-center justify-between w-full max-w-[280px] rounded-[24px] border-[1px] border-accent/50 bg-[#060606] px-5 py-3 transition-all duration-300 hover:border-accent hover:shadow-[0_0_15px_rgba(255,176,0,0.15)]"
                   >
@@ -461,7 +461,7 @@ const LegacyContact = () => {
             className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full mb-16 mt-[30px] relative z-20"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.12, margin: '0px 0px -6% 0px' }}
+            viewport={{ once: false, amount: 0.12, margin: '0px 0px 12% 0px' }}
             transition={{ staggerChildren: 0.075 }}
           >
             <ContactCard
@@ -500,7 +500,7 @@ const LegacyContact = () => {
               className="lg:col-span-5 flex flex-col items-start justify-center"
               initial={{ opacity: 0, x: -28, filter: 'blur(8px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              viewport={{ once: false, amount: 0.35 }}
+              viewport={{ once: false, amount: 0.18 }}
               transition={{ duration: 0.62, ease: 'easeOut' }}
             >
               <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
@@ -531,7 +531,7 @@ const LegacyContact = () => {
               className="lg:col-span-7 flex flex-col w-full"
               initial={{ opacity: 0, x: 28, filter: 'blur(8px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              viewport={{ once: false, amount: 0.25 }}
+              viewport={{ once: false, amount: 0.18 }}
               transition={{ duration: 0.66, ease: 'easeOut', delay: 0.08 }}
             >
               <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
@@ -672,7 +672,7 @@ const LegacyContact = () => {
             className="absolute left-0 right-1/2 flex items-center justify-end origin-right"
             initial={{ scaleX: 0, opacity: 0.35 }}
             whileInView={{ scaleX: 1, opacity: 1 }}
-            viewport={{ once: false, amount: 0.7 }}
+            viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
           >
             <svg width="22" height="13" viewBox="0 0 22 13" fill="none" className="shrink-0 mr-[-1px] opacity-55">
@@ -732,7 +732,7 @@ const LegacyContact = () => {
             className="absolute left-1/2 right-0 flex items-center justify-start origin-left"
             initial={{ scaleX: 0, opacity: 0.35 }}
             whileInView={{ scaleX: 1, opacity: 1 }}
-            viewport={{ once: false, amount: 0.7 }}
+            viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="h-[1px] flex-1"

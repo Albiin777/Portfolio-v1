@@ -51,7 +51,7 @@ function EducationTimelineItem({ item, index }: { item: EducationItem; index: nu
           controls.start('hidden')
         }
       }}
-      viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
+      viewport={{ once: false, amount: 0.1, margin: '0px 0px 15% 0px' }}
       transition={{ delay: index * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className="relative pl-10"
     >

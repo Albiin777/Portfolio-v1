@@ -553,7 +553,7 @@ export default function CodingProfiles() {
   const hardPercent = totalSolved > 0 ? (leetcodeData.hard / totalSolved) * 100 : 0
 
   return (
-    <div className="relative w-full py-16 md:py-20 bg-bg-dark text-white font-sans overflow-hidden border-t border-white/[0.02]">
+    <div className="coding-profiles-section relative w-full py-16 md:py-20 bg-bg-dark text-white font-sans overflow-hidden border-t border-white/[0.02]">
       {/* Background glow effects */}
       <div className="absolute right-[-10%] top-[10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none z-0" />
       <div className="absolute left-[-10%] bottom-[20%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -564,14 +564,14 @@ export default function CodingProfiles() {
         <motion.div
           initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-start mb-14 text-left max-w-3xl"
         >
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3"
           >
@@ -600,7 +600,7 @@ export default function CodingProfiles() {
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
           >
@@ -610,7 +610,7 @@ export default function CodingProfiles() {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
             className="text-white/45 text-sm md:text-base font-montserrat leading-relaxed"
           >
@@ -736,13 +736,13 @@ export default function CodingProfiles() {
               {githubStatsList.map((stat) => (
                 <div 
                   key={stat.label}
-                  className="bg-white/[0.015] border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:border-emerald-500/15 transition-all duration-300"
+                  className="min-w-0 bg-white/[0.015] border border-white/5 rounded-xl px-2 py-3 flex flex-col items-center justify-center text-center hover:border-emerald-500/15 transition-all duration-300"
                 >
                   <div className="flex items-center gap-1 text-emerald-400 mb-1">
                     <span className="shrink-0 scale-90">{stat.icon}</span>
                     <span className="text-sm md:text-base font-bold tracking-tight text-emerald-400">{stat.value}</span>
                   </div>
-                  <span className="text-[9px] text-white/40 font-mono tracking-wider uppercase leading-tight">{stat.label.split(' ')[0]}</span>
+                  <span className="max-w-full truncate text-[8px] sm:text-[9px] text-white/40 font-mono tracking-[0.08em] sm:tracking-wider uppercase leading-tight">{stat.label.split(' ')[0]}</span>
                 </div>
               ))}
             </div>
@@ -758,12 +758,12 @@ export default function CodingProfiles() {
                     key={lang.name}
                     className="bg-white/[0.015] border border-white/5 rounded-xl px-4 py-3 flex flex-col justify-between h-[64px] relative overflow-hidden group/lang hover:border-emerald-500/10 transition-colors duration-300"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: lang.color }} />
-                        <span className="text-[12px] md:text-[13px] font-mono font-medium text-white/80">{lang.name}</span>
+                    <div className="flex min-w-0 items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 shrink-0 rounded-full" style={{ backgroundColor: lang.color }} />
+                        <span className="min-w-0 truncate text-[12px] md:text-[13px] font-mono font-medium text-white/80">{lang.name}</span>
                       </div>
-                      <span className="text-[11px] font-mono text-white/45">{lang.percentage}%</span>
+                      <span className="shrink-0 text-[11px] font-mono text-white/45">{lang.percentage}%</span>
                     </div>
                     <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1.5">
                       <div className="h-full rounded-full transition-all duration-1000" style={{ backgroundColor: lang.color, width: `${lang.percentage}%` }} />

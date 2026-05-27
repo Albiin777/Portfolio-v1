@@ -14,14 +14,14 @@ export default function Journey() {
       <motion.div
         initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
         whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        viewport={{ once: false, amount: 0.6 }}
+        viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 flex flex-col items-center mb-10 md:mb-20 px-6"
       >
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="font-mono text-white/40 text-sm mb-4 tracking-widest"
         >
@@ -30,7 +30,7 @@ export default function Journey() {
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-5xl flex items-center justify-center gap-4 md:gap-8 mb-4"
         >
@@ -134,7 +134,7 @@ export default function Journey() {
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
           className="text-white/40 text-sm md:text-base font-montserrat max-w-2xl text-center"
         >
@@ -150,7 +150,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
+            viewport={{ once: false, amount: 0.1, margin: '0px 0px 15% 0px' }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-6">
@@ -171,7 +171,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
+            viewport={{ once: false, amount: 0.1, margin: '0px 0px 15% 0px' }}
             transition={{ delay: 0.2 }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >

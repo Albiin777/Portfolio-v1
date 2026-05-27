@@ -648,14 +648,14 @@ export default function Projects() {
         <motion.div
           initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-start mb-14 text-left max-w-3xl"
         >
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase flex items-center gap-3"
           >
@@ -664,7 +664,7 @@ export default function Projects() {
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
             className="text-4xl md:text-5xl font-bold tracking-tight mb-4 flex items-center gap-3"
           >
@@ -674,7 +674,7 @@ export default function Projects() {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
             className="text-white/45 text-sm md:text-base font-montserrat leading-relaxed"
           >
@@ -683,7 +683,7 @@ export default function Projects() {
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
             whileInView={{ opacity: 1, scaleX: 1 }}
-            viewport={{ once: false, amount: 0.6 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.38, delay: 0.23, ease: [0.22, 1, 0.36, 1] }}
             className="w-16 h-[2px] bg-accent relative mt-4 origin-left"
           >

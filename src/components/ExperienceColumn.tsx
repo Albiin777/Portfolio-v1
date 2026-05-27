@@ -80,7 +80,7 @@ function DirectionalRole({ item, roleIndex, isLast }: { item: ExperienceRole; ro
           controls.start('hidden')
         }
       }}
-      viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
+      viewport={{ once: false, amount: 0.1, margin: '0px 0px 15% 0px' }}
       transition={{ delay: roleIndex * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={`flex items-start gap-3 px-5 py-5 group hover:bg-white/5 transition-colors
         ${!isLast ? 'border-b border-white/5' : ''}`}
@@ -142,7 +142,7 @@ function DirectionalOrg({ org, orgIndex }: { org: ExperienceOrg; orgIndex: numbe
           controls.start('hidden')
         }
       }}
-      viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
+      viewport={{ once: false, amount: 0.1, margin: '0px 0px 15% 0px' }}
       transition={{ delay: orgIndex * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className="relative"
     >

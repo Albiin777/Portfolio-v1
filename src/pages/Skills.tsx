@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import { motion, useMotionValueEvent, useScroll } from 'framer-motion'
+import React, { useEffect, useRef, useState } from 'react'
+import { motion, useInView, useMotionValueEvent, useScroll } from 'framer-motion'
 import PythonLogo from '../assets/tech/python.svg'
 import Html5Logo from '../assets/tech/html5.svg'
 import Css3Logo from '../assets/tech/css3.svg'
@@ -212,13 +212,13 @@ const SkillStageCard = ({
 }) => (
   <motion.div
     key={category.title}
-    initial={false}
+    initial={{ opacity: 0, y: 26, scale: 0.98, filter: 'blur(8px)' }}
     animate={
       isVisible
         ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
         : { opacity: 0, y: 26, scale: 0.98, filter: 'blur(8px)' }
     }
-    transition={{ duration: 0.42, delay: isVisible ? index * 0.035 : 0, ease: [0.22, 1, 0.36, 1] }}
+    transition={{ duration: 0.42, delay: isVisible ? 0.12 + index * 0.05 : 0, ease: [0.22, 1, 0.36, 1] }}
     className={`relative h-full min-w-0 bg-[#111111]/40 border border-white/5 rounded-2xl p-4 md:p-8 hover:border-accent/20 transition-[border-color,background-color] duration-300 group overflow-hidden ${
       isVisible ? 'pointer-events-auto' : 'pointer-events-none'
     }`}
@@ -330,8 +330,15 @@ const getSkillIcon = (name: string) => {
 export default function Skills() {
   const stageRef = useRef<HTMLDivElement>(null)
   const visibleStepRef = useRef(1)
+  const cardsUnlockTimer = useRef<number | null>(null)
   const [visibleStep, setVisibleStep] = useState(1)
+  const [sequenceStarted, setSequenceStarted] = useState(false)
+  const [cardsUnlocked, setCardsUnlocked] = useState(false)
   const skillDocs = useCollectionData<SkillDoc>('skills', [])
+  const stageEntered = useInView(stageRef, {
+    amount: 0.08,
+    margin: '0px 0px 12% 0px'
+  })
   const { scrollYProgress } = useScroll({
     target: stageRef,
     offset: ['start 56%', 'end 46%']
@@ -367,6 +374,20 @@ export default function Skills() {
     visibleStepRef.current = nextStep
   })
 
+  useEffect(() => {
+    if (!stageEntered || sequenceStarted) return
+
+    setSequenceStarted(true)
+    cardsUnlockTimer.current = window.setTimeout(() => {
+      setCardsUnlocked(true)
+      cardsUnlockTimer.current = null
+    }, 520)
+  }, [stageEntered, sequenceStarted])
+
+  useEffect(() => () => {
+    if (cardsUnlockTimer.current) window.clearTimeout(cardsUnlockTimer.current)
+  }, [])
+
   const categories: Category[] = FALLBACK_SKILL_DOCS.map((fallbackCategory, index) => {
     const categoryId = index === 0 ? 'frontend' : index === 1 ? 'backend' : 'tools'
     const override = skillDocs.find((skillDoc) => skillDoc.__id === categoryId)
@@ -387,7 +408,7 @@ export default function Skills() {
     }
   })
   return (
-    <div className="relative w-full pt-2 pb-4 md:pt-3 md:pb-6 bg-bg-dark text-white font-sans overflow-hidden">
+    <div className="relative w-full pt-10 pb-4 md:pt-16 md:pb-6 bg-bg-dark text-white font-sans overflow-visible">
       {/* Subtle background glow */}
       <div className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
       <div className="absolute right-[-10%] bottom-[10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
@@ -395,20 +416,18 @@ export default function Skills() {
       {/* Main Grid Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Scroll-driven Card Stage */}
-        <div ref={stageRef} className="relative max-w-6xl mx-auto h-[96vh] min-h-[640px] mb-0">
-          <div className="sticky top-20 md:top-[13vh]">
+        <div ref={stageRef} className="relative max-w-6xl mx-auto h-[88vh] min-h-[640px] mb-0">
+          <div className="sticky top-16 md:top-[10vh]">
             {/* Section Header */}
             <motion.div
               initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              viewport={{ once: false, amount: 0.6 }}
+              animate={sequenceStarted ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 18, filter: 'blur(6px)' }}
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col items-start mb-7 text-left max-w-3xl"
             >
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.6 }}
+                animate={sequenceStarted ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="font-mono text-white/40 text-xs mb-3 tracking-[0.2em] uppercase"
               >
@@ -416,8 +435,7 @@ export default function Skills() {
               </motion.div>
               <motion.h2
                 initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.6 }}
+                animate={sequenceStarted ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                 transition={{ duration: 0.42, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="text-4xl md:text-5xl font-bold tracking-tight mb-3"
               >
@@ -426,8 +444,7 @@ export default function Skills() {
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.6 }}
+                animate={sequenceStarted ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.4, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
                 className="text-white/40 text-sm md:text-base font-montserrat leading-relaxed"
               >
@@ -441,7 +458,7 @@ export default function Skills() {
                   key={category.title}
                   category={category}
                   index={index}
-                  isVisible={index < Math.min(visibleStep, categories.length)}
+                  isVisible={cardsUnlocked && index < Math.min(visibleStep, categories.length)}
                 />
               ))}
             </div>
@@ -454,7 +471,7 @@ export default function Skills() {
                   : { opacity: 0, y: 24, filter: 'blur(8px)' }
               }
               transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-              className={`flex justify-center mt-8 ${
+              className={`flex justify-center mt-8 pb-2 ${
                 visibleStep > categories.length ? 'pointer-events-auto' : 'pointer-events-none'
               }`}
             >
@@ -463,7 +480,7 @@ export default function Skills() {
                   const targetSection = document.getElementById('projects');
                   if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="group relative inline-flex items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/30 text-white font-mono text-[11px] tracking-[0.2em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.1)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_25px_rgba(224,90,43,0.25)] hover:-translate-y-0.5 rounded-xl"
+                className="group relative inline-flex shrink-0 items-center gap-3 px-8 py-[14px] bg-white/5 backdrop-blur-[10px] border border-accent/30 text-white font-mono text-[11px] tracking-[0.2em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(224,90,43,0.1)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_25px_rgba(224,90,43,0.25)] hover:-translate-y-0.5 rounded-xl"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent shrink-0">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
