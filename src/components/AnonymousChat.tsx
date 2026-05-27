@@ -93,7 +93,7 @@ export default function AnonymousChat() {
         
         {/* Unread indicator / glowing dot on button */}
         {!isOpen && (
-          <div className="absolute top-0 right-0 w-3 h-3 bg-accent rounded-full border-2 border-[#111111] shadow-[0_0_10px_var(--accent)]" />
+          <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#111111] shadow-[0_0_10px_rgba(52,211,153,0.9)]" />
         )}
       </button>
     </motion.div>
