@@ -296,8 +296,8 @@ const LegacyContact = () => {
           </div>
 
           <div className="absolute inset-0">
-            <div className="absolute inset-0 flex flex-col justify-start px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-[62px] md:pt-24 lg:pt-[14vh]">
-              <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between w-full gap-12 lg:gap-8 mt-4 lg:mt-8">
+            <div className="absolute inset-0 flex flex-col justify-start px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-[60px] md:pt-20 lg:pt-[10vh]">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between w-full gap-12 lg:gap-8 mt-[8px] lg:mt-8">
 
                 {/* LEFT SIDE TEXT & BUTTON */}
                 <div className="flex flex-col items-start w-full lg:w-[45%] z-30">
@@ -367,8 +367,14 @@ const LegacyContact = () => {
 
                 {/* RIGHT SIDE QR CODE */}
                 <div className="flex flex-col items-center justify-center w-full lg:w-[50%] relative z-30">
-                  <motion.div style={{ opacity: cardOpacity, scale: cardScale }} className="w-full max-w-[320px] md:max-w-[360px] lg:max-w-[360px] relative">
-                    <div className="contact-qr-container relative aspect-square rounded-[36px] border border-accent/80 bg-black/20 backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(255,176,0,0.3),inset_0_-15px_30px_rgba(0,0,0,0.6),inset_0_4px_15px_rgba(255,255,255,0.15)] p-6 md:p-8 overflow-hidden group">
+                  <motion.div style={{ opacity: cardOpacity, scale: cardScale }} className="w-full max-w-[320px] md:max-w-[360px] lg:max-w-[360px] relative mt-2">
+                    <a
+                      href="https://linktr.ee/albin.thomas"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Open Albin Thomas Linktree"
+                      className="contact-qr-container relative block aspect-square rounded-[36px] border border-accent/80 bg-black/20 backdrop-blur-7xl shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(255,176,0,0.3),inset_0_-15px_30px_rgba(0,0,0,0.6),inset_0_4px_15px_rgba(255,255,255,0.15)] p-6 md:p-8 overflow-hidden group cursor-pointer"
+                    >
                       
                       {/* Convex Water Droplet Highlight */}
                       <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[70%] bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.15)_0%,_transparent_70%)] pointer-events-none rounded-full transform rotate-[-5deg]" />
@@ -399,13 +405,13 @@ const LegacyContact = () => {
                           }}
                         />
                       </div>
-                    </div>
+                    </a>
                   </motion.div>
                 </div>
               </div>
 
               {/* SOCIAL LINKS ROW at the bottom right */}
-              <div className="w-full mt-8 lg:mt-24 relative z-30 flex justify-center max-md:-translate-y-1">
+              <div className="w-full mt-8 pb-6 lg:mt-24 lg:pb-0 relative z-30 flex justify-center max-md:-translate-y-4">
                 
                 <div className="flex flex-row flex-wrap justify-center items-center gap-10 md:gap-14 lg:gap-[60px] w-full max-w-5xl">
                   {[
@@ -417,7 +423,7 @@ const LegacyContact = () => {
                     <motion.a key={idx} href={link.url} target="_blank" rel="noreferrer" style={linkStyles[idx]} className="relative group flex items-center rounded-full border border-accent/40 bg-[#050505] shadow-[0_0_15px_rgba(255,176,0,0.1)] overflow-visible px-5 py-2.5 lg:px-7 lg:py-3.5 hover:border-accent hover:shadow-[0_0_25px_rgba(255,176,0,0.25)] transition-all">
                       
                       {/* Yellow Floor Reflection */}
-                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-[70%] h-[3px] bg-accent blur-[10px] opacity-50 rounded-full mix-blend-screen pointer-events-none group-hover:opacity-80 group-hover:blur-[14px] transition-all" />
+                      <div className="absolute -bottom-5 left-1/2 hidden h-[3px] w-[70%] -translate-x-1/2 rounded-full bg-accent opacity-50 blur-[10px] mix-blend-screen transition-all pointer-events-none group-hover:opacity-80 group-hover:blur-[14px] md:block" />
 
                       {/* Glass Highlight */}
                       <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none rounded-t-full" />
