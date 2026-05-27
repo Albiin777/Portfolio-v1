@@ -296,7 +296,7 @@ const LegacyContact = () => {
           </div>
 
           <div className="absolute inset-0">
-            <div className="absolute inset-0 flex flex-col justify-start px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-16 md:pt-24 lg:pt-[14vh]">
+            <div className="absolute inset-0 flex flex-col justify-start px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-[62px] md:pt-24 lg:pt-[14vh]">
               <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between w-full gap-12 lg:gap-8 mt-4 lg:mt-8">
 
                 {/* LEFT SIDE TEXT & BUTTON */}
@@ -405,7 +405,7 @@ const LegacyContact = () => {
               </div>
 
               {/* SOCIAL LINKS ROW at the bottom right */}
-              <div className="w-full mt-8 lg:mt-24 relative z-30 flex justify-center">
+              <div className="w-full mt-8 lg:mt-24 relative z-30 flex justify-center max-md:-translate-y-1">
                 
                 <div className="flex flex-row flex-wrap justify-center items-center gap-10 md:gap-14 lg:gap-[60px] w-full max-w-5xl">
                   {[

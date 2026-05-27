@@ -186,9 +186,8 @@ export default function CircularMobileNav({ isDayMode, onToggleDayMode }: Circul
           aria-label="Home"
         >
           <div 
-            className="w-[78px] h-[28px] origin-left transition-colors duration-200 bg-accent"
+            className="w-[78px] h-[28px] origin-left transition-colors duration-200 bg-white"
             style={{
-              backgroundColor: isDayMode ? '#000000' : undefined,
               maskImage: 'url(/logo-mask-mid.png)',
               maskSize: 'auto 100%',
               maskRepeat: 'no-repeat',
