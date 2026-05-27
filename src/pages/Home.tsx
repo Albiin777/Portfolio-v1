@@ -98,6 +98,7 @@ export default function Home() {
 
   const [imageMousePos, setImageMousePos] = useState({ x: 50, y: 50 })
   const [isHoveringImage, setIsHoveringImage] = useState(false)
+  const [isMobileImageColor, setIsMobileImageColor] = useState(false)
 
   const handleImageMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -132,6 +133,21 @@ export default function Home() {
   const snapToNearest = useCallback((rot: number) => {
     setRingRotation(Math.round(rot / 72) * 72)
   }, [])
+
+  const wheelTimeout = useRef<number | null>(null)
+  
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    // Only handle vertical/horizontal scroll gestures (like trackpad)
+    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    setRingRotation(r => {
+      const nextR = r + delta * 0.5;
+      if (wheelTimeout.current) clearTimeout(wheelTimeout.current);
+      wheelTimeout.current = window.setTimeout(() => {
+        setRingRotation(currentR => Math.round(currentR / 72) * 72);
+      }, 200);
+      return nextR;
+    });
+  }, []);
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -311,7 +327,7 @@ export default function Home() {
           {/* Buttons */}
           <motion.div variants={STAGGER_ITEM} custom={2.2} className="mt-[15px] xl:mt-[20px] flex gap-4 sm:gap-6 items-center">
             <button
-              className="group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(255,176,0,0.12),_inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(255,176,0,0.25),_inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
+              className="home-cta-btn group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-accent/40 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_20px_rgba(255,176,0,0.12),_inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-accent/10 hover:border-accent hover:shadow-[0_0_30px_rgba(255,176,0,0.25),_inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-400 after:ease-out"
               onClick={() => downloadResume(resumeUrl)}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 ease-out group-hover:translate-y-0.5">
@@ -320,7 +336,7 @@ export default function Home() {
               <span>DOWNLOAD RESUME</span>
             </button>
             <button
-              className="group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-white/10 hover:border-white/40 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
+              className="home-cta-btn group relative inline-flex items-center gap-3 px-8 py-[9px] xl:py-[14px] bg-white/[0.04] backdrop-blur-[12px] border border-white/15 text-white font-mono text-[11px] tracking-[0.25em] uppercase cursor-pointer overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-white/10 hover:border-white/40 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-600 before:ease-out after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:origin-left hover:after:scale-x-100 hover:after:origin-right after:transition-transform after:duration-400 after:ease-out"
               onClick={scrollToProjects}
             >
               <span>VIEW PROJECTS</span>
@@ -419,7 +435,7 @@ export default function Home() {
               {/* 4 Brackets */}
               {[45, 135, 225, 315].map((angle, i) => (
                 <div key={i} className="absolute inset-0 flex items-center justify-center" style={{ transform: `rotate(${angle}deg)` }}>
-                  <div className="absolute top-0 w-24 h-12 bg-[#111111] border border-white/5 rounded-t-lg shadow-mech-inner flex items-center justify-center">
+                  <div className="mech-bracket absolute top-0 w-24 h-12 bg-[#0f0f0f] border border-white/5 rounded-t-lg shadow-mech-inner flex items-center justify-center">
                     <div className="w-12 h-1 bg-white/10 rounded-full" />
                     <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
                     <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
@@ -438,6 +454,7 @@ export default function Home() {
             <div className="absolute inset-[44px] rounded-full z-10 cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={onMouseDown}
               onTouchStart={e => { isDragging.current = true; hasDragged.current = false; lastAngle.current = getAngle(e.touches[0].clientX, e.touches[0].clientY) }}
+              onWheel={handleWheel}
               onClick={() => {
                 if (hasDragged.current) return;
                 if (transitioning) return;
@@ -452,19 +469,19 @@ export default function Home() {
             >
               <div ref={wheelRef} className="absolute inset-[16px] rounded-full shadow-mech-ring bg-[#0f0f0f]">
               {/* Top Label (Static) */}
-              <div className="absolute top-[26px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1">
+              <div className="absolute top-[20px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1">
                 <span className="font-mono text-[9px] text-white/50 tracking-[0.2em]">{activePage.num}</span>
                 <span className="font-sans text-[12px] font-bold tracking-[0.2em] text-white uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{activePage.label}</span>
               </div>
 
-              <div className="absolute top-[60px] left-1/2 -translate-x-1/2 w-[6px] h-[6px] rounded-full bg-accent shadow-[0_0_12px_var(--accent),_0_0_24px_var(--accent)] z-20" />
+              <div className="absolute top-[54px] left-1/2 -translate-x-1/2 w-[6px] h-[6px] rounded-full bg-accent shadow-[0_0_12px_var(--accent),_0_0_24px_var(--accent)] z-20" />
 
               {/* Static Red Arrows on Sides */}
               <div className="absolute top-1/2 left-[30px] -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-r-[6px] border-r-accent z-20" />
               <div className="absolute top-1/2 right-[30px] -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-l-[6px] border-l-accent z-20" />
 
               {/* Static SVG for Bottom Text */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}>
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 mech-wheel-svg" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}>
                 <defs>
                   <path id="static-text-path-bottom" d={`M ${CX - textPathRadius} ${CY} a ${textPathRadius} ${textPathRadius} 0 0 0 ${textPathRadius * 2} 0`} />
                 </defs>
@@ -474,7 +491,7 @@ export default function Home() {
               </svg>
 
               {/* The Rotating SVG part */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-100 ease-linear" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none transition-transform duration-100 ease-linear mech-wheel-svg" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
                 style={{ transform: `rotate(${ringRotation}deg)` }}
               >
                 <defs>
@@ -531,16 +548,16 @@ export default function Home() {
 
               {/* Center Image Container */}
               <div
-                className="absolute inset-[48px] rounded-full overflow-hidden z-10 border border-white/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.9),_0_0_30px_rgba(0,0,0,0.8)] pointer-events-auto flex items-center justify-center bg-black cursor-pointer"
+                className="home-center-circle-bg absolute inset-[48px] rounded-full overflow-hidden z-10 border border-white/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.9),_0_0_30px_rgba(0,0,0,0.8)] pointer-events-auto flex items-center justify-center cursor-pointer"
                 onMouseMove={handleImageMouseMove}
                 onMouseEnter={() => setIsHoveringImage(true)}
                 onMouseLeave={() => setIsHoveringImage(false)}
               >
-                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] z-20 pointer-events-none" />
+                <div className="home-center-vignette absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] z-20 pointer-events-none" />
 
                 {/* Base Image (Black & White) */}
                 <img src="/albin.png" alt="Albin Thomas Base"
-                  className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none grayscale opacity-70"
+                  className="home-base-image absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none grayscale opacity-70"
                 />
 
                 {/* Colored Image Spotlight (Original Colors) */}
@@ -548,8 +565,8 @@ export default function Home() {
                   className="absolute w-full h-full object-cover object-[center_20%] scale-105 pointer-events-none transition-opacity duration-300"
                   style={{
                     opacity: isHoveringImage ? 1 : 0,
-                    WebkitMaskImage: `radial-gradient(circle 165px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,
-                    maskImage: `radial-gradient(circle 165px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`
+                    WebkitMaskImage: `radial-gradient(circle 200px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`,
+                    maskImage: `radial-gradient(circle 200px at ${imageMousePos.x}% ${imageMousePos.y}%, black 0%, transparent 100%)`
                   }}
                 />
               </div>
@@ -644,19 +661,22 @@ export default function Home() {
             </div>
 
             {/* Central Square Image Container (Mobile) */}
-            <div className="relative w-[246px] h-[246px] z-10 flex items-center justify-center">
-              <div 
-                className="w-[222px] h-[222px] overflow-hidden border border-white/5 bg-black"
-                style={{
-                  clipPath: "polygon(14px 0, 208px 0, 222px 14px, 222px 208px, 208px 222px, 14px 222px, 0 208px, 0 14px)"
-                }}
-              >
-                <img 
-                  src="/albin.png" 
-                  alt="Albin Thomas"
-                  className="w-full h-full object-cover object-[center_20%] grayscale opacity-80"
-                />
-              </div>
+          <div 
+            className="relative w-[246px] h-[246px] z-10 flex items-center justify-center cursor-pointer"
+            onClick={() => setIsMobileImageColor(prev => !prev)}
+          >
+            <div 
+              className="home-center-circle-bg w-[222px] h-[222px] overflow-hidden border border-white/5"
+              style={{
+                clipPath: "polygon(14px 0, 208px 0, 222px 14px, 222px 208px, 208px 222px, 14px 222px, 0 208px, 0 14px)"
+              }}
+            >
+              <img 
+                src="/albin.png" 
+                alt="Albin Thomas"
+                className={`w-full h-full object-cover object-[center_20%] transition-all duration-700 ease-out ${isMobileImageColor ? 'grayscale-0 opacity-100' : 'grayscale opacity-80'}`}
+              />
+            </div>
 
               {/* Sci-Fi HUD Overlay Frame */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 220 220">

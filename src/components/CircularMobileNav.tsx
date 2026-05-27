@@ -3,9 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { useDocData } from '../lib/content'
 import { smoothScrollToElement } from '../lib/smoothScroll'
+import type { ThemeOrigin } from '../App'
 
 type ProfileData = {
   resumeUrl: string
+}
+
+type CircularMobileNavProps = {
+  isDayMode: boolean
+  onToggleDayMode: (origin?: ThemeOrigin) => void
 }
 
 // Icons for the sections
@@ -35,7 +41,7 @@ const getLabel = (id: string) => {
   return map[id] ?? id
 }
 
-export default function CircularMobileNav() {
+export default function CircularMobileNav({ isDayMode, onToggleDayMode }: CircularMobileNavProps) {
   const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
   const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
   const [isOpen, setIsOpen] = useState(false)
@@ -139,6 +145,14 @@ export default function CircularMobileNav() {
     scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, duration + 120)
   }
 
+  const handleThemeClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    onToggleDayMode({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    })
+  }
+
   const continuousIndex = scrollOffset / ITEM_HEIGHT
 
   return (
@@ -168,18 +182,25 @@ export default function CircularMobileNav() {
             window.history.replaceState(null, '', '#home');
             setIsOpen(false);
           }}
-          className="h-11 pl-2 pr-4 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-1 pointer-events-auto active:scale-95 transition-all"
+          className="h-11 px-4 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
           aria-label="Home"
         >
-          <img
-            src="/logo-new.png"
-            alt=""
-            aria-hidden="true"
-            className="h-9 w-9 rounded-full object-contain"
+          <div 
+            className="w-[78px] h-[28px] origin-left transition-colors duration-200 bg-accent"
+            style={{
+              backgroundColor: isDayMode ? '#000000' : undefined,
+              maskImage: 'url(/logo-mask-mid.png)',
+              maskSize: 'auto 100%',
+              maskRepeat: 'no-repeat',
+              maskPosition: '-6px center',
+              WebkitMaskImage: 'url(/logo-mask-mid.png)',
+              WebkitMaskSize: 'auto 100%',
+              WebkitMaskRepeat: 'no-repeat',
+              WebkitMaskPosition: '-6px center'
+            }}
+            role="img"
+            aria-label="Albin"
           />
-          <span className="font-orbitron font-bold text-[13px] tracking-widest text-accent whitespace-nowrap">
-            ALBIN
-          </span>
         </a>
         
         {/* Right Capsule - Menu Toggle */}
@@ -202,15 +223,15 @@ export default function CircularMobileNav() {
             >
               {isOpen ? (
                 <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                  <span className="font-mono text-[9px] tracking-[0.2em] text-accent uppercase font-bold">CLOSE</span>
+                  <svg className={isDayMode ? 'text-black' : 'text-accent'} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                  <span className={`font-mono text-[9px] tracking-[0.2em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-accent'}`}>CLOSE</span>
                 </>
               ) : (
                 <>
-                  <span className="text-accent flex items-center justify-center shrink-0">
+                  <span className={`flex items-center justify-center shrink-0 ${isDayMode ? 'text-black' : 'text-accent'}`}>
                     {getIconForPage(activeSection)}
                   </span>
-                  <span className="font-mono text-[9.5px] tracking-[0.2em] text-white uppercase font-bold">
+                  <span className={`font-mono text-[9.5px] tracking-[0.2em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-white'}`}>
                     {getLabel(activeSection)}
                   </span>
                 </>
@@ -304,22 +325,34 @@ export default function CircularMobileNav() {
 
             </motion.div>
 
-            {/* View Resume - Fixed at bottom left to balance layout */}
+            {/* View Resume and Day Mode - Fixed at bottom left to balance layout */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
               transition={{ delay: 0.1 }}
-              className="absolute bottom-6 left-4 pointer-events-auto"
+              className="absolute bottom-6 left-4 right-4 flex items-center justify-between gap-3 pointer-events-auto"
             >
               <a
                 href={resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center h-14 px-6 rounded-full bg-[#111111]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[12px] sm:text-[13px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255, 176, 0,0.15)]"
+                className="flex items-center justify-center h-14 px-5 rounded-full bg-[#111111]/90 backdrop-blur-xl border border-accent/40 text-accent font-mono text-[11px] sm:text-[13px] tracking-widest uppercase active:scale-95 transition-all shadow-[0_0_20px_rgba(255, 176, 0,0.15)]"
               >
                 <span>View Resume</span>
               </a>
+              <button
+                type="button"
+                onClick={handleThemeClick}
+                className={`ml-auto flex h-14 items-center justify-center rounded-full border px-4 backdrop-blur-xl font-mono text-[10px] tracking-widest uppercase active:scale-95 transition-all ${
+                  isDayMode
+                    ? 'border-accent bg-accent text-black shadow-[0_0_20px_rgba(255,176,0,0.22)]'
+                    : 'border-accent/35 bg-[#111111]/90 text-accent shadow-[0_0_20px_rgba(255,176,0,0.12)]'
+                }`}
+                aria-pressed={isDayMode}
+              >
+                <span>{isDayMode ? 'Night Mode' : 'Day Mode'}</span>
+              </button>
             </motion.div>
           </div>
         )}

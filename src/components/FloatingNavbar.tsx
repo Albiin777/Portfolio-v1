@@ -3,18 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { NAV_PAGES } from '../context/NavigationContext'
 import { useDocData } from '../lib/content'
 import { smoothScrollToElement } from '../lib/smoothScroll'
+import type { ThemeOrigin } from '../App'
 
 type ProfileData = {
   resumeUrl: string
 }
 
-export default function FloatingNavbar() {
+type FloatingNavbarProps = {
+  isDayMode: boolean
+  onToggleDayMode: (origin?: ThemeOrigin) => void
+}
+
+export default function FloatingNavbar({ isDayMode, onToggleDayMode }: FloatingNavbarProps) {
   const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
   const resumeUrl = profile.resumeUrl || '/Albin_Thomas-resume.pdf'
-  const [isVisible, setIsVisible]       = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
-  const isProgrammaticScroll            = useRef(false)
-  const scrollTimeout                   = useRef<number | null>(null)
+  const isProgrammaticScroll = useRef(false)
+  const scrollTimeout = useRef<number | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,6 +57,14 @@ export default function FloatingNavbar() {
     scrollTimeout.current = window.setTimeout(() => { isProgrammaticScroll.current = false }, duration + 120)
   }
 
+  const handleThemeClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    onToggleDayMode({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    })
+  }
+
   const getLabel = (id: string) => {
     const map: Record<string, string> = {
       home: 'HOME', journey: 'JOURNEY', skills: 'SKILLS',
@@ -64,8 +78,8 @@ export default function FloatingNavbar() {
       {isVisible && (
         <motion.header
           initial={{ y: -72, opacity: 0 }}
-          animate={{ y: 0,   opacity: 1 }}
-          exit={{    y: -72, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -72, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 28 }}
           className="hidden md:flex fixed top-0 left-0 right-0 z-50 flex-col pointer-events-none"
         >
@@ -84,25 +98,43 @@ export default function FloatingNavbar() {
           </div>
 
           {/* ── Main navbar bar ─────────────────────────────────────────── */}
-          <div className="w-full bg-[#060608]/35 backdrop-blur-md border-b border-white/[0.07] pointer-events-auto">
+          <div
+            className="w-full backdrop-blur-md border-b border-white/[0.07] pointer-events-auto transition-colors duration-300"
+            style={{
+              backgroundColor: isDayMode
+                ? 'rgba(255, 252, 242, 0.45)'
+                : 'rgba(6, 6, 8, 0.35)',
+              borderBottomColor: isDayMode
+                ? 'rgba(200, 180, 130, 0.25)'
+                : undefined,
+            }}
+          >
             <div className="max-w-7xl mx-auto px-6 h-[58px] flex items-center justify-between relative">
 
               {/* ── Logo ── */}
               <a
                 href="#home"
                 onClick={e => handleNavClick(e, 'home')}
-                className="flex items-center gap-2.5 cursor-pointer shrink-0 -ml-1 sm:-ml-3"
+                className="flex items-center gap-2.5 cursor-pointer shrink-0 -ml-[6px] sm:-ml-[22px]"
                 aria-label="Home"
               >
-                <img
-                  src="/logo-new.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="h-11 w-11 sm:h-12 sm:w-12 object-contain drop-shadow-[0_0_12px_rgba(255,176,0,0.45)] brightness-110 contrast-125"
+
+                <div
+                  className="w-[210px] h-[70px] sm:w-[240px] sm:h-[80px] transition-colors duration-200 mt-[2px]"
+                  style={{
+                    backgroundColor: isDayMode ? '#000000' : 'var(--color-accent, #FFB000)',
+                    maskImage: 'url(/logo-mask.png)',
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    maskPosition: 'left center',
+                    WebkitMaskImage: 'url(/logo-mask.png)',
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'left center'
+                  }}
+                  role="img"
+                  aria-label="Albin Thomas"
                 />
-                <span className="font-grotesk font-bold text-[19px] sm:text-[20px] tracking-wide text-accent hover:text-accent/80 transition-colors duration-200 select-none mt-[2px]">
-                  ALBIN THOMAS
-                </span>
               </a>
 
               {/* ── Center Nav Links ── */}
@@ -140,7 +172,7 @@ export default function FloatingNavbar() {
                               <span className="spark absolute w-[2px] h-[2px] rounded-full bg-[#ff8500]"
                                 style={{ left: '52%', bottom: '1px', animationDelay: '0.5s', animationDuration: '1.3s' }} />
                               <span className="spark absolute w-[3px] h-[3px] rounded-full bg-[#FFB000]"
-                                style={{ left: '78%', bottom: '1px', animationDelay: '0s',  animationDuration: '1.1s' }} />
+                                style={{ left: '78%', bottom: '1px', animationDelay: '0s', animationDuration: '1.1s' }} />
                             </motion.div>
                           </div>
                         )}
@@ -152,34 +184,48 @@ export default function FloatingNavbar() {
               </nav>
 
               {/* ── Resume Button ── */}
-              <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative shrink-0 group -mr-1 sm:-mr-3"
-                aria-label="View Resume"
-              >
-                <div
-                  className="absolute -inset-1 opacity-50 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent, rgba(255,176,0,0.28), rgba(255,85,31,0.22), transparent)',
-                    filter: 'blur(9px)',
-                  }}
-                />
-                <div
-                  className="relative flex items-center justify-center px-5 py-2
-                             border border-accent/45 bg-[#0a0a0a]/75 overflow-hidden
+              <div className="flex items-center gap-3 -mr-1 sm:-mr-3">
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative shrink-0 group"
+                  aria-label="View Resume"
+                >
+                  <div
+                    className="absolute -inset-1 opacity-50 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(90deg, transparent, rgba(255,176,0,0.28), rgba(255,85,31,0.22), transparent)',
+                      filter: 'blur(9px)',
+                    }}
+                  />
+                  <div
+                    className="relative flex h-9 min-w-[142px] items-center justify-center px-6
+                               border border-accent/45 bg-[#0a0a0a]/75 overflow-hidden
                              group-hover:border-accent group-hover:bg-accent
                              group-hover:text-black group-hover:shadow-[0_0_24px_rgba(255,176,0,0.24),inset_0_1px_0_rgba(255,255,255,0.25)]
-                             text-accent font-mono text-[13px] tracking-[0.22em] uppercase
+                               text-accent font-mono font-bold text-[13px] tracking-[0.22em] uppercase
                              transition-all duration-300 cursor-pointer select-none"
+                  >
+                    <span className="absolute inset-x-3 top-[4px] h-px bg-gradient-to-r from-transparent via-accent/45 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
+                    <span className="absolute inset-x-3 bottom-[4px] h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
+                    <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.26),transparent)] transition-transform duration-700 group-hover:translate-x-full" />
+                    <span className="relative leading-none text-[15px]">Resume</span>
+                  </div>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleThemeClick}
+                  className={`relative flex h-9 min-w-[70px] items-center justify-center border px-5 font-mono font-bold text-[13px] tracking-[0.22em] uppercase transition-all duration-300 ${isDayMode
+                    ? 'border-accent bg-accent text-black shadow-[0_0_18px_rgba(255,176,0,0.22)]'
+                    : 'border-accent/35 bg-[#0a0a0a]/75 text-accent hover:border-accent hover:bg-accent/10'
+                    }`}
+                  aria-pressed={isDayMode}
                 >
-                  <span className="absolute inset-x-3 top-[4px] h-px bg-gradient-to-r from-transparent via-accent/45 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
-                  <span className="absolute inset-x-3 bottom-[4px] h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent transition-opacity duration-300 group-hover:opacity-0" />
-                  <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.26),transparent)] transition-transform duration-700 group-hover:translate-x-full" />
-                  <span className="relative leading-none">Resume</span>
-                </div>
-              </a>
+                  <span>{isDayMode ? 'Night' : 'Day'}</span>
+                </button>
+              </div>
 
 
 

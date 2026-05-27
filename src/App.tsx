@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { NavigationProvider } from './context/NavigationContext'
 import Home from './pages/Home'
@@ -13,7 +14,23 @@ import CircularMobileNav from './components/CircularMobileNav'
 import GlobalIndicator from './components/GlobalIndicator'
 import SpaceCursor from './components/SpaceCursor'
 
-const PortfolioPage = () => (
+export type ThemeOrigin = {
+  x: number
+  y: number
+}
+
+type ThemePulse = {
+  mode: 'sunrise' | 'sunset'
+  origin: ThemeOrigin
+}
+
+const PortfolioPage = ({
+  isDayMode,
+  onToggleDayMode
+}: {
+  isDayMode: boolean
+  onToggleDayMode: (origin?: ThemeOrigin) => void
+}) => (
   <>
     <main className="w-full flex flex-col">
       <section id="home" className="scroll-mt-6 md:scroll-mt-0">
@@ -36,8 +53,8 @@ const PortfolioPage = () => (
       </section>
     </main>
     <GlobalIndicator />
-    <FloatingNavbar />
-    <CircularMobileNav />
+    <FloatingNavbar isDayMode={isDayMode} onToggleDayMode={onToggleDayMode} />
+    <CircularMobileNav isDayMode={isDayMode} onToggleDayMode={onToggleDayMode} />
     <AnonymousChat />
   </>
 )
@@ -45,15 +62,45 @@ const PortfolioPage = () => (
 export default function App() {
   const location = useLocation()
   const showCustomCursor = location.pathname !== '/admin'
+  const [isDayMode, setIsDayMode] = useState(() => (
+    typeof window !== 'undefined' && window.localStorage.getItem('portfolio-theme') === 'day'
+  ))
+  const [themePulse, setThemePulse] = useState<ThemePulse | null>(null)
+
+  useEffect(() => {
+    window.localStorage.setItem('portfolio-theme', isDayMode ? 'day' : 'dark')
+  }, [isDayMode])
+
+  const toggleDayMode = (origin: ThemeOrigin = { x: window.innerWidth / 2, y: window.innerHeight / 2 }) => {
+    if (isDayMode) {
+      setThemePulse({ mode: 'sunset', origin })
+      window.setTimeout(() => setIsDayMode(false), 760)
+      return
+    }
+
+    setThemePulse({ mode: 'sunrise', origin })
+    window.setTimeout(() => setIsDayMode(true), 760)
+  }
+
+  useEffect(() => {
+    if (!themePulse) return
+    const timeout = window.setTimeout(() => setThemePulse(null), 1180)
+    return () => window.clearTimeout(timeout)
+  }, [themePulse])
 
   return (
     <NavigationProvider>
-      {showCustomCursor && <SpaceCursor />}
-      <Routes>
-        <Route path="/" element={<PortfolioPage />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
+      <div className={`${isDayMode ? 'day-mode' : ''} min-h-screen`}>
+        {themePulse && (
+          <div className={`theme-shift theme-shift-${themePulse.mode}`} />
+        )}
+        {showCustomCursor && <SpaceCursor />}
+        <Routes>
+          <Route path="/" element={<PortfolioPage isDayMode={isDayMode} onToggleDayMode={toggleDayMode} />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </div>
     </NavigationProvider>
   )
 }

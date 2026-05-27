@@ -150,7 +150,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.25 }}
+            viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >
             <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-6">
@@ -171,7 +171,7 @@ export default function Journey() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.25 }}
+            viewport={{ once: false, amount: 0.1, margin: '0px 0px -10% 0px' }}
             transition={{ delay: 0.2 }}
             className="relative bg-[#111111]/40 border border-white/5 rounded-2xl p-6 md:p-10 shadow-[0_0_20px_rgba(0,0,0,0.3)]"
           >

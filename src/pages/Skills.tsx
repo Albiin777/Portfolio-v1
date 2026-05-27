@@ -342,22 +342,22 @@ export default function Skills() {
     let nextStep = currentStep
 
     if (currentStep === 1) {
-      if (latest >= 0.68) nextStep = 4
+      if (latest >= 0.58) nextStep = 4
       else if (latest >= 0.42) nextStep = 3
       else if (latest >= 0.18) nextStep = 2
     } else if (currentStep === 2) {
-      if (latest >= 0.68) nextStep = 4
+      if (latest >= 0.58) nextStep = 4
       else if (latest >= 0.42) nextStep = 3
       else if (latest < 0.12) nextStep = 1
     } else if (currentStep === 3) {
-      if (latest >= 0.68) nextStep = 4
+      if (latest >= 0.58) nextStep = 4
       else if (latest < 0.12) nextStep = 1
       else if (latest < 0.34) nextStep = 2
     } else if (latest < 0.12) {
       nextStep = 1
     } else if (latest < 0.34) {
       nextStep = 2
-    } else if (latest < 0.6) {
+    } else if (latest < 0.5) {
       nextStep = 3
     }
 

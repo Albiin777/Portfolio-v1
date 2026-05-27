@@ -1,12 +1,16 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { useDocData } from '../lib/content'
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 
 type ProfileData = {
   resumeUrl: string
+}
+
+export default function Contact() {
+  return <LegacyContact />
 }
 
 const downloadResume = (resumeUrl: string) => {
@@ -70,6 +74,19 @@ const SendIcon = () => (
   </svg>
 )
 
+const ArrowRightIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+)
+
+const WhatsAppIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-accent shrink-0">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.66-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+  </svg>
+)
+
 const GitHubSocialIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
@@ -97,7 +114,7 @@ const InstagramSocialIcon = () => (
 )
 
 // ─── Solar Nodes ──────────────────────────────────────────────────────────────
-const EMBER_PARTICLES = Array.from({ length: 50 }, (_, i) => {
+const EMBER_PARTICLES = Array.from({ length: 42 }, (_, i) => {
   const seed = (i + 1) * 12.9898
   const wave = Math.sin(seed) * 43758.5453
   const rand = (offset: number) => {
@@ -115,100 +132,10 @@ const EMBER_PARTICLES = Array.from({ length: 50 }, (_, i) => {
   }
 })
 
-const SolarNode = ({ icon, href, title, textAlignment, opacity, scale, textOpacity, ringOrientation = 'top' }: { icon: React.ReactNode, href: string, title: string, textAlignment: 'left' | 'right' | 'top' | 'bottom' | 'top-left', opacity: MotionValue<number>, scale: MotionValue<number>, textOpacity: MotionValue<number>, ringOrientation?: 'top' | 'bottom' }) => {
-  const outerMaskClass = ringOrientation === 'top' ? '[mask-image:linear-gradient(to_bottom,black_10%,transparent_80%)]' : '[mask-image:linear-gradient(to_top,black_10%,transparent_80%)]';
 
-  const getTextPositionClass = () => {
-    switch (textAlignment) {
-      case 'left': return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end';
-      case 'right': return 'top-1/2 -translate-y-1/2 left-[calc(100%+1.5rem)] text-left items-start';
-      case 'top': return 'bottom-[calc(100%+1.5rem)] left-1/2 -translate-x-1/2 text-center items-center pointer-events-none';
-      case 'top-left': return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end pointer-events-none md:bottom-[calc(100%+0.5rem)] md:top-auto md:translate-y-0 md:left-auto md:right-[calc(50%+2rem)] md:text-right md:items-end';
-      case 'bottom': return 'top-[calc(100%+1.5rem)] left-1/2 -translate-x-1/2 text-center items-center pointer-events-none';
-      default: return 'top-1/2 -translate-y-1/2 right-[calc(100%+1.5rem)] text-right items-end';
-    }
-  };
-
-  return (
-    <motion.div style={{ opacity, scale, x: "-50%", y: "-50%" }} className="absolute flex items-center justify-center pointer-events-auto group z-30">
-      
-      <a href={href} target="_blank" rel="noreferrer" className="relative flex items-center justify-center pointer-events-auto w-14 h-14 md:w-16 md:h-16">
-        
-        {/* Outermost faint ring - fades away opposite to the center */}
-        <div className={`absolute inset-0 rounded-full border-[0.5px] border-[#FFB000]/20 scale-[1.5] pointer-events-none ${outerMaskClass}`} />
-        
-        {/* Orbiting Tiny Glowing Dots on the tighter 1.25x ring - fades away in the middle */}
-        <div className="absolute inset-0 scale-[1.25] rounded-full border-[0.5px] border-[#FFB000]/40 group-hover:rotate-180 transition-transform duration-[3000ms] ease-linear pointer-events-none [mask-image:linear-gradient(45deg,black_20%,transparent_50%,black_80%)]">
-           {/* Top arc bright highlight */}
-           <div className="absolute top-[-1px] left-1/2 -translate-x-1/2 w-[30%] h-[2px] bg-white rounded-full blur-[1px] shadow-[0_0_10px_3px_#FFB000]" />
-           
-           {/* 8 orbiting dots */}
-           {[...Array(8)].map((_, i) => (
-             <div key={i} className="absolute w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_5px_2px_#FFB000]"
-                  style={{
-                    top: `${50 - Math.cos(i * Math.PI / 4) * 50}%`,
-                    left: `${50 + Math.sin(i * Math.PI / 4) * 50}%`,
-                    transform: 'translate(-50%, -50%)'
-                  }} />
-           ))}
-        </div>
-
-        {/* Connection Flare (Horizontal anamorphic) aggressively tapering and fading towards edges */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[2px] bg-white opacity-70 blur-[0.5px] rounded-[50%] pointer-events-none group-hover:opacity-100 transition-all duration-500 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_80%)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[8px] bg-[#FFB000] opacity-80 blur-[3px] rounded-[50%] pointer-events-none group-hover:opacity-100 transition-all duration-500 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_80%)]" />
-
-        {/* Background radial glow */}
-        <div className="absolute inset-0 rounded-full bg-[#FFB000] blur-[20px] scale-[1.2] opacity-40 group-hover:opacity-70 transition-opacity duration-300 pointer-events-none" />
-
-        {/* Core - Solid Black with intense gradient border */}
-        <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-b from-white via-[#FFB000] to-[#FFB000]/10 shadow-[0_0_15px_rgba(255,176,0,0.6)] z-10 group-hover:shadow-[0_0_25px_rgba(255,176,0,0.9)] transition-all duration-300">
-           <div className="w-full h-full rounded-full bg-[#050505] shadow-[inset_0_0_15px_rgba(255,176,0,0.2)]" />
-        </div>
-        
-        {/* Icon */}
-        <div className="relative z-20 text-white scale-[0.95] group-hover:scale-[1.05] transition-transform drop-shadow-[0_0_2px_rgba(255,255,255,0.8)]">
-           {icon}
-        </div>
-
-        {/* Title */}
-        <motion.div 
-          style={{ opacity: textOpacity }} 
-          className={`absolute hidden md:flex flex-col ${getTextPositionClass()}`}
-        >
-           <span className="text-white/60 font-mono text-[9px] md:text-[10px] tracking-[0.3em] font-medium uppercase whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] group-hover:text-[#FFB000] transition-colors">{title}</span>
-        </motion.div>
-      </a>
-    </motion.div>
-  )
-}
-
-const CenterSun = ({ onClick, opacity, scale }: { onClick: () => void, opacity: MotionValue<number>, scale: MotionValue<number> }) => (
-  <motion.div style={{ opacity, scale, x: "-50%", y: "-50%" }} onClick={onClick} className="absolute left-[50%] top-[50%] flex flex-col items-center justify-center pointer-events-auto cursor-pointer group z-40">
-    
-    {/* Eruption / Sun Aura */}
-    <div className="absolute inset-0 rounded-full bg-[#FFB000]/10 blur-[60px] scale-[3.5] group-hover:bg-[#FFB000]/20 transition-all duration-700 pointer-events-none" />
-    <div className="absolute inset-0 rounded-full bg-[#FFB000]/20 blur-[30px] scale-[2.0] pointer-events-none" />
-    
-    {/* The Core Container */}
-    <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full p-[1px] bg-gradient-to-br from-[#FFB000]/80 via-[#FFB000]/40 to-[#FFB000]/10 shadow-[0_0_30px_rgba(255,176,0,0.4)] group-hover:shadow-[0_0_50px_rgba(255,176,0,0.6)] transition-all duration-500 z-10">
-       
-       <div className="w-full h-full rounded-full bg-[#050505] flex items-center justify-center p-4 md:p-5 shadow-[inset_0_0_40px_rgba(255,176,0,0.3)] relative">
-         {/* Sharp bright inner ring */}
-         <div className="absolute inset-0 rounded-full border-[1.5px] border-[#FFB000] opacity-80 pointer-events-none" />
-         
-         <img src="/logo-new.png" alt="Logo" className="relative z-10 w-full h-full object-contain brightness-150 drop-shadow-[0_0_15px_rgba(255,176,0,0.8)] group-hover:drop-shadow-[0_0_25px_rgba(255,176,0,1)] transition-all duration-500" />
-       </div>
-    </div>
-
-    {/* Linktree Label */}
-    <div className="absolute -bottom-12 md:-bottom-14 left-1/2 -translate-x-1/2 text-white/60 font-mono text-[9px] md:text-[10px] tracking-[0.3em] font-medium uppercase whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,176,0,0.4)] group-hover:text-[#FFB000] transition-colors pointer-events-none">
-      LINKTREE
-    </div>
-  </motion.div>
-)
 
 // ─── Reusable card icon wrapper ───────────────────────────────────────────────
-const CardIcon = ({ children }: { children: React.ReactNode }) => (
+const CardIcon = ({ children }: { children: ReactNode }) => (
   <div className="w-10 h-10 border border-accent/30 bg-accent/[0.06] flex items-center justify-center
                   shadow-[0_0_12px_rgba(255, 176, 0,0.07)] group-hover:shadow-[0_0_18px_rgba(255, 176, 0,0.22)]
                   group-hover:border-accent/55 group-hover:bg-accent/[0.12]
@@ -220,7 +147,7 @@ const CardIcon = ({ children }: { children: React.ReactNode }) => (
 )
 
 interface ContactCardProps {
-  icon: React.ReactNode
+  icon: ReactNode
   label: string
   value: string
   sub?: string
@@ -263,7 +190,7 @@ const ContactCard = ({ icon, label, value, sub, onClick }: ContactCardProps) => 
 )
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
-export default function Contact() {
+const LegacyContact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const profile = useDocData<ProfileData>('profile', 'main', { resumeUrl: '/Albin_Thomas-resume.pdf' })
@@ -309,46 +236,38 @@ export default function Contact() {
     }
   }
 
-  // Animation scroll transforms
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end end'] // Track full container height
+    offset: ['start start', 'end end']
   })
 
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 20, restDelta: 0.001 })
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 92, damping: 24, restDelta: 0.001 })
+  const sectionOpacity = useTransform(smoothProgress, [0, 0.08], [0.45, 1])
+  const cardOpacity = useTransform(smoothProgress, [0, 0.08], [0, 1])
+  const cardScale = useTransform(smoothProgress, [0, 0.08], [0.96, 1])
+  const logoOpacity = useTransform(smoothProgress, [0.02, 0.22], [1, 0])
+  const logoScale = useTransform(smoothProgress, [0.02, 0.22], [1, 0.94])
+  const qrOpacity = useTransform(smoothProgress, [0.18, 0.4], [0, 1])
+  const qrTranslate = useTransform(smoothProgress, [0.18, 0.4], [26, 0])
+  const qrClip = useTransform(smoothProgress, [0.18, 0.4], ['inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 0%)'])
+  const link1Opacity = useTransform(smoothProgress, [0.4, 0.48], [0, 1])
+  const link1Offset = useTransform(smoothProgress, [0.4, 0.48], [16, 0])
+  const link2Opacity = useTransform(smoothProgress, [0.46, 0.54], [0, 1])
+  const link2Offset = useTransform(smoothProgress, [0.46, 0.54], [16, 0])
+  const link3Opacity = useTransform(smoothProgress, [0.52, 0.60], [0, 1])
+  const link3Offset = useTransform(smoothProgress, [0.52, 0.60], [16, 0])
+  const link4Opacity = useTransform(smoothProgress, [0.58, 0.66], [0, 1])
+  const link4Offset = useTransform(smoothProgress, [0.58, 0.66], [16, 0])
 
-  // 1. Outer nodes fade in (0 to 0.15)
-  const nodesOpacity = useTransform(smoothProgress, [0, 0.15], [0, 1])
-  const nodesScale = useTransform(smoothProgress, [0, 0.15], [0.5, 1])
-  
-  // 2. SVG Fire Roots draw inward to the center (0.15 to 0.45)
-  const lineProgress = useTransform(smoothProgress, [0.15, 0.45], [0, 1])
-  
-  // 3. Center Sun Erupts (0.45 to 0.65)
-  const sunOpacity = useTransform(smoothProgress, [0.45, 0.65], [0, 1])
-  const sunScale = useTransform(smoothProgress, [0.45, 0.65], [0.1, 1])
-  
-  // 4. Node text descriptions fade in (0.65 to 0.85)
-  const textOpacity = useTransform(smoothProgress, [0.65, 0.85], [0, 1])
-
-  // Prevent text fading so the top doesn't feel blank
-  const heroOpacityValue = 1 
-  const heroYValue = 0 
-
-  const orbitScale = isMobile ? 1.02 : 0.68
-  const scaleVal = (value: number) => 50 + (value - 50) * orbitScale
-  const pathD = (c1x: number, c1y: number, c2x: number, c2y: number, ex: number, ey: number) => (
-    `M 50,50 C ${scaleVal(c1x)},${scaleVal(c1y)} ${scaleVal(c2x)},${scaleVal(c2y)} ${scaleVal(ex)},${scaleVal(ey)}`
-  )
-  const nodePos = {
-    topLeft: { x: scaleVal(20), y: scaleVal(25) },
-    topRight: { x: scaleVal(80), y: scaleVal(25) },
-    bottomLeft: { x: isMobile ? scaleVal(26) : scaleVal(30), y: scaleVal(75) },
-    bottomRight: { x: isMobile ? scaleVal(74) : scaleVal(70), y: scaleVal(75) }
-  }
+  const linkStyles = [
+    { opacity: link1Opacity, y: link1Offset },
+    { opacity: link2Opacity, y: link2Offset },
+    { opacity: link3Opacity, y: link3Offset },
+    { opacity: link4Opacity, y: link4Offset }
+  ]
 
   return (
-    <div className="relative w-full pt-0 pb-0 bg-[#050505] text-white font-sans flex flex-col items-center">
+    <div className="contact-section relative w-full pt-0 pb-0 bg-[#050505] text-white font-sans flex flex-col items-center">
 
       {/* Ambient glows safely contained */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -357,34 +276,17 @@ export default function Contact() {
       </div>
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  NEW: Solar Constellation Sequence                    */}
+      {/*  Solar Constellation Sequence                          */}
       {/* ══════════════════════════════════════════════════════ */}
       <div ref={containerRef} className={`relative w-full ${isMobile ? 'h-[250vh]' : 'h-[300vh]'}`}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
-          <div className="absolute top-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-[#050505]/90 via-[#050505]/50 to-transparent pointer-events-none z-20" />
-          <div className="absolute bottom-0 left-0 right-0 h-36 md:h-44 bg-gradient-to-t from-[#050505] via-[#050505]/75 to-transparent pointer-events-none z-20" />
-          <div className="hidden md:block absolute top-0 bottom-0 left-0 w-16 md:w-24 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent pointer-events-none z-20" />
-          
+        <div className="contact-sticky sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
+          <div className="contact-top-fade absolute top-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-[#050505]/90 via-[#050505]/50 to-transparent pointer-events-none z-20" />
+          <div className="contact-bottom-fade absolute bottom-0 left-0 right-0 h-36 md:h-44 bg-gradient-to-t from-[#050505] via-[#050505]/75 to-transparent pointer-events-none z-20" />
+          <div className="contact-side-fade hidden md:block absolute top-0 bottom-0 left-0 w-16 md:w-24 bg-gradient-to-r from-bg-dark via-bg-dark/80 to-transparent pointer-events-none z-20" />
+
           {/* Background: Embers & Space */}
-          <div className="absolute inset-0 z-0 bg-[#050505]">
-            {/* Large center subtle glow */}
-            <div className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] bg-[#FFB000]/[0.02] rounded-full blur-[120px]" />
-            
-            {/* Milky Way / Nebula Diagonal Dust Band */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[170vw] md:w-[140vw] h-[78vh] md:h-[56vh] rotate-[-35deg] pointer-events-none opacity-70 [mask-image:radial-gradient(ellipse_at_center,black_0%,black_38%,rgba(0,0,0,0.45)_56%,transparent_78%)]">
-               {/* Core bright cosmic dust lane */}
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,176,0,0.12)_0%,transparent_60%)] blur-[80px]" />
-               
-               {/* Intense Nebula Clusters */}
-               <div className="absolute top-[20%] left-[15%] w-[40%] h-[80%] bg-[#FFB000]/10 blur-[90px] rounded-[50%]" />
-               <div className="absolute top-[35%] left-[50%] w-[45%] h-[90%] bg-[#ff5500]/10 blur-[120px] rounded-[50%]" />
-               <div className="absolute top-[10%] left-[30%] w-[30%] h-[60%] bg-[#FFF2D1]/5 blur-[70px] rounded-[50%]" />
-               
-               {/* Star cluster overlay within the milky way */}
-               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjAuNSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIxIiBmaWxsPSIjRkZCMDAwIiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSI1MCIgcj0iMS41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC42Ii8+PGNpcmNsZSBjeD0iMzIwIiBjeT0iMjAwIiByPSIwLjUiIGZpbGw9IiNGRkIwMDAiIG9wYWNpdHk9IjAuNSIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjI4MCIgcj0iMC41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC43Ii8+PGNpcmNsZSBjeD0iMTAiIGN5PSIzMDAiIHI9IjEiIGZpbGw9IiNGRkIwMDAiIG9wYWNpdHk9IjAuNSIvPjxjaXJjbGUgY3g9IjI4MCIgY3k9IjM1MCIgcj0iMC41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+')] opacity-30 mix-blend-screen" style={{ backgroundSize: '200px 200px' }} />
-            </div>
-            
-            {/* Bokeh Orbs (from reference image) */}
+          <div className="contact-space-bg absolute inset-0 z-0 bg-[#050505]">
+            <div className="contact-center-glow absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] bg-[#FFB000]/[0.02] rounded-full blur-[120px]" />
 
             {EMBER_PARTICLES.map((particle, i) => (
               <div key={i} className="absolute rounded-full bg-[#FFB000] animate-pulse" style={{
@@ -399,161 +301,160 @@ export default function Contact() {
               }} />
             ))}
           </div>
-          
+
           <div className="absolute inset-0">
-            {/* Static Hero Text Inside Sticky Block */}
-            <motion.div style={{ opacity: heroOpacityValue, y: heroYValue }} className="absolute top-20 md:top-24 left-0 w-full flex justify-center z-30 pointer-events-none text-left">
-              <div className="w-full max-w-7xl px-6 flex flex-col items-start">
-                <div className="-ml-1 sm:-ml-3">
-                  <div className="font-mono text-white/55 text-[11px] md:text-xs mb-2 md:mb-4 tracking-[0.2em] uppercase drop-shadow-md">
+            <div className="absolute inset-0 flex flex-col justify-start px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl pt-16 md:pt-24 lg:pt-[14vh]">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between w-full gap-12 lg:gap-8 mt-4 lg:mt-8">
+
+                {/* LEFT SIDE TEXT & BUTTON */}
+                <div className="flex flex-col items-start w-full lg:w-[45%] z-30">
+                  <motion.div
+                    initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                    className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/55 drop-shadow-md md:mb-4 md:text-xs"
+                  >
                     06
-                  </div>
-                  <h2 className="text-[2.6rem] md:text-[3.8rem] font-bold tracking-tight mb-2 md:mb-3 leading-[1.1] drop-shadow-lg">
-                    <span className="text-white block">Let's </span>
-                    <span className="text-accent block">Connect.</span>
-                  </h2>
-                  <p className="text-white/40 text-[14px] md:text-[15px] font-montserrat leading-relaxed mb-5 max-w-[280px] md:max-w-md drop-shadow-md">
+                  </motion.div>
+                  
+                  <motion.h2
+                    initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                    className="mb-4 text-[2.6rem] font-bold leading-[1.05] tracking-tight drop-shadow-lg md:text-[3.8rem]"
+                  >
+                    <span className="block text-white">Let's </span>
+                    <span className="block text-accent">Connect.</span>
+                  </motion.h2>
+                  
+                  <motion.p
+                    initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                    className="mb-8 md:mb-6 max-w-[280px] font-montserrat text-[14px] leading-relaxed text-white/60 drop-shadow-md md:max-w-md md:text-[15px]"
+                  >
                     Open to collaborations, projects, and meaningful conversations.
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="w-[7px] h-[3px] bg-accent/80 -skew-x-12 inline-block" />
-                    ))}
-                    <div className="w-20 h-[1px] bg-gradient-to-r from-accent/50 to-transparent ml-1" />
-                    <div className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-full bg-accent/40 animate-ping" />
-                      <span className="absolute inset-0 rounded-full bg-accent shadow-[0_0_6px_2px_rgba(255, 176, 0,0.5)]" />
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0, x: -15, filter: 'blur(4px)' }}
+                    whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
+                    className="hidden md:flex items-center gap-4 mb-8 w-full max-w-[280px] opacity-90"
+                  >
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((_, i) => (
+                        <div key={i} className="w-4 h-[2px] bg-accent" />
+                      ))}
                     </div>
-                  </div>
+                    <div className="flex items-center flex-1">
+                      <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-accent" />
+                      <div className="w-[6px] h-[6px] rounded-full bg-accent shadow-[0_0_8px_var(--accent)]" />
+                    </div>
+                  </motion.div>
+
+                  <motion.a
+                    initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+                    href="https://wa.me/918078574876" target="_blank" rel="noreferrer" className="contact-start-btn group flex items-center justify-between w-full max-w-[280px] rounded-[24px] border-[1px] border-accent/50 bg-[#060606] px-5 py-3 transition-all duration-300 hover:border-accent hover:shadow-[0_0_15px_rgba(255,176,0,0.15)]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <WhatsAppIcon />
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/80">START A CONVERSATION</span>
+                    </div>
+                    <span className="text-accent group-hover:translate-x-1 transition-transform"><ArrowRightIcon /></span>
+                  </motion.a>
+                </div>
+
+                {/* RIGHT SIDE QR CODE */}
+                <div className="flex flex-col items-center justify-center w-full lg:w-[50%] relative z-30">
+                  <motion.div style={{ opacity: cardOpacity, scale: cardScale }} className="w-full max-w-[320px] md:max-w-[360px] lg:max-w-[360px] relative">
+                    <div className="contact-qr-container relative aspect-square rounded-[36px] border border-accent/80 bg-black/20 backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_30px_rgba(255,176,0,0.3),inset_0_-15px_30px_rgba(0,0,0,0.6),inset_0_4px_15px_rgba(255,255,255,0.15)] p-6 md:p-8 overflow-hidden group">
+                      
+                      {/* Convex Water Droplet Highlight */}
+                      <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[70%] bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.15)_0%,_transparent_70%)] pointer-events-none rounded-full transform rotate-[-5deg]" />
+                      
+                      {/* Additional Edge Light for Depth */}
+                      <div className="absolute inset-0 rounded-[36px] shadow-[inset_0_0_20px_rgba(255,176,0,0.1)] pointer-events-none" />
+
+                      {/* Top rim light */}
+                      <div className="absolute top-[1px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-90 blur-[0.5px]" />
+
+                      {/* Content Images */}
+                      <div className="relative w-full h-full rounded-[24px] overflow-hidden flex items-center justify-center">
+                        <motion.img
+                          src="/logo-new.png"
+                          alt="Albin Thomas logo"
+                          className="contact-logo absolute inset-0 h-full w-full object-contain p-12 drop-shadow-[0_0_15px_rgba(255,176,0,0.4)]"
+                          style={{ opacity: logoOpacity, scale: logoScale }}
+                        />
+                        <motion.img
+                          src="/albin-linktree.svg"
+                          alt="Linktree QR"
+                          className="absolute inset-0 h-full w-full object-contain"
+                          style={{
+                            opacity: qrOpacity,
+                            y: qrTranslate,
+                            clipPath: qrClip,
+                            filter: 'brightness(0) saturate(100%) invert(64%) sepia(55%) saturate(3015%) hue-rotate(7deg) brightness(105%) contrast(104%)'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
-            </motion.div>
 
-            {/* Constellation Container - shifted right and sized down to create a 2-column layout feel */}
-            <div className="absolute inset-0 top-[20vh] md:top-[8vh] md:translate-x-[5%] lg:translate-x-[8%]">
-              {/* SVG Connection Lines */}
-              <div className="absolute inset-0 z-10 pointer-events-none">
-                <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-none overflow-visible">
-                  <defs>
-                  <linearGradient id="fireLineGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
-                    <stop offset="25%" stopColor="#ff4500" stopOpacity="0.2" />
-                    <stop offset="35%" stopColor="#FFB000" stopOpacity="0.8" />
-                    <stop offset="50%" stopColor="#FFF2D1" stopOpacity="1" />
-                    <stop offset="65%" stopColor="#FFB000" stopOpacity="0.8" />
-                    <stop offset="75%" stopColor="#ff4500" stopOpacity="0.2" />
-                  </linearGradient>
-                  <radialGradient id="rootFade" cx="50%" cy="50%" r="25%">
-                    <stop offset="0%" stopColor="#FFF2D1" stopOpacity="0.8" />
-                    <stop offset="30%" stopColor="#FFB000" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="#FFB000" stopOpacity="0" />
-                  </radialGradient>
-                  <filter id="glowBlur">
-                     <feGaussianBlur stdDeviation="0.8" result="coloredBlur"/>
-                     <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                     </feMerge>
-                  </filter>
-                </defs>
+              {/* SOCIAL LINKS ROW at the bottom right */}
+              <div className="w-full mt-8 lg:mt-24 relative z-30 flex justify-center">
                 
-                <g filter="url(#glowBlur)">
-                  {/* TOP LEFT (GitHub) */}
-                  <motion.path d={pathD(40, 55, 25, 20, 20, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
-                  <motion.path d={pathD(50, 30, 35, 35, 20, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
+                <div className="flex flex-row flex-wrap justify-center items-center gap-10 md:gap-14 lg:gap-[60px] w-full max-w-5xl">
+                  {[
+                    { name: 'GitHub', icon: <GitHubSocialIcon />, url: 'https://github.com/Albiin777' },
+                    { name: 'LinkedIn', icon: <LinkedInSocialIcon />, url: 'https://www.linkedin.com/in/albinthomas18/' },
+                    { name: 'Instagram', icon: <InstagramSocialIcon />, url: 'https://instagram.com/albiin.thomas/' },
+                    { name: 'X / Twitter', icon: <TwitterSocialIcon />, url: 'https://x.com/albiin7777' }
+                  ].map((link, idx) => (
+                    <motion.a key={idx} href={link.url} target="_blank" rel="noreferrer" style={linkStyles[idx]} className="relative group flex items-center rounded-full border border-accent/40 bg-[#050505] shadow-[0_0_15px_rgba(255,176,0,0.1)] overflow-visible px-5 py-2.5 lg:px-7 lg:py-3.5 hover:border-accent hover:shadow-[0_0_25px_rgba(255,176,0,0.25)] transition-all">
+                      
+                      {/* Yellow Floor Reflection */}
+                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-[70%] h-[3px] bg-accent blur-[10px] opacity-50 rounded-full mix-blend-screen pointer-events-none group-hover:opacity-80 group-hover:blur-[14px] transition-all" />
 
-                  {/* TOP RIGHT (LinkedIn) */}
-                  <motion.path d={pathD(60, 55, 75, 20, 80, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
-                  <motion.path d={pathD(50, 30, 65, 35, 80, 25)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
-
-                  {/* BOTTOM LEFT (X) */}
-                  <motion.path d={pathD(40, 45, 25, 80, 30, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
-                  <motion.path d={pathD(50, 70, 35, 65, 30, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
-
-                  {/* BOTTOM RIGHT (Instagram) */}
-                  <motion.path d={pathD(60, 45, 75, 80, 70, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.15" strokeLinecap="round" opacity="0.8" fill="none" style={{ pathLength: lineProgress }} />
-                  <motion.path d={pathD(50, 70, 65, 65, 70, 75)} stroke="url(#fireLineGrad)" strokeWidth="0.08" strokeLinecap="round" opacity="0.4" fill="none" style={{ pathLength: lineProgress }} />
-                </g>
-              </svg>
-            </div>
-
-            {/* Constellation Nodes */}
-            <div className="absolute inset-0 z-30 pointer-events-none">
-              
-              {/* Center Sun Node (Linktree) */}
-              <CenterSun 
-                opacity={sunOpacity} 
-                scale={sunScale}
-                onClick={() => {
-                  window.open('https://linktr.ee/albin.thomas?utm_source=qr_code', '_blank')
-                }} 
-              />
-
-              {/* Node 1: GitHub (Top Left) */}
-              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.topLeft.x}%`, top: `${nodePos.topLeft.y}%` }}>
-                <SolarNode 
-                  icon={<GitHubSocialIcon />} 
-                  href="https://github.com/Albiin777" 
-                  title="GITHUB" 
-                  textAlignment="top-left" 
-                  opacity={nodesOpacity} 
-                  scale={nodesScale} 
-                  textOpacity={textOpacity} 
-                  ringOrientation="top"
-                />
-              </div>
-
-              {/* Node 2: LinkedIn (Top Right) */}
-              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.topRight.x}%`, top: `${nodePos.topRight.y}%` }}>
-                <SolarNode 
-                  icon={<LinkedInSocialIcon />} 
-                  href="https://www.linkedin.com/in/albinthomas18/" 
-                  title="LINKEDIN" 
-                  textAlignment="right" 
-                  opacity={nodesOpacity} 
-                  scale={nodesScale} 
-                  textOpacity={textOpacity} 
-                  ringOrientation="top"
-                />
-              </div>
-
-              {/* Node 3: X / Twitter (Bottom Left) */}
-              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.bottomLeft.x}%`, top: `${nodePos.bottomLeft.y}%` }}>
-                <SolarNode 
-                  icon={<TwitterSocialIcon />} 
-                  href="https://x.com/albiin7777" 
-                  title="TWITTER / X" 
-                  textAlignment="left" 
-                  opacity={nodesOpacity} 
-                  scale={nodesScale} 
-                  textOpacity={textOpacity} 
-                  ringOrientation="bottom"
-                />
-              </div>
-
-              {/* Node 4: Instagram (Bottom Right) */}
-              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${nodePos.bottomRight.x}%`, top: `${nodePos.bottomRight.y}%` }}>
-                <SolarNode 
-                  icon={<InstagramSocialIcon />} 
-                  href="https://instagram.com/albiin.thomas/" 
-                  title="INSTAGRAM" 
-                  textAlignment="right" 
-                  opacity={nodesOpacity} 
-                  scale={nodesScale} 
-                  textOpacity={textOpacity} 
-                  ringOrientation="bottom"
-                />
+                      {/* Glass Highlight */}
+                      <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none rounded-t-full" />
+                      
+                      {/* Icon */}
+                      <div className="text-white relative z-10 w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center">
+                        {link.icon}
+                      </div>
+                      
+                      {/* Divider */}
+                      <div className="w-[1px] h-[14px] lg:h-[16px] bg-white/20 mx-3 relative z-10" />
+                      
+                      {/* Text */}
+                      <span className="text-[10px] lg:text-[11px] font-mono font-semibold uppercase tracking-[0.24em] text-white/90 relative z-10">
+                        {link.name}
+                      </span>
+                    </motion.a>
+                  ))}
+                </div>
               </div>
 
             </div>
-          </div>
           </div>
 
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col overflow-visible">
-        <div className="absolute left-1/2 top-0 bottom-0 w-screen -translate-x-1/2 bg-[#050505] pointer-events-none z-0" />
-        <div className="-ml-1 sm:-ml-3 w-full relative z-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col overflow-visible">
+        <div className="contact-lower-bg absolute left-1/2 top-0 bottom-0 w-screen -translate-x-1/2 bg-[#050505] pointer-events-none z-0" />
+        <div className="w-full relative z-10">
           {/* ══════════════════════════════════════════════════════ */}
           {/*  Original 4-Card Info Grid                            */}
           {/* ══════════════════════════════════════════════════════ */}
@@ -595,175 +496,175 @@ export default function Contact() {
           {/* ══════════════════════════════════════════════════════ */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start relative z-20 pb-20">
 
-          {/* Left — heading */}
-          <motion.div
-            className="lg:col-span-5 flex flex-col items-start justify-center"
-            initial={{ opacity: 0, x: -28, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, amount: 0.35 }}
-            transition={{ duration: 0.62, ease: 'easeOut' }}
-          >
-            <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
-              07
-            </div>
-            <h2 className="text-[2.6rem] md:text-[3rem] font-bold tracking-tight leading-[1.1] mb-3">
-              <span className="text-white block">Send Me</span>
-              <span className="text-accent block">a Message.</span>
-            </h2>
-            <p className="text-white/40 text-[14px] font-montserrat leading-relaxed">
-              Interested in working together or just saying hello? Feel free to connect.
-            </p>
-
-            {/* Decorative accent line */}
-            <div className="flex items-center gap-1.5 mt-6">
-              {[...Array(4)].map((_, i) => (
-                <span key={i} className="w-[7px] h-[3px] bg-accent/70 -skew-x-12 inline-block" />
-              ))}
-              <div className="w-16 h-[1px] bg-gradient-to-r from-accent/40 to-transparent ml-1" />
-              <div className="relative w-1.5 h-1.5 ml-1">
-                <span className="absolute inset-0 rounded-full bg-accent/35 animate-pulse" />
+            {/* Left — heading */}
+            <motion.div
+              className="lg:col-span-5 flex flex-col items-start justify-center"
+              initial={{ opacity: 0, x: -28, filter: 'blur(8px)' }}
+              whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              viewport={{ once: false, amount: 0.35 }}
+              transition={{ duration: 0.62, ease: 'easeOut' }}
+            >
+              <div className="font-mono text-white/40 text-xs mb-4 tracking-[0.2em] uppercase">
+                07
               </div>
-            </div>
-          </motion.div>
+              <h2 className="text-[2.6rem] md:text-[3rem] font-bold tracking-tight leading-[1.1] mb-3">
+                <span className="text-white block">Send Me</span>
+                <span className="text-accent block">a Message.</span>
+              </h2>
+              <p className="text-white/40 text-[14px] font-montserrat leading-relaxed">
+                Interested in working together or just saying hello? Feel free to connect.
+              </p>
 
-          {/* Right — form with button inside */}
-          <motion.div
-            className="lg:col-span-7 flex flex-col w-full"
-            initial={{ opacity: 0, x: 28, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ duration: 0.66, ease: 'easeOut', delay: 0.08 }}
-          >
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
+              {/* Decorative accent line */}
+              <div className="flex items-center gap-1.5 mt-6">
+                {[...Array(4)].map((_, i) => (
+                  <span key={i} className="w-[7px] h-[3px] bg-accent/70 -skew-x-12 inline-block" />
+                ))}
+                <div className="w-16 h-[1px] bg-gradient-to-r from-accent/40 to-transparent ml-1" />
+                <div className="relative w-1.5 h-1.5 ml-1">
+                  <span className="absolute inset-0 rounded-full bg-accent/35 animate-pulse" />
+                </div>
+              </div>
+            </motion.div>
 
-              {/* Name + Email row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Right — form with button inside */}
+            <motion.div
+              className="lg:col-span-7 flex flex-col w-full"
+              initial={{ opacity: 0, x: 28, filter: 'blur(8px)' }}
+              whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              viewport={{ once: false, amount: 0.25 }}
+              transition={{ duration: 0.66, ease: 'easeOut', delay: 0.08 }}
+            >
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
 
-                {/* Name */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Name</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Enter your name"
-                      required
-                      className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
+                {/* Name + Email row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                  {/* Name */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Name</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter your name"
+                        required
+                        className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
                                  focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
                                  px-4 py-3 text-[12.5px] text-white placeholder-white/25
                                  outline-none transition-all duration-300 font-sans"
-                      style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
-                    />
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <UserIcon />
+                        style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
+                      />
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <UserIcon />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Email</label>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
+                        required
+                        className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
+                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
+                                 px-4 py-3 text-[12.5px] text-white placeholder-white/25
+                                 outline-none transition-all duration-300 font-sans"
+                        style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
+                      />
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <EnvelopeIcon />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Email */}
+                {/* Message */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Email</label>
+                  <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Message</label>
                   <div className="relative">
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                    <textarea
+                      name="message"
+                      value={formData.message}
                       onChange={handleChange}
-                      placeholder="Enter your email"
+                      placeholder="Write your message..."
+                      rows={5}
                       required
                       className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
-                                 focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
-                                 px-4 py-3 text-[12.5px] text-white placeholder-white/25
-                                 outline-none transition-all duration-300 font-sans"
-                      style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
-                    />
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <EnvelopeIcon />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Message */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10.5px] text-white/50 font-mono uppercase tracking-[0.18em]">Your Message</label>
-                <div className="relative">
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Write your message..."
-                    rows={5}
-                    required
-                    className="w-full bg-[#0a0a0c]/80 border border-white/[0.08] hover:border-white/[0.14]
                                focus:border-accent/45 focus:shadow-[0_0_0_1px_rgba(255, 176, 0,0.1)]
                                px-4 py-3 text-[12.5px] text-white placeholder-white/25
                                outline-none resize-none transition-all duration-300 font-sans"
-                    style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
-                  />
-                  <div className="absolute right-3.5 bottom-3.5 pointer-events-none">
-                    <PencilIcon />
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)' }}
+                    />
+                    <div className="absolute right-3.5 bottom-3.5 pointer-events-none">
+                      <PencilIcon />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* SEND MESSAGE — centered on mobile, inline on desktop */}
-              <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-4 mt-2">
+                {/* SEND MESSAGE — centered on mobile, inline on desktop */}
+                <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 sm:gap-4 mt-2">
 
-                {/* Left decorative line */}
-                <div className="hidden sm:flex items-center gap-1.5 text-accent/30 flex-1 min-w-0">
-                  <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-accent/40" />
-                  <span className="text-[6px] tracking-widest font-mono select-none">▰▰</span>
-                </div>
+                  {/* Left decorative line */}
+                  <div className="hidden sm:flex items-center gap-1.5 text-accent/30 flex-1 min-w-0">
+                    <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-accent/40" />
+                    <span className="text-[6px] tracking-widest font-mono select-none">▰▰</span>
+                  </div>
 
-                {/* Button — orange fill sweep on hover */}
-                <div className="relative group shrink-0 overflow-hidden w-full sm:w-auto"
-                  style={{ clipPath: 'polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)' }}
-                >
-                  {/* Hover fill sweep background */}
-                  <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                  {/* Outer glow on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                  {/* Button — orange fill sweep on hover */}
+                  <div className="relative group shrink-0 overflow-hidden w-full sm:w-auto"
+                    style={{ clipPath: 'polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)' }}
+                  >
+                    {/* Hover fill sweep background */}
+                    <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    {/* Outer glow on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
                                   shadow-[0_0_20px_4px_rgba(255, 176, 0,0.4)] pointer-events-none" />
-                  <button
-                    type="submit"
-                    disabled={status === 'sending' || status === 'success'}
-                    className="relative z-10 w-full sm:w-auto px-10 py-3 border border-accent/50 group-hover:border-accent
+                    <button
+                      type="submit"
+                      disabled={status === 'sending' || status === 'success'}
+                      className="contact-submit-btn relative z-10 w-full sm:w-auto px-10 py-3 border border-accent/50 group-hover:border-accent
                                bg-[#09090b]/90
                                text-white font-mono text-[10.5px] uppercase tracking-[0.28em]
                                flex items-center justify-center gap-2.5 cursor-pointer
                                transition-colors duration-300
                                disabled:opacity-50 disabled:cursor-not-allowed select-none"
-                    style={{ clipPath: 'polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)' }}
-                  >
-                    {status === 'idle' && <><span>SEND MESSAGE</span><SendIcon /></>}
-                    {status === 'sending' && <span>SENDING...</span>}
-                    {status === 'success' && <span>MESSAGE SENT ✓</span>}
-                    {status === 'error' && <span>TRY AGAIN</span>}
-                  </button>
+                      style={{ clipPath: 'polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)' }}
+                    >
+                      {status === 'idle' && <><span>SEND MESSAGE</span><SendIcon /></>}
+                      {status === 'sending' && <span>SENDING...</span>}
+                      {status === 'success' && <span>MESSAGE SENT ✓</span>}
+                      {status === 'error' && <span>TRY AGAIN</span>}
+                    </button>
+                  </div>
+
+                  {/* Right decorative line */}
+                  <div className="hidden sm:flex items-center gap-1.5 text-accent/30 flex-1 min-w-0">
+                    <span className="text-[6px] tracking-widest font-mono select-none">▰▰</span>
+                    <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-accent/40" />
+                  </div>
+
                 </div>
 
-                {/* Right decorative line */}
-                <div className="hidden sm:flex items-center gap-1.5 text-accent/30 flex-1 min-w-0">
-                  <span className="text-[6px] tracking-widest font-mono select-none">▰▰</span>
-                  <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-accent/40" />
-                </div>
+              </form>
+            </motion.div>
 
-              </div>
-
-            </form>
-          </motion.div>
-
-        </div>{/* end grid: 07 GET IN TOUCH */}
+          </div>{/* end grid: 07 GET IN TOUCH */}
         </div>
       </div>{/* end max-w-7xl container */}
 
       {/* ══════════════════════════════════════════════════════ */}
       {/*  FOOTER — Original Full-Width                         */}
       {/* ══════════════════════════════════════════════════════ */}
-      <footer className="relative w-full flex flex-col items-center overflow-hidden bg-[#050505] pb-6 z-10 px-4 sm:px-0 mt-8">
+      <footer className="contact-footer relative w-full flex flex-col items-center overflow-hidden bg-[#050505] pb-6 z-10 px-4 sm:px-0 mt-8">
 
         {/* Glowing divider — pure light bloom, angled end brackets */}
         <div className="relative w-full flex items-center justify-center h-[13px]">

@@ -85,7 +85,7 @@ export default function SpaceCursor() {
     <>
       <div
         ref={cursorRef}
-        className="fixed left-0 top-0 z-[9999] pointer-events-none rounded-full border border-accent/80 mix-blend-screen flex items-center justify-center"
+        className="space-cursor-ring fixed left-0 top-0 z-[9999] pointer-events-none rounded-full border border-accent/80 mix-blend-screen flex items-center justify-center"
         style={{
           width: ringSize,
           height: ringSize,
@@ -96,7 +96,7 @@ export default function SpaceCursor() {
         }}
       >
         <div
-          className="rounded-full bg-[#ff7a1a]"
+          className="space-cursor-dot rounded-full bg-[#ff7a1a]"
           style={{
             width: dotSize,
             height: dotSize,
@@ -104,10 +104,10 @@ export default function SpaceCursor() {
             transition: 'width 120ms ease, height 120ms ease'
           }}
         />
-        <div className="absolute left-1/2 top-[-7px] h-3 w-px -translate-x-1/2 bg-accent/60" />
-        <div className="absolute left-1/2 bottom-[-7px] h-3 w-px -translate-x-1/2 bg-accent/60" />
-        <div className="absolute left-[-7px] top-1/2 h-px w-3 -translate-y-1/2 bg-accent/60" />
-        <div className="absolute right-[-7px] top-1/2 h-px w-3 -translate-y-1/2 bg-accent/60" />
+        <div className="space-cursor-line absolute left-1/2 top-[-7px] h-3 w-px -translate-x-1/2 bg-accent/60" />
+        <div className="space-cursor-line absolute left-1/2 bottom-[-7px] h-3 w-px -translate-x-1/2 bg-accent/60" />
+        <div className="space-cursor-line absolute left-[-7px] top-1/2 h-px w-3 -translate-y-1/2 bg-accent/60" />
+        <div className="space-cursor-line absolute right-[-7px] top-1/2 h-px w-3 -translate-y-1/2 bg-accent/60" />
         <div
           className={`absolute inset-[-7px] rounded-full border border-accent/10 ${
             isPressed ? 'animate-[cursorPulse_420ms_ease-out]' : ''

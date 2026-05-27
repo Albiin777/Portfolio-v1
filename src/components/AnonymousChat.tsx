@@ -44,7 +44,7 @@ export default function AnonymousChat() {
     >
       {/* Chat Window */}
       <div 
-        className={`mb-4 w-80 bg-[#111111] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
+        className={`anonymous-chat-window mb-4 w-80 bg-[#111111] border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.9),_inset_0_2px_4px_rgba(255,255,255,0.02)] overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'}`}
       >
         <div className="bg-[#111111] px-5 py-4 border-b border-white/10 flex justify-between items-center">
           <div className="flex items-center gap-2">
