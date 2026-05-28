@@ -170,74 +170,92 @@ export default function CircularMobileNav({ isDayMode, onToggleDayMode }: Circul
       </div>
 
       {/* Floating Top Header (Always Visible on Mobile) */}
-      <div className="fixed top-5 left-5 right-5 z-[100] flex flex-row items-center justify-between pointer-events-none transition-all duration-300">
-        
-        {/* Left Capsule - Brand */}
-        <a
-          href="#home"
-          onClick={(e) => {
-            e.preventDefault();
-            const section = document.getElementById('home');
-            if (section) smoothScrollToElement(section);
-            window.history.replaceState(null, '', '#home');
-            setIsOpen(false);
-          }}
-          className="h-11 px-4 rounded-full bg-[#111111]/80 backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center justify-center pointer-events-auto active:scale-95 transition-all"
-          aria-label="Home"
-        >
-          <div 
-            className="mobile-nav-logo-mark w-[78px] h-[28px] origin-left transition-colors duration-200 bg-white"
-            style={{
-              maskImage: 'url(/logo-mask-mid.png)',
-              maskSize: 'auto 100%',
-              maskRepeat: 'no-repeat',
-              maskPosition: '-6px center',
-              WebkitMaskImage: 'url(/logo-mask-mid.png)',
-              WebkitMaskSize: 'auto 100%',
-              WebkitMaskRepeat: 'no-repeat',
-              WebkitMaskPosition: '-6px center'
-            }}
-            role="img"
-            aria-label="Albin"
-          />
-        </a>
-        
-        {/* Right Capsule - Menu Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`h-11 px-4 rounded-full backdrop-blur-xl border shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-2.5 pointer-events-auto transition-all active:scale-95 shrink-0 ${
-            isOpen 
-              ? 'bg-[#111111]/90 border-accent/40 text-accent font-bold' 
-              : 'bg-[#111111]/80 border-white/10 text-accent hover:bg-white/5'
+      <div className="fixed top-5 left-5 right-5 z-[100] flex items-center justify-center pointer-events-none transition-all duration-300">
+        {/* Single centered capsule that toggles the menu (replaces left brand + right toggle) */}
+        <div
+          className={`h-12 min-w-[340px] px-4 rounded-full backdrop-blur-xl border flex items-center justify-between gap-4 pointer-events-auto transition-all ${
+            isOpen ? 'bg-[#111111]/92 border-accent/40 text-accent' : 'bg-[#111111]/84 border-white/10 text-accent'
           }`}
+          style={{
+            boxShadow: isDayMode
+              ? '0 2px 6px rgba(0,0,0,0.08), 0 -2px 6px rgba(0,0,0,0.06), 2px 0 6px rgba(0,0,0,0.06), -2px 0 6px rgba(0,0,0,0.06)'
+              : '0 6px 28px rgba(0,0,0,0.55)'
+          }}
+          role="group"
+          aria-label="Mobile navigation"
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={isOpen ? 'close' : activeSection}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="flex items-center gap-2"
-            >
-              {isOpen ? (
-                <>
-                  <svg className={isDayMode ? 'text-black' : 'text-accent'} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                  <span className={`font-montserrat text-[9px] tracking-[0.16em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-accent'}`}>CLOSE</span>
-                </>
-              ) : (
-                <>
-                  <span className={`flex items-center justify-center shrink-0 ${isDayMode ? 'text-black' : 'text-accent'}`}>
-                    {getIconForPage(activeSection)}
-                  </span>
-                  <span className={`font-montserrat text-[9.5px] tracking-[0.16em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-white'}`}>
-                    {getLabel(activeSection)}
-                  </span>
-                </>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </button>
+          {/* Left: Brand / Home button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              const section = document.getElementById('home')
+              if (section) {
+                const duration = smoothScrollToElement(section)
+                window.history.replaceState(null, '', '#home')
+                // ensure menu is closed
+                setIsOpen(false)
+                if (scrollTimeout.current !== null) window.clearTimeout(scrollTimeout.current)
+                scrollTimeout.current = window.setTimeout(() => { /* noop */ }, duration + 120)
+              }
+            }}
+            className="flex items-center gap-3 pl-3 pr-2 py-1 rounded-full bg-transparent pointer-events-auto active:scale-95 transition-all"
+            aria-label="Home"
+          >
+            <div
+              className="mobile-nav-logo-mark w-[84px] h-[28px] origin-left transition-colors duration-200 bg-white"
+              style={{
+                maskImage: 'url(/logo-mask-mid.png)',
+                maskSize: 'auto 100%',
+                maskRepeat: 'no-repeat',
+                maskPosition: '-6px center',
+                WebkitMaskImage: 'url(/logo-mask-mid.png)',
+                WebkitMaskSize: 'auto 100%',
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskPosition: '-6px center'
+              }}
+              role="img"
+              aria-label="Albin"
+            />
+          </button>
+
+          {/* Center logo (absolutely centered so side width changes don't shift it) */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true">
+            <div className="w-[78px] h-[20px] opacity-0" />
+          </div>
+
+          {/* Right: Toggle menu button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`flex items-center gap-2 pr-3 pl-2 py-1 rounded-full pointer-events-auto active:scale-95 transition-all ${
+              isOpen ? 'text-accent font-bold' : 'text-accent'
+            }`}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isOpen ? 'close' : activeSection}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.92, opacity: 0 }}
+                transition={{ duration: 0.12 }}
+                className="flex items-center gap-2"
+              >
+                {isOpen ? (
+                  <>
+                    <svg className={isDayMode ? 'text-black' : 'text-accent'} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    <span className={`font-montserrat text-[11px] tracking-[0.16em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-accent'}`}>CLOSE</span>
+                  </>
+                ) : (
+                  <>
+                    <span className={`font-montserrat text-[13px] tracking-[0.12em] uppercase font-bold ${isDayMode ? 'text-black' : 'text-white'}`}>
+                      {getLabel(activeSection)}
+                    </span>
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+        </div>
       </div>
 
       {/* Overlay & Circular Menu */}

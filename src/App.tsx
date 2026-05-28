@@ -62,9 +62,12 @@ const PortfolioPage = ({
 export default function App() {
   const location = useLocation()
   const showCustomCursor = location.pathname !== '/admin'
-  const [isDayMode, setIsDayMode] = useState(() => (
-    typeof window !== 'undefined' && window.localStorage.getItem('portfolio-theme') === 'day'
-  ))
+  const [isDayMode, setIsDayMode] = useState(() => {
+    if (typeof window === 'undefined') return true
+    const stored = window.localStorage.getItem('portfolio-theme')
+    if (stored) return stored === 'day'
+    return true
+  })
   const [themePulse, setThemePulse] = useState<ThemePulse | null>(null)
 
   useEffect(() => {
